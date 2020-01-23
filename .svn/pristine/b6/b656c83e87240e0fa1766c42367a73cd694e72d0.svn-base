@@ -1,0 +1,478 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true" CodeFile="frm_MedicalClaimApprove.aspx.cs" Inherits="Medical_frm_MedicalClaimApprove" %>
+
+<%@ Register TagPrefix="Telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphDefault" runat="Server">
+    <br />
+    <telerik:RadAjaxManagerProxy ID="RAM_MedicalBenfitClaim" runat="server">
+        <AjaxSettings>
+            <telerik:AjaxSetting AjaxControlID="Rg_MedicalBenfitClaim">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="lnk_Edit">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="lnk_Add">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="btn_Cancel">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="btn_Save">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="btn_Update">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+        </AjaxSettings>
+    </telerik:RadAjaxManagerProxy>
+    <table align="center" style="vertical-align: top;">
+        <tr>
+            <td>
+                <telerik:RadWindowManager ID="RWM_POSTREPLY1" runat="server" Style="z-index: 8000">
+                </telerik:RadWindowManager>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <asp:Label ID="lbl_MedicalBenfitClaimHeader" runat="server" Text="Medical Benefits Claim Confirm" Font-Bold="True"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <telerik:RadMultiPage ID="Rm_CY_page" runat="server" SelectedIndex="0" Style="z-index: 10"
+                    Width="990px" Height="590px" ScrollBars="Auto">
+                    <telerik:RadPageView ID="Rp_CY_ViewMain" runat="server" Selected="True">
+                        <asp:UpdatePanel ID="updPanel1" runat="server">
+                            <ContentTemplate>
+                                <table align="center" width="50%">
+                                    <tr>
+                                        <td>
+                                            <telerik:RadGrid ID="Rg_MedicalClaim" runat="server" AutoGenerateColumns="False"
+                                                GridLines="None" Skin="WebBlue" OnNeedDataSource="Rg_MedicalClaim_NeedDataSource"
+                                                AllowPaging="True" AllowFilteringByColumn="true">
+                                                <MasterTableView CommandItemDisplay="Top">
+                                                    <Columns>
+                                                        <telerik:GridBoundColumn DataField="CLAIMID" UniqueName="CLAIMID" HeaderText="Claim ID"
+                                                            meta:resourcekey="CLAIMID" Visible="False">
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="EMP_NAME" UniqueName="EMP_NAME" HeaderText="Employee Name"
+                                                            meta:resourcekey="EMP_NAME">
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="EMPID" UniqueName="EMPID" Visible="false" HeaderText="Emp ID"
+                                                            meta:resourcekey="EMPID">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="BENFICIARYNAME" UniqueName="BENFICIARYNAME" HeaderText="Beneficiary Name"
+                                                            meta:resourcekey="BENFICIARYNAME">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <%-- <telerik:GridBoundColumn DataField="SERVICEPROVIDERNAME" UniqueName="SERVICEPROVIDERNAME" HeaderText="Service Provider Name"
+                                                            meta:resourcekey="SERVICEPROVIDERNAME">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>--%>
+                                                        <telerik:GridBoundColumn DataField="AMOUNT" UniqueName="AMOUNT" HeaderText="Amount" DataType="System.Double"
+                                                            meta:resourcekey="AMOUNT">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="STATUS" UniqueName="STATUS" HeaderText="Status" meta:resourcekey="STATUS"
+                                                            AllowFiltering="false">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="MED_STATUS" UniqueName="MED_STATUS" HeaderText="MED_STATUS" 
+                                                            meta:resourcekey="MED_STATUS" Visible="false">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="RULE_AMNT" HeaderText="Amount as per Rule"
+                                                            meta:resourcekey="RULE_AMNT" UniqueName="RULE_AMNT">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridTemplateColumn HeaderText="Invoice" AllowFiltering="false">
+                                                            <ItemTemplate>
+                                                                <a id="D2" runat="server" target="_blank" href='<%#Eval("INVOICEDOCUMENT") %>'>Download Invoice</a>
+                                                                <asp:Label ID="lbl_BioData" Text='<%#Eval("INVOICEDOCUMENT") %>' Visible="false" runat="server"></asp:Label>
+                                                            </ItemTemplate>
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn UniqueName="ColEdit" meta:resourcekey="GridTemplateColumnResource1" AllowFiltering="false">
+                                                            <ItemTemplate>
+                                                                <asp:LinkButton ID="lnk_Edit" runat="server" CommandArgument='<%# Eval("CLAIMID") %>'
+                                                                    OnCommand="lnk_Edit_Command" meta:resourcekey="lnk_Edit">View</asp:LinkButton>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                    </Columns>
+                                                    <EditFormSettings>
+                                                        <EditColumn CancelImageUrl="Cancel.gif" EditImageUrl="Edit.gif" InsertImageUrl="Update.gif"
+                                                            UpdateImageUrl="Update.gif">
+                                                        </EditColumn>
+                                                    </EditFormSettings>
+                                                    <CommandItemTemplate>
+                                                        <div align="right">
+                                                            <asp:LinkButton ID="lnk_Add" runat="server" meta:resourceKey="lnk_Add" OnCommand="lnk_Add_Command" Visible="false">Add</asp:LinkButton>
+                                                        </div>
+                                                    </CommandItemTemplate>
+                                                </MasterTableView>
+                                                <PagerStyle AlwaysVisible="True" />
+                                                <FilterMenu Skin="WebBlue">
+                                                </FilterMenu>
+                                                <HeaderContextMenu Skin="WebBlue">
+                                                </HeaderContextMenu>
+                                            </telerik:RadGrid>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                            <table>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+
+                                                    <td></td>
+                                                </tr>
+
+                                            </table>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ContentTemplate>
+
+                        </asp:UpdatePanel>
+                    </telerik:RadPageView>
+                    <telerik:RadPageView ID="Rp_CY_ViewDetails" runat="server">
+                        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                            <ContentTemplate>
+                                <table align="center" width="50%">
+                                    <tr>
+                                        <td colspan="3" align="center" style="font-weight: bold;"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblEmployee" runat="server" Text="Employee"></asp:Label>
+                                        </td>
+                                        <td>:</td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcmb_Employee" runat="server" MarkFirstMatch="true" AutoPostBack="true" MaxHeight="200"
+                                                OnSelectedIndexChanged="rcmb_Employee_SelectedIndexChanged" Filter="Contains">
+                                            </telerik:RadComboBox>
+                                            <asp:RequiredFieldValidator ID="rfv_rcmb_Employee" runat="server" Text="*" InitialValue="Select"
+                                                ControlToValidate="rcmb_Employee" ValidationGroup="Controls" Display="Dynamic"
+                                                ErrorMessage="Please Select Employee"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblBusinesUnit" runat="server" Text="Busines Unit"></asp:Label>
+                                        </td>
+                                        <td>:</td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcmb_BusinesUnit" runat="server" MarkFirstMatch="true" Enabled="false" Filter="Contains"></telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblDirectorate" runat="server" Text="Directorate"></asp:Label>
+                                        </td>
+                                        <td>:</td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcmb_Directorate" runat="server" MarkFirstMatch="true" Enabled="false" Filter="Contains"></telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblDepartment" runat="server" Text="Department"></asp:Label>
+                                        </td>
+                                        <td>:</td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcmb_Department" runat="server" MarkFirstMatch="true" Enabled="false" Filter="Contains"></telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <%-- <tr>
+                                <td colspan="3" align="left">
+                                    &nbsp;<BUFilter:BU ID="BU1" runat="server" />
+                                </td>
+                            </tr>--%>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblFinPeriod" runat="server" Text="Financial Period"></asp:Label>
+                                        </td>
+                                        <td>:</td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcbFinPeriod" runat="server" MarkFirstMatch="true" AutoPostBack="true"
+                                                OnSelectedIndexChanged="rcbFinPeriod_SelectedIndexChanged" Filter="Contains">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 150px;">
+                                            <asp:Label ID="lbl_MedicalClaimID" runat="server" Visible="false"></asp:Label>
+                                            <asp:Label ID="lbl_Scale" runat="server" Text="Grade" meta:resourcekey="lbl_ExpenditureName"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="radGradeName" runat="server" EmptyMessage="Select" Skin="WebBlue" MaxLength="50" Enabled="false" Filter="Contains">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lbl_ClaimType" runat="server" Text="Claim Type" meta:resourcekey="lbl_ClaimType"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="RadClaimType" runat="server" AutoPostBack="True"
+                                                OnSelectedIndexChanged="RadClaimType_SelectedIndexChanged" EmptyMessage="Select">
+                                                <Items>
+                                                    <telerik:RadComboBoxItem runat="server" Text="Select" Value="Select" />
+                                                    <telerik:RadComboBoxItem runat="server" Text="Self" Value="Self" />
+                                                    <telerik:RadComboBoxItem runat="server" Text="Family" Value="Family" />
+
+                                                </Items>
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <%--<asp:Label ID="lbl_InvoiceDocID" runat="server" Visible="False" meta:resourcekey="lbl_InvoiceDocID"></asp:Label>--%>
+                                            <asp:Label ID="lbl_ServiceProviderName" runat="server" Text="Service Provider Name" meta:resourcekey="lbl_ServiceProviderName"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="RadServiceProviderName" runat="server" AutoPostBack="true" OnSelectedIndexChanged="RadServiceProviderName_SelectedIndexChanged" EmptyMessage="Select" Skin="WebBlue" MaxLength="50" Filter="Contains">
+                                            </telerik:RadComboBox>
+                                            <asp:RequiredFieldValidator ID="rfv_RadServiceProviderName" runat="server" Text="*" InitialValue="Select"
+                                                ControlToValidate="RadServiceProviderName" ValidationGroup="Controls" Display="Dynamic" ErrorMessage="Please Select Service Provider Name"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>
+                                    <tr id="trMedicalSvcPrvdr" runat="server" visible="false">
+                                        <td style="width: 150px;">
+                                            <%--<asp:Label ID="lblMedicalServiceProvider" runat="server" Text="Medical Service Provider Name" meta:resourcekey="lblMedicalServiceProvider"></asp:Label>--%>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <telerik:RadTextBox ID="radMedicalServiceProvider" runat="server" Skin="WebBlue" MaxLength="50">
+                                            </telerik:RadTextBox>
+                                        </td>
+                                    </tr>
+
+                                    <tr id="trBenficaryName" runat="server">
+                                        <td>
+                                            <asp:Label ID="lblBenficaryName" runat="server" Text="Beneficiary Name"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="radBenficaryName" runat="server" AutoPostBack="True" OnSelectedIndexChanged="radBenficaryName_SelectedIndexChanged" EmptyMessage="Select" Filter="Contains">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr id="trRelation" runat="server">
+                                        <td>
+                                            <asp:Label ID="lblBRelation" runat="server" Text="Relation" meta:resourcekey="lblBRelation"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="radRelation" runat="server" EmptyMessage="Select" Enabled="false" Filter="Contains">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblExpenditureName" runat="server" Text="Expenditure Name" meta:resourcekey="lblExpenditureName"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="radExpenditureName" runat="server" AutoPostBack="true" EmptyMessage="Select"
+                                                OnSelectedIndexChanged="radExpenditureName_SelectedIndexChanged" Filter="Contains">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr runat="server" id="trOtherExpndName" visible="false">
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <telerik:RadTextBox ID="rtbOtherExpndName" runat="server" EmptyMessage="Enter Other Expenditure Name">
+                                            </telerik:RadTextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblExpenditureMaxEligibleAmount" runat="server" Text="Expenditure Max Eligible Amount" meta:resourcekey="lblExpenditureName"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lblMaxEligibleAmount" runat="server"></asp:Label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblAvailableAmounttxt" runat="server" Text="Available Amount" meta:resourcekey="lblExpenditureName"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lblAvailableAmount" runat="server"></asp:Label>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lbl_currency" runat="server" Text="Currency Type"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <b>:</b>
+                                        </td>
+                                        <td align="left">
+                                            <telerik:RadComboBox ID="rcmb_Currency" runat="server" MarkFirstMatch="true" MaxHeight="120px" Filter="Contains"
+                                                Skin="WebBlue" AutoPostBack="true" OnSelectedIndexChanged="rcmb_Currency_SelectedIndexChanged">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+                                    <tr id="MAXCURR" runat="server">
+                                        <td>
+                                            <asp:Label ID="lbl_maxcurrencyamt" runat="server" Text="Amount After Convertion"></asp:Label></td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rnt_maxcurramt" runat="server"
+                                                Culture="English (United States)" AutoPostBack="true"
+                                                Skin="WebBlue" Enabled="false">
+                                            </telerik:RadNumericTextBox>
+                                            <asp:HiddenField ID="hdf_maxcurr" runat="server" />
+
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="width: 150px;">
+                                            <asp:Label ID="lblAmount" runat="server" Text="Amount" meta:resourcekey="lblAmount"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="radAmount" runat="server" Skin="WebBlue" MaxLength="7" MinValue="0"
+                                                AutoPostBack="true" OnTextChanged="radAmount_TextChanged">
+                                            </telerik:RadNumericTextBox>
+                                            <asp:HiddenField ID="hf_Claimamount" runat="server" />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lbl_currencyAmt" runat="server" Text="Currency Amount in USD$"></asp:Label></td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rnt_CurrencyAmt" runat="server"
+                                                Culture="English (United States)" MaxLength="9" AutoPostBack="true"
+                                                MinValue="0" Skin="WebBlue" Enabled="false">
+                                            </telerik:RadNumericTextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblRule80" runat="server" Text="Final Amount as per Rule 80%"></asp:Label>
+                                            <asp:CheckBox ID="chk_Rule" runat="server" OnCheckedChanged="chk_Rule_CheckedChanged" AutoPostBack="true" />
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rntbRule80" runat="server"
+                                                Culture="English (United States)" MaxLength="9"
+                                                MinValue="0" Skin="WebBlue" Enabled="false">
+                                            </telerik:RadNumericTextBox>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="width: 150px;">
+                                            <asp:Label ID="lblInvoiceID" runat="server" Text="Invoice ID" meta:resourcekey="lblInvoiceID"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadTextBox ID="radInvoiceID" runat="server" Skin="WebBlue" MaxLength="8">
+                                            </telerik:RadTextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 150px;">
+                                            <asp:Label ID="lblInvoiceDate" runat="server" Text="Claim Date/Invoice Date" meta:resourcekey="lblInvoiceDate"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadDatePicker ID="rdpInvoiceDate" runat="server">
+                                            </telerik:RadDatePicker>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 150px;">
+                                            <asp:Label ID="lblUpload" runat="server" Text="Upload" meta:resourcekey="lblAmount"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <asp:FileUpload ID="FBrowse" runat="server" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" colspan="3">
+                                            <asp:Button ID="btn_Update" runat="server" meta:resourcekey="btn_Edit" OnClick="btn_Save_Click"
+                                                Text="Update" Visible="False" ValidationGroup="Controls" />
+                                            <asp:Button ID="btn_Save" runat="server" meta:resourcekey="btn_Save" OnClick="btn_Save_Click"
+                                                Text="Save" Visible="False" ValidationGroup="Controls" />
+                                            <asp:Button ID="btnApprove" runat="server" OnClick="btn_Save_Click"
+                                                Text="Confirm" Visible="False" ValidationGroup="Controls" />
+                                            <asp:Button ID="btn_Cancel" runat="server" meta:resourcekey="btn_Cancel" OnClick="btn_Cancel_Click"
+                                                Text="Cancel" />
+                                            <asp:ValidationSummary ID="vs_Expenditure" runat="server" ShowMessageBox="True" ShowSummary="False"
+                                                ValidationGroup="Controls" />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td align="center" colspan="3"></td>
+                                    </tr>
+
+                                </table>
+                            </ContentTemplate>
+
+                            <Triggers>
+                                <asp:PostBackTrigger ControlID="btn_Save" />
+                                <asp:PostBackTrigger ControlID="btn_Update" />
+                            </Triggers>
+                        </asp:UpdatePanel>
+                    </telerik:RadPageView>
+                </telerik:RadMultiPage>
+            </td>
+        </tr>
+    </table>
+</asp:Content>

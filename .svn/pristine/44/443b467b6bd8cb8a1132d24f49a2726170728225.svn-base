@@ -1,0 +1,69 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true" CodeFile="ProvisionalPayslipBefore.aspx.cs" Inherits="Reportss_ProvisionalPayslipBefore" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    <link href="../smhr.css" rel="Stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+        function ShowPop(Employee, Organisation, BusinessUnit, Period, PeriodElement) {
+            var win = window.radopen('../Reportss/ProvisionalPayslipBeforeReport.aspx?Employee=' + Employee + '&Organisation=' + Organisation +
+                '&BusinessUnit=' + BusinessUnit + '&Period=' + Period + '&PeriodElement=' + PeriodElement, "RadWindow1");
+            win.center();
+            win.set_modal(true);
+            win.set_behaviors(Telerik.Web.UI.WindowBehaviors.Maximize + Telerik.Web.UI.WindowBehaviors.Close);
+        }
+        function OnKeyPress(sender, args) {
+            var re = /^[0-9\-\:\/]$/;
+            args.set_cancel(!re.test(args.get_keyCharacter()));
+        }
+    </script>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphDefault" runat="Server">
+    <table align="center">
+        <tr>
+            <td colspan="4" align="center">
+                <asp:Label ID="lbl_header" runat="server" Font-Bold="true" Text="Pre-Payroll Payslip" Font-Size="11pt" Font-Names="Arial"> </asp:Label>
+                <br />
+                <br />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label ID="lbl_Employee" runat="server" Text="Employee"> </asp:Label>
+            </td>
+            <td>
+                <b>:</b>
+            </td>
+            <td>
+                <telerik:RadComboBox ID="rcmb_Employee" runat="server" MarkFirstMatch="true" MaxHeight="120px"
+                    AutoPostBack="true" Filter="Contains" OnSelectedIndexChanged="rcmb_Employee_SelectedIndexChanged">
+                </telerik:RadComboBox>
+                <asp:RequiredFieldValidator ID="rfv_employee" runat="server" ErrorMessage="Please Select Employee"
+                    ControlToValidate="rcmb_Employee" ValidationGroup="Controls" InitialValue="Select" ForeColor="Red" Text="*">
+                </asp:RequiredFieldValidator>
+            </td>
+        </tr>
+    </table>
+    <table align="center">
+        <tr>
+            <td align="center">
+                <asp:Button ID="btn_Generate" runat="server" Text="Generate" OnClick="btn_Generate_Click"
+                    ValidationGroup="Controls" />
+            </td>
+            <td>
+                <asp:Button ID="btn_Cancel" runat="server" Text="Cancel" OnClick="btn_Cancel_Click" />
+                <asp:ValidationSummary ID="vs_Summary" runat="server" ShowMessageBox="True" ShowSummary="False"
+                     ValidationGroup="Controls" />
+            </td>
+        </tr>
+    </table>
+    <div>
+        <telerik:RadWindow runat="server" ID="rwPreAprPaySlip" VisibleOnPageLoad="false" Height="518px"
+            Width="900px" Behaviors="Maximize,Close" Modal="true">
+            <ContentTemplate>
+                <rsweb:ReportViewer ID="RPT_ProvisionalPayslip" runat="server"
+                    ShowParameterPrompts="false" ProcessingMode="Remote" SizeToReportContent="true" Visible="false">
+                </rsweb:ReportViewer>
+            </ContentTemplate>
+        </telerik:RadWindow>
+    </div>
+</asp:Content>

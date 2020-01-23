@@ -1,0 +1,1 @@
+﻿setTimeout("myBar.loaded('Gathering Required Infomation')", 2500);

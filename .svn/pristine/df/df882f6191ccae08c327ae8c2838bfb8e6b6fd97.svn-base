@@ -1,0 +1,109 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true" CodeFile="VoteCodeEntry.aspx.cs" Inherits="Masters_VoteCodeEntry" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphDefault" runat="Server">
+    <style type="text/css">
+        .setWidth {
+            width: 75px !important;
+        }
+    </style>
+
+    <table align="center">
+        <tr>
+            <td>
+                <div style="height: 490px; width: 1014px; overflow: auto;">
+                    <table align="center">
+                        <tr>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <asp:Label ID="lbl_VoteCodeEntry" runat="server" Text="Account Code Entry" Style="font-weight: 700"></asp:Label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <table>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td align="left">
+                                            <asp:Label ID="Label" runat="server" Visible="False" meta:resourcekey="lblbusinessunitId"></asp:Label>
+                                            <asp:Label ID="lbl_businessunit" runat="server" Text="Business Unit" meta:resourcekey="lbl_businessunit"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcmb_BusinessUnit" runat="server" MarkFirstMatch="true" Filter="Contains"
+                                                AutoPostBack="true" OnSelectedIndexChanged="rcmb_BusinessUnit_SelectedIndexChanged" MaxHeight="200">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td align="left">
+                                            <asp:Label ID="Label1" runat="server" Visible="False" meta:resourcekey="lblsalarystructureId"></asp:Label>
+                                            <asp:Label ID="lbl_salarystructure" runat="server" Text="Salary Structures" meta:resourcekey="lbl_salarystructure"></asp:Label>
+                                        </td>
+                                        <td>:
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcmb_SalaryStructure" runat="server" MarkFirstMatch="true" Filter="Contains"
+                                                AutoPostBack="true" OnSelectedIndexChanged="rcmb_SalaryStructure_SelectedIndexChanged" MaxHeight="200">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                        <td></td>
+
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                                <telerik:RadGrid ID="RG_VoteCodeEntry" runat="server" AutoGenerateColumns="False" GridLines="None" Skin="WebBlue" Visible="false">
+                                    <MasterTableView NoMasterRecordsText="No Records to display">
+                                        <Columns>
+                                            <telerik:GridBoundColumn DataField="PAYITEM_ID" UniqueName="PAYITEM_ID" HeaderText="Factors"
+                                                meta:resourcekey="PAYITEM_ID" Visible="false">
+                                                <HeaderStyle HorizontalAlign="Center" />
+                                            </telerik:GridBoundColumn>
+                                            <telerik:GridBoundColumn DataField="PAYITEM_PAYITEMNAME" UniqueName="PAYITEM_PAYITEMNAME"
+                                                HeaderText="Pay Item " meta:resourcekey="PAYITEM_PAYITEMNAME">
+                                                <HeaderStyle HorizontalAlign="Center" />
+                                            </telerik:GridBoundColumn>
+                                            <telerik:GridTemplateColumn UniqueName="VoteName" AllowFiltering="false" HeaderText="Account Name">
+                                                <ItemTemplate>
+                                                    <telerik:RadTextBox ID="txtVoteName" runat="server" Text='<%# Eval("VoteName") %>'>
+                                                    </telerik:RadTextBox>
+                                                </ItemTemplate>
+                                            </telerik:GridTemplateColumn>
+                                            <telerik:GridTemplateColumn UniqueName="VoteCode" AllowFiltering="false" HeaderText="Account Code">
+                                                <ItemTemplate>
+                                                    <telerik:RadTextBox ID="txtVoteCode" runat="server" MaxLength="100" Text='<%# Eval("VoteCode") %>'>
+                                                    </telerik:RadTextBox>
+                                                </ItemTemplate>
+                                            </telerik:GridTemplateColumn>
+                                        </Columns>
+                                    </MasterTableView>
+                                </telerik:RadGrid>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <asp:Button ID="btn_submit" runat="server" Text="Save" Visible="false"
+                                    OnClick="btn_submit_Click" UseSubmitBehavior="false" ValidationGroup="Part" />
+                                <asp:Button ID="btn_Cancel" runat="server" Text="Cancel" Visible="false" OnClick="btn_Cancel_Click" />
+                                <asp:ValidationSummary ID="vs_TrainerProf" runat="server" ShowMessageBox="True" ShowSummary="False"
+                                    ValidationGroup="Part" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</asp:Content>

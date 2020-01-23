@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btn_CancelResource1.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btn_EditResource1.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="btn_SaveResource1.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EMP_RESG_REASON" xml:space="preserve">
+    <value>Resignation Reason</value>
+  </data>
+  <data name="EMP_RESG_REASONCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EMP_RESG_REASONDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="EMP_RESG_REASONDETAIL" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="EMPLOYEESTATUS" xml:space="preserve">
+    <value>EmployeeStatus</value>
+  </data>
+  <data name="EMPLOYEESTATUSCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EMPLOYEESTATUSDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="EXPENSE" xml:space="preserve">
+    <value>Expense Types</value>
+  </data>
+  <data name="EXPENSECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EXPENSEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="GRADE" xml:space="preserve">
+    <value>Grade</value>
+  </data>
+  <data name="GRADECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="GRADEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="GridBoundColumnResource1.HeaderText" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="GridBoundColumnResource1.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="GridBoundColumnResource2.HeaderText" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="GridBoundColumnResource2.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="GridBoundColumnResource3.HeaderText" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="GridBoundColumnResource3.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="GridTemplateColumnResource1.HeaderText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IDENTIFICATIONTYPE" xml:space="preserve">
+    <value>Identification Type</value>
+  </data>
+  <data name="IDENTIFICATIONTYPECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="IDENTIFICATIONTYPEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="LANGUAGE" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LANGUAGECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LANGUAGEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="lbl_CodeResource1.Text" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="lbl_DescResource1.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="lbl_Master_IDResource1.Text" xml:space="preserve">
+    <value>lbl_Master_ID</value>
+  </data>
+  <data name="LEAVE" xml:space="preserve">
+    <value>Leave</value>
+  </data>
+  <data name="LEAVECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LEAVEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="lnk_AddResource1.Text" xml:space="preserve">
+    <value> Add</value>
+  </data>
+  <data name="lnk_Master_Edit.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="NATIONALITY" xml:space="preserve">
+    <value>Nationality</value>
+  </data>
+  <data name="NATIONALITYCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NATIONALITYDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="NODUE" xml:space="preserve">
+    <value>NoDue</value>
+  </data>
+  <data name="NODUECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NODUEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="OT" xml:space="preserve">
+    <value>OverTime </value>
+  </data>
+  <data name="OTCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="OTDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="OVERTIME" xml:space="preserve">
+    <value>OverTime</value>
+  </data>
+  <data name="OVERTIMECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="OVERTIMEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="PAYITEMMODE" xml:space="preserve">
+    <value>Pay Item Mode</value>
+  </data>
+  <data name="PAYITEMMODECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PAYITEMMODEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="PAYITEMTYPE" xml:space="preserve">
+    <value>Pay Item Type</value>
+  </data>
+  <data name="PAYITEMTYPECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PAYITEMTYPEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="PAYMENTMODE" xml:space="preserve">
+    <value>Payment Mode</value>
+  </data>
+  <data name="PAYMENTMODECODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PAYMENTMODEDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="PROJECT" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="PROJECTCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PROJECTDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="QUALIFICATION" xml:space="preserve">
+    <value>Qualification</value>
+  </data>
+  <data name="QUALIFICATIONCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="QUALIFICATIONDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="RELATIONSHIP" xml:space="preserve">
+    <value>Relationship</value>
+  </data>
+  <data name="RELATIONSHIPCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RELATIONSHIPDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="RELIGION" xml:space="preserve">
+    <value>Religion</value>
+  </data>
+  <data name="RELIGIONCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RELIGIONDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="rftxt_MasterCodeResource1.ErrorMessage" xml:space="preserve">
+    <value>Name cannot be blank</value>
+  </data>
+  <data name="rftxt_MasterCodeResource1.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="rftxt_MasterDescResource1.ErrorMessage" xml:space="preserve">
+    <value> Description cannot be blank</value>
+  </data>
+  <data name="rftxt_MasterDescResource1.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="SKILL" xml:space="preserve">
+    <value>Skill</value>
+  </data>
+  <data name="SKILLCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SKILLDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ASSETS" xml:space="preserve">
+    <value>Assets</value>
+  </data>
+  <data name="ASSETSCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ASSETSDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DocumentsCode" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DocumentsDesc" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DOCUMENTS" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="ATTMAS" xml:space="preserve">
+    <value>Attendance Master</value>
+  </data>
+  <data name="ATTMASCODE" xml:space="preserve">
+    <value>Attendance&amp;nbsp;Code</value>
+  </data>
+  <data name="ATTMASDESC" xml:space="preserve">
+    <value>Attendance&amp;nbsp;Description</value>
+  </data>
+  <data name="LOAN" xml:space="preserve">
+    <value>Loan Types</value>
+  </data>
+  <data name="LOANCODE" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LOANDESC" xml:space="preserve">
+    <value>Description</value>
+  </data>
+</root>

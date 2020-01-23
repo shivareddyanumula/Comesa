@@ -1,0 +1,4 @@
+﻿div.RadGrid .rgPager .rgAdvPart
+{
+	display: none;
+}

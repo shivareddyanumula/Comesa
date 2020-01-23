@@ -1,0 +1,534 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<%@ Register Assembly="Telerik.Web.UI"
+    Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <meta http-equiv="Page-Enter" content="BlendTrans(Duration=.01)" />
+    <meta http-equiv="Page-Exit" content="BlendTrans(Duration=.01)" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+        <link href="../smhr.css" rel="Stylesheet" type="text/css" />
+    </asp:ContentPlaceHolder>
+    <style type="text/css">
+        .footer {
+            text-align: center;
+        }
+
+        .style1 {
+            text-align: center;
+            font-weight: bold;
+            font-size: x-small;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            text-align: right;
+        }
+    </style>
+
+    <script type="text/javascript">
+        history.forward();
+    </script>
+
+    <link rel="shortcut icon" href="people.ico">
+</head>
+<body>
+    <form id="form1" runat="server">
+        <telerik:RadFormDecorator ID="RadFormDecorator1" runat="server" EnableRoundedCorners="true"
+            DecoratedControls="Buttons" />
+        <telerik:RadScriptBlock ID="RadScriptBlock1" runat="server">
+
+            <script type="text/javascript">
+                function ShowPopForm(url, ID, status, sal) {
+                    var win = window.radopen('../Security/ChangePassword.aspx', "RW_ChangePWD");
+                    win.center();
+                    win.set_modal(true);
+                }
+
+            </script>
+
+        </telerik:RadScriptBlock>
+        <telerik:RadWindowManager ID="RWM_ChangePWD" runat="server" Skin="WebBlue" Title="Change Password"
+            Animation="Fade" AnimationDuration="400" KeepInScreenBounds="True" Modal="True"
+            Overlay="True">
+            <Windows>
+                <telerik:RadWindow ID="RW_ChangePWD" Skin="WebBlue" Modal="true" runat="server" Width="500px"
+                    Title="Change Password" VisibleStatusbar="false" Behaviors="Close" ShowContentDuringLoad="true"
+                    Height="300px" KeepInScreenBounds="true">
+                </telerik:RadWindow>
+            </Windows>
+        </telerik:RadWindowManager>
+        <div id="RAL_Panel_Main_c" style="position: absolute; left: 50%; top: 50%;" runat="server">
+        </div>
+        <telerik:RadAjaxLoadingPanel ID="RAL_Panel_Main" runat="server" Height="75px" Width="75px"
+            Transparency="30" Skin="WebBlue">
+            <%--<img alt="Loading..." src='<%= RadAjaxLoadingPanel.GetWebResourceUrl(Page, "Telerik.Web.UI.Skins.Default.Ajax.loading.gif") %>'
+            style="border: 0;" />--%>
+        </telerik:RadAjaxLoadingPanel>
+        <telerik:RadAjaxManager ID="RAMgr" runat="server">
+        </telerik:RadAjaxManager>
+        <table cellpadding="0" cellspacing="0" class="main_Content" align="center">
+            <tr>
+                <td class="LeftPane"></td>
+                <td class="top_header">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td style="width: 650px;" class="top_line"></td>
+                            <td class="top_box_left"></td>
+                            <td class="top_box" style="width: 306px;" align="center">&nbsp;&nbsp;&nbsp;
+                            <asp:LinkButton ID="lnk_ChangePassword" runat="server" Text="Change Password" CssClass="line_link_1"
+                                Style="cursor: pointer; font-family: Arial; font-size: 8pt; font-weight: bold; color: #FFFFFF;"
+                                OnClick="lnk_ChangePassword_Click"></asp:LinkButton>&nbsp;<span
+                                    class="line_link_1">|</span>&nbsp;
+                            <asp:LinkButton ID="lnk_Home" runat="server" Text="Home" CssClass="line_link_1" Style="cursor: pointer; font-family: Arial; font-size: 8pt; font-weight: bold; color: #FFFFFF;"
+                                OnClick="lnk_Home_Click"></asp:LinkButton>&nbsp;<span
+                                    class="line_link_1">|</span>&nbsp;
+                            <asp:LinkButton ID="lnk_Logout" runat="server" Text="Logout" CssClass="line_link_1"
+                                Style="cursor: pointer; font-weight: bold; font-family: Arial; font-size: 8pt; color: #FFFFFF;"
+                                OnClick="lnk_Logout_Click"></asp:LinkButton>
+                            </td>
+                            <td class="top_box_right"></td>
+                            <td style="width: 40px;" class="top_line"></td>
+                        </tr>
+                    </table>
+                    <br />
+                    <telerik:RadScriptManager ID="RadScriptManager1" runat="server">
+                    </telerik:RadScriptManager>
+                    <table align="center" width="100%">
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;<asp:Image ID="img_Logo" runat="server" Height="81px" Width="192px"
+                                ImageUrl="~/Images/Smart_HR_Logo.png" />
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td align="right">
+                                <asp:Image ID="img_CompLogo" runat="server" />&nbsp;&nbsp;&nbsp;&nbsp;
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="RightPane"></td>
+            </tr>
+            <tr>
+                <td class="LeftPane"></td>
+                <td class="header">
+                    <asp:Label ID="lbl_Welcome" runat="server" Font-Bold="True"
+                        Font-Names="Arial" Font-Size="9pt"></asp:Label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="RightPane"></td>
+            </tr>
+            <tr>
+                <td class="LeftPane"></td>
+                <td class="menu">
+                    <telerik:RadMenu ID="RadMenu1" runat="server" Height="25px" Width="100%" Skin="WebBlue"
+                        Style="z-index: 2000" EnableRoundedCorners="True" EnableAutoScroll="True" EnableShadows="True">
+                        <Items>
+                            <telerik:RadMenuItem runat="server" Text="Framework" TabIndex="1" Visible="false">
+                                <Items>
+                                    <telerik:RadMenuItem runat="server" Text="Category" Value="CATEGORY" TabIndex="2"
+                                        Visible="false" NavigateUrl="~/Masters/frm_Catagory.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Organisation" Value="ORGANISATION" TabIndex="119"
+                                        Visible="false" NavigateUrl="~/Masters/frm_organisation.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Business Unit" Value="BUSINESS_UNIT" TabIndex="3"
+                                        Visible="false" NavigateUrl="~/Masters/frm_BusinessUnit.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Banks" Value="BUSINESSUNIT_BANK" TabIndex="4"
+                                        Visible="false" NavigateUrl="~/Masters/frm_BusinessUnitBanks.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Country" Value="COUNTRY" TabIndex="5" NavigateUrl="~/Masters/frm_Country.aspx"
+                                        Visible="false">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="District" Value="COUNTY" TabIndex="430" NavigateUrl="~/Masters/frm_County.aspx"
+                                        Visible="false">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Currrency" Value="CURRENCY" TabIndex="6"
+                                        Visible="false" NavigateUrl="~/Masters/frm_Currency.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Department" Value="DEPARTMENT" TabIndex="122"
+                                        Visible="false" NavigateUrl="~/Masters/frm_Department.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Human Resources" TabIndex="7" Visible="false">
+                                        <Items>
+                                            <telerik:RadMenuItem runat="server" Text="Job" Value="JOB_MAIN" TabIndex="9" NavigateUrl="~/Masters/frm_Jobs.aspx"
+                                                Visible="false">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Position" Value="POSITION_MAIN" TabIndex="10"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Position.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Qualification" Value="QUALIFICATION" TabIndex="12"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=QUALIFICATION">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Language" Value="LANGUAGE" TabIndex="13"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=LANGUAGE">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Skill" Value="SKILL" TabIndex="14" NavigateUrl="~/Masters/frm_Master.aspx?Control=SKILL"
+                                                Visible="false">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Nationality" Value="NATIONALITY" TabIndex="15"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=NATIONALITY">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Relationship" Value="RELATIONSHIP" TabIndex="16"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=RELATIONSHIP">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Religion" Value="RELIGION" TabIndex="17"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=RELIGION">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Asset Type" Value="ASSETS" TabIndex="18"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=ASSETS">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Document Type" Value="DOCUMENTS" TabIndex="18"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=DOCUMENTS">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Resignation Type" Value="EMP_RESG_REASON"
+                                                Visible="false" TabIndex="19" NavigateUrl="~/Masters/frm_Master.aspx?Control=EMP_RESG_REASON">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Grade" Value="GRADE" TabIndex="20" NavigateUrl="~/Masters/frm_Master.aspx?Control=GRADE"
+                                                Visible="false">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Loan Type" Value="LOAN" TabIndex="21" NavigateUrl="~/Masters/frm_Master.aspx?Control=LOAN"
+                                                Visible="false">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Leave Type" Value="LEAVE" TabIndex="26"
+                                                Visible="false" NavigateUrl="~/Masters/frm_LeaveMaster.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="OverTime" Value="OT" TabIndex="22" NavigateUrl="~/Masters/frm_Master.aspx?Control=OT"
+                                                Visible="false">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Holiday" Value="HOLIDAY" TabIndex="23"
+                                                Visible="false" NavigateUrl="~/Masters/frm_HolidayCalendar.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Department" Value="DEPARTMENT" TabIndex="23"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Department.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Status" Value="EMP_STATUS" TabIndex="120"
+                                                NavigateUrl="~/Masters/frm_Master.aspx?Control=STATUS" Visible="false">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Expense" Value="EXPENSE" TabIndex="37"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=EXPENSE">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Identification Type" Value="IDENTIFICATIONTYPE"
+                                                Visible="false" TabIndex="32" NavigateUrl="~/Masters/frm_Master.aspx?Control=IDENTIFICATIONTYPE">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Organization Chart" Value="ORGANISATION_CHART"
+                                                Visible="false" TabIndex="24" NavigateUrl="~/Masters/frm_OrganizationChart.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Chart" Value="EMP_CHART" TabIndex="25"
+                                                Visible="false" NavigateUrl="~/Masters/frm_EmployeeChart.aspx">
+                                            </telerik:RadMenuItem>
+                                        </Items>
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Payroll" TabIndex="26" Visible="false">
+                                        <Items>
+                                            <telerik:RadMenuItem runat="server" Text="Payment Mode" TabIndex="27" Value="PAYMENTMODE"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Master.aspx?Control=PAYMENTMODE">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Pay Item Define" Value="PAY_ITEM" TabIndex="30"
+                                                Visible="false" NavigateUrl="~/Masters/frm_PayItemDefine.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Period Define" Value="PERIOD" TabIndex="33"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Period.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Professional Tax" TabIndex="42" Value="PFTax"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Taxslab.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="NHIF" TabIndex="113" Value="PFTax" Visible="false"
+                                                NavigateUrl="~/Masters/frm_NHIFslab.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Entertainment Slab" TabIndex="114" Value="PFTax"
+                                                Visible="false" NavigateUrl="~/Masters/frm_Entertainmentslab.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="TDS Consultant" Value="TDS_CONSULTANT"
+                                                Visible="false" TabIndex="67" NavigateUrl="~/Payroll/frm_TDS_Consultant.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="TDS Exemptions Master" TabIndex="92" Value="TAX_EXEMPT_MASTER"
+                                                Visible="false" NavigateUrl="~/Masters/frm_TaxExempt.aspx">
+                                            </telerik:RadMenuItem>
+                                        </Items>
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Shift" TabIndex="35" Visible="false">
+                                        <Items>
+                                            <telerik:RadMenuItem runat="server" Text="Working Hours" Value="WORKING_HOURS" TabIndex="35"
+                                                Visible="false" NavigateUrl="~/Masters/frm_workinghours.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Shift Definition" Value="SHIFT_DEFINITION"
+                                                Visible="false" TabIndex="36" NavigateUrl="~/Masters/frm_shiftDefinition.aspx">
+                                            </telerik:RadMenuItem>
+                                        </Items>
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Salary Structure" Value="SALARY_STRUCTURE"
+                                        Visible="false" TabIndex="38" NavigateUrl="~/Masters/frm_SalaryStructure.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Leave Structure" Value="LEAVE_STRUCTURE"
+                                        Visible="false" TabIndex="39" NavigateUrl="~/Masters/frm_LeaveStructure.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="No Due" Value="NODUE" TabIndex="40" NavigateUrl="~/Masters/frm_Master.aspx?Control=NODUE"
+                                        Visible="false">
+                                    </telerik:RadMenuItem>
+                                </Items>
+                            </telerik:RadMenuItem>
+                            <telerik:RadMenuItem runat="server" Text="Recruitment" TabIndex="43" Visible="false">
+                                <Items>
+                                    <telerik:RadMenuItem runat="server" Text="Applicant" Value="APPLICANT" TabIndex="44"
+                                        Visible="false" NavigateUrl="~/Recruitment/frmapplicant.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Job Requisition" Value="JOB_REQUISITION"
+                                        Visible="false" TabIndex="45">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Resume Short Listing" Value="RESUME_SHORT_LISTING"
+                                        Visible="false" TabIndex="46">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Phase Definition" Value="PHASE_DEFINITION"
+                                        Visible="false" TabIndex="47">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Interview Remarks" Value="INTERVIEW_REMARKS"
+                                        Visible="false" TabIndex="48">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Job Offers" Value="JOB_OFFERS" TabIndex="49"
+                                        Visible="false">
+                                    </telerik:RadMenuItem>
+                                </Items>
+                            </telerik:RadMenuItem>
+                            <telerik:RadMenuItem runat="server" Text="Human Resources" TabIndex="50" Visible="false">
+                                <Items>
+                                    <telerik:RadMenuItem runat="server" Text="Employee" Value="EMPLOYEE" TabIndex="51"
+                                        Visible="false" NavigateUrl="~/HR/frmemployee.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Notes On Employee" Value="EMP_NOTES" TabIndex="52"
+                                        Visible="false" NavigateUrl="~/HR/frm_employeeNotes.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Displinary Notes on Employee" Value="EMP_DISNOTES"
+                                        Visible="false" TabIndex="53" NavigateUrl="~/HR/frm_DisactRecording.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Assets" Value="ASSETS" TabIndex="54"
+                                        Visible="false" NavigateUrl="~/HR/frmassetdoc.aspx?type=asset">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Documents" Value="DOCUMENTS" TabIndex="55"
+                                        Visible="false" NavigateUrl="~/HR/frmassetdoc.aspx?type=doc">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Resignation" Value="RESIGNATION"
+                                        Visible="false" TabIndex="56" NavigateUrl="~/HR/frm_Resignation.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Relieving" Value="RELIEVING" TabIndex="57"
+                                        Visible="false" NavigateUrl="~/HR/frm_Relieving.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Re-Hire Process" Value="REHIRE"
+                                        Visible="false" TabIndex="62" NavigateUrl="~/HR/frm_EmployeeRehire.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Bank Details" Value="IDENTIFICATION"
+                                        Visible="false" TabIndex="84" NavigateUrl="~/HR/frmempidentification.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Identification Details" Value="IDENTITY"
+                                        Visible="false" TabIndex="87" NavigateUrl="~/HR/frm_Identification.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Pay Elements" Value="PAY_ELEMENTS"
+                                        Visible="false" TabIndex="86" NavigateUrl="~/HR/frmemppayelements.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Tax Savings" Value="TDS_SAVINGS"
+                                        Visible="false" TabIndex="91" NavigateUrl="~/Payroll/frm_TDSExempt.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Details" Value="EMP_DETAILS" TabIndex="97"
+                                        Visible="false" NavigateUrl="~/Selfservice/Employee_Details.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Employee Medical Scheme" Value="EMP_MEDICAL_SCHEME"
+                                        TabIndex="121" Visible="false" NavigateUrl="~/HR/Emp_Med_Scheme.aspx">
+                                    </telerik:RadMenuItem>
+                                </Items>
+                            </telerik:RadMenuItem>
+                            <telerik:RadMenuItem runat="server" Text="Payroll" TabIndex="58" Visible="false">
+                                <Items>
+                                    <telerik:RadMenuItem runat="server" Text="Transactions" TabIndex="59" Visible="false">
+                                        <Items>
+                                            <telerik:RadMenuItem runat="server" Text="Leave Opening Balances" Value="LEAVE_OPENINGBALANCE"
+                                                Visible="false" TabIndex="98" NavigateUrl="~/Payroll/Default.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Leave Application" Value="LEAVE_APPLICATION"
+                                                Visible="false" TabIndex="60" NavigateUrl="~/Payroll/frm_Leaveapplication.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="All Leaves Data" Value="LEAVE_TRAN" TabIndex="100"
+                                                Visible="false" NavigateUrl="~/Payroll/frm_leavetran.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Compensatory Off" Value="COMP_OFF" TabIndex="99"
+                                                Visible="false" NavigateUrl="~/Payroll/frm_comoffrequest.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Expense Entry" Value="EXPENSE_ENTRY" TabIndex="8"
+                                                Visible="false" NavigateUrl="~/Payroll/frm_ExpenseTrans.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Over Time Details" Value="OVER_TIME_DETAILS"
+                                                Visible="false" TabIndex="61" NavigateUrl="~/Payroll/frm_OTDetails.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Loan/Advances" Value="LOAN/ADVANCES" TabIndex="62"
+                                                Visible="false" NavigateUrl="~/Payroll/frm_emploantran.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Promotions & Hikes" Value="PROMOTIONS & HIKES"
+                                                Visible="false" TabIndex="63" NavigateUrl="~/Payroll/frm_PromotionHikes.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Payroll Process" Value="PAYROLL_PROCESS"
+                                                Visible="false" TabIndex="64" NavigateUrl="~/Payroll/frm_PayrollTrans.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Payroll Results" Value="PAYROLL_RESULTS"
+                                                Visible="false" TabIndex="64" NavigateUrl="~/Payroll/frm_Payresults.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Quick Pay Process" Value="QUICK_PAY_PROCESS"
+                                                Visible="false" TabIndex="65" NavigateUrl="~/Payroll/frm_QuickPay.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Rollback Pay Process" Value="ROLLBACK_PAY_PROCESS"
+                                                Visible="false" TabIndex="88" NavigateUrl="~/Payroll/frm_Rollback.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Leave Encashment Process" Value="LEAVE_YTD_PROCESS"
+                                                Visible="false" TabIndex="257" NavigateUrl="~/Payroll/LeaveEncashment_New.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Direct Payments" Value="DIRECT_PAY" TabIndex="95"
+                                                Visible="false" NavigateUrl="~/payroll/frm_DirectPay.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Attendance Details" Value="ATTENDANCEDETAILS"
+                                                Visible="false" TabIndex="29" NavigateUrl="~/Payroll/frm_AttendanceDetails.aspx">
+                                            </telerik:RadMenuItem>
+                                        </Items>
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Reports" TabIndex="68" Visible="false">
+                                        <Items>
+                                            <telerik:RadMenuItem runat="server" Text="Business Unit" Value="BUSINESS_UNIT_REP"
+                                                Visible="false" TabIndex="70" NavigateUrl="~/Reports/BusinessUnit_Report.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Assignment Details" Value="ASSGMENT_DETAILS"
+                                                Visible="false" TabIndex="71" NavigateUrl="~/Reports/Emp_AssignmentDetails.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Pay Item " Value="PAY_ITEM_REPORT"
+                                                Visible="false" TabIndex="103" NavigateUrl="~/Reports/Employee_Pay_Item.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Bank Statement" Value="BANK_STMT" TabIndex="102"
+                                                Visible="false" NavigateUrl="~/Reports/BankStatement.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Salary Register" Value="SAL_REGISTER" TabIndex="104"
+                                                Visible="false" NavigateUrl="~/Reports/frm_SalaryRegister.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Pay Slips" Value="PAY_SLIPS" TabIndex="72"
+                                                Visible="false" NavigateUrl="~/Reports/Employee_Payslip.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Loan/Advances Details" Value="EMP_LOANS"
+                                                TabIndex="111" Visible="false" NavigateUrl="~/Reports/EmpLoans.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Asset Reports" Value="EMP_ASSET_REPORTS"
+                                                TabIndex="112" Visible="false" NavigateUrl="~/Reports/Employee_AssetReport.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Expense Reports" Value="EXPENSE_REPORTS"
+                                                TabIndex="115" Visible="false" NavigateUrl="~/Reports/Expense_Report.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Skill Report" Value="SKILL_REPORT"
+                                                TabIndex="116" Visible="false" NavigateUrl="~/Reports/Employee_Skill_Report.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Resignation Report" Value="RESIGNATION_REPORT"
+                                                TabIndex="117" Visible="false" NavigateUrl="~/Reports/Resignation_Report.aspx">
+                                            </telerik:RadMenuItem>
+                                            <telerik:RadMenuItem runat="server" Text="Employee Rehire Report" Value="REHIRE_REPORT"
+                                                TabIndex="118" Visible="false" NavigateUrl="~/Reports/Rehire_Report.aspx">
+                                            </telerik:RadMenuItem>
+                                        </Items>
+                                    </telerik:RadMenuItem>
+                                </Items>
+                            </telerik:RadMenuItem>
+                            <telerik:RadMenuItem runat="server" Text="Attendance Reports" TabIndex="110" Visible="false">
+                                <Items>
+                                    <telerik:RadMenuItem runat="server" Text="Daily Log Report" Value="LOG_REPORT" TabIndex="105"
+                                        Visible="false" NavigateUrl="~/Reports/frm_dailylogreport.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Department Wise Daily Log Report" Value="DEPTWISE_LOG_REPORT"
+                                        Visible="false" TabIndex="107" NavigateUrl="~/Reports/frm_DeptLogReportDaily.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Designation Wise Daily Log Report" Value="DESGWISE_LOG_REPORT"
+                                        Visible="false" TabIndex="109" NavigateUrl="~/Reports/frm_DesgLogReportDaily.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Shift Wise Daily Log Report" Value="SHIFT_DAILY_LOG_REPORT"
+                                        Visible="false" TabIndex="108" NavigateUrl="~/Reports/frm_ShiftWiseDaily.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="All Employee Log Report" Value="ALL_EMP_LOG_REPORT"
+                                        Visible="false" TabIndex="106" NavigateUrl="~/Reports/frm_AllEmpLog.aspx">
+                                    </telerik:RadMenuItem>
+                                </Items>
+                            </telerik:RadMenuItem>
+                            <telerik:RadMenuItem runat="server" Text="Security" TabIndex="73" Visible="false">
+                                <Items>
+                                    <telerik:RadMenuItem runat="server" Text="User Group" Value="USER_GROUP" TabIndex="74"
+                                        Visible="false" NavigateUrl="~/Security/frm_LoginType.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Users" Value="USER_MANAGER" TabIndex="75"
+                                        Visible="false" NavigateUrl="~/Security/frm_Users.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Assign Privileges" Value="ASSIGN_PRIVILEGES"
+                                        Visible="false" TabIndex="76" NavigateUrl="~/Security/frm_AssignPriveleges.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Global Configuration" Value="GLOBAL_CONFIGURATION"
+                                        Visible="false" TabIndex="77" NavigateUrl="~/Security/frm_GlobalConfig.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="User Log" Value="USER_LOG" TabIndex="429"
+                                        Visible="false" NavigateUrl="~/Security/frm_UserLog.aspx">
+                                    </telerik:RadMenuItem>
+                                </Items>
+                            </telerik:RadMenuItem>
+                            <telerik:RadMenuItem runat="server" Text="Approval" TabIndex="79" Visible="false">
+                                <Items>
+                                    <telerik:RadMenuItem runat="server" Text="Leave Approval" Value="LEAVE_APPROVAL"
+                                        Visible="false" TabIndex="80" NavigateUrl="~/Approval/frm_LeaveApproval.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Payroll Approval" Value="PAYROLL_APPROVAL"
+                                        Visible="false" TabIndex="81" NavigateUrl="~/Approval/frm_PayrollApproval.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Expense Approval" Value="EXPENSE_APPROVAL"
+                                        Visible="false" TabIndex="82" NavigateUrl="~/Approval/frm_ExpenseApproval.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Overtime Approval" Value="OT_APPROVAL"
+                                        Visible="false" TabIndex="83" NavigateUrl="~/Approval/frm_OverTime.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Compensatory Off Approval" Value="COMP_APPROVAL"
+                                        Visible="false" TabIndex="84" NavigateUrl="~/Approval/frm_CompOffApproval.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Resignation Approval" Value="RESG_APPROVAL"
+                                        Visible="false" TabIndex="69" NavigateUrl="~/Approval/frm_ResignationApproval.aspx">
+                                    </telerik:RadMenuItem>
+                                    <telerik:RadMenuItem runat="server" Text="Pay Reject History" Value="REJECT_PAY"
+                                        Visible="false" TabIndex="90" NavigateUrl="~/Payroll/frm_payrejection.aspx">
+                                    </telerik:RadMenuItem>
+                                </Items>
+                            </telerik:RadMenuItem>
+                        </Items>
+                    </telerik:RadMenu>
+                </td>
+                <td class="RightPane"></td>
+            </tr>
+            <tr>
+                <td class="LeftPane"></td>
+                <td>
+                    <asp:ContentPlaceHolder ID="cphDefault" runat="server">
+                    </asp:ContentPlaceHolder>
+                </td>
+                <td class="RightPane"></td>
+            </tr>
+            <tr>
+                <td class="LeftPane"></td>
+                <td>
+                    <hr />
+                </td>
+                <td class="RightPane"></td>
+            </tr>
+            <tr>
+                <td class="LeftPane"></td>
+                <td class="style1">Copyright © 2010&nbsp; Smart HR - All Rights are Reserved
+                <br />
+                    <br />
+                </td>
+                <td class="RightPane"></td>
+            </tr>
+            <tr>
+                <td class="bottom_left"></td>
+                <td class="BottomPane"></td>
+                <td class="bottom_right"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

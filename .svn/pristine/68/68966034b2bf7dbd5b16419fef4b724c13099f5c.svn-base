@@ -1,0 +1,6 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true" CodeFile="frmEduClaimAdd.aspx.cs" Inherits="Selfservice_frmEduClaimAdd" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphDefault" runat="Server">
+</asp:Content>

@@ -1,0 +1,384 @@
+﻿using System;
+using System.Data.SqlClient;
+using System.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.IO;
+using SMHR;
+using Telerik.Web.UI;
+
+public partial class Payroll_frm_Rollback : System.Web.UI.Page
+{
+    SMHR_PAYROLL _obj_smhr_payroll;
+    SMHR_PAYREJECT _obj_smhr_payreject;
+    SMHR_PERIOD _obj_smhr_period;
+    SMHR_PERIODDTL _obj_smhr_perioddtl;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "function pageLoad(){   }", true);
+            if (!Page.IsPostBack)
+            {
+                Session.Remove("WRITEFACILITY");
+
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Roll Back Process");//ROLL BACK");
+
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    btn_Rollback.Visible = false;
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+                loadDetails();
+
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected override void InitializeCulture()
+    {
+        BLL.SetCulture_Theme(Page, Request);
+        base.InitializeCulture();
+    }
+
+    private void loadDetails()
+    {
+        try
+        {
+            _obj_smhr_period = new SMHR_PERIOD();
+            _obj_smhr_period.OPERATION = operation.Select;
+            _obj_smhr_period.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt_Details = BLL.get_PeriodHeaderDetails(_obj_smhr_period);
+            rcb_Period.DataSource = dt_Details;
+            rcb_Period.DataValueField = "PERIOD_ID";
+            rcb_Period.DataTextField = "PERIOD_NAME";
+            rcb_Period.DataBind();
+            rcb_Period.Items.Insert(0, new RadComboBoxItem("Select"));
+
+            rcmb_businessunit.Items.Clear();
+            //To load Business unit
+            SMHR_LOGININFO _obj_SMHR_LoginInfo = new SMHR_LOGININFO();
+            _obj_SMHR_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            _obj_SMHR_LoginInfo.LOGIN_ID = Convert.ToInt32(Session["USER_ID"]);
+            DataTable dt_BUDetails = BLL.get_Business_Units(_obj_SMHR_LoginInfo);
+            if (dt_BUDetails.Rows.Count != 0)
+            {
+                rcmb_businessunit.DataSource = dt_BUDetails;
+                rcmb_businessunit.DataValueField = "BUSINESSUNIT_ID";
+                rcmb_businessunit.DataTextField = "BUSINESSUNIT_CODE";
+                rcmb_businessunit.DataBind();
+                rcmb_businessunit.Items.Insert(0, new RadComboBoxItem("Select"));
+                rcb_Transaction.Items.Clear();
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+        //_obj_smhr_payroll = new SMHR_PAYROLL();
+        //_obj_smhr_payroll.MODE = 22;
+        //DataTable dt = BLL.get_PayDetails(_obj_smhr_payroll);
+        //rcb_Transaction.DataSource = dt;
+        //rcb_Transaction.DataTextField = "TEMP_PAYTRAN_NAME";
+        //rcb_Transaction.DataValueField = "TEMP_PAYTRAN_ID";
+        //rcb_Transaction.DataBind();
+        //rcb_Transaction.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select"));
+
+    }
+
+    protected void rcb_Transaction_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if (rcb_Transaction.SelectedIndex > 0)
+            {
+                // To Close The Previously Opened window.
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "Close()", true);
+                _obj_smhr_payroll = new SMHR_PAYROLL();
+                _obj_smhr_payroll.MODE = 23;
+                _obj_smhr_payroll.TRANID = Convert.ToInt32(rcb_Transaction.SelectedValue);
+                DataTable dt = BLL.get_PayDetails(_obj_smhr_payroll);
+                if (dt.Rows.Count != 0)
+                {
+                    RG_Transaction.Visible = true;
+                    if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                    {
+
+                        btn_Rollback.Visible = false;
+                    }
+                    else
+                    {
+                        btn_Rollback.Visible = true;
+
+                    }
+                    RG_Transaction.DataSource = dt;
+                    RG_Transaction.DataBind();
+                }
+                else
+                {
+                    RG_Transaction.Visible = false;
+                    btn_Rollback.Visible = false;
+                }
+
+            }
+            else
+            {
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void lnk_Edit_Command(object sender, CommandEventArgs e)
+    {
+        try
+        {
+            string str = Convert.ToString(e.CommandName);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "function pageLoad(){  ShowPopForm('" + Convert.ToString(e.CommandArgument) + "','" + Convert.ToString(str) + "'); }", true);
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Rollback_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            _obj_smhr_payreject = new SMHR_PAYREJECT();
+            _obj_smhr_payreject.MODE = 3;
+            _obj_smhr_payreject.TRANID = Convert.ToInt32(rcb_Transaction.SelectedValue);
+            _obj_smhr_payreject.PERIODDTL_ID = Convert.ToInt32(rcb_PeriodElements.SelectedValue);
+            _obj_smhr_payreject.BUID = Convert.ToInt32(rcmb_businessunit.SelectedItem.Value);
+            _obj_smhr_payreject.CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+            bool status = BLL.set_payrollback(_obj_smhr_payreject);
+            if (status == true)
+            {
+                BLL.ShowMessage(this, "Payroll Transaction is successfully roll backed.");
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+                //rcb_Transaction.Items.Remove(rcb_Transaction.SelectedIndex);
+                //rcb_Transaction.SelectedIndex = 0;
+                rcb_Period.ClearSelection();
+                rcb_PeriodElements.Items.Clear();
+                rcb_PeriodElements.Items.Insert(0, new RadComboBoxItem("", ""));
+                rcmb_businessunit.ClearSelection();
+                rcb_Transaction.Items.Clear();
+                rcb_Transaction.Items.Insert(0, new RadComboBoxItem("", ""));
+                return;
+            }
+            else
+            {
+                BLL.ShowMessage(this, "An Error Occured while doing the process");
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+                rcb_Period.ClearSelection();
+                rcb_PeriodElements.Items.Clear();
+                rcb_PeriodElements.Items.Insert(0, new RadComboBoxItem("", ""));
+                rcmb_businessunit.ClearSelection();
+                rcb_Transaction.Items.Clear();
+                rcb_Transaction.Items.Insert(0, new RadComboBoxItem("", ""));
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+
+    }
+
+    protected void rcb_Period_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if ((rcb_Period.SelectedIndex != 0) && (rcmb_businessunit.SelectedIndex > 0))
+            {
+                _obj_smhr_perioddtl = new SMHR_PERIODDTL();
+                _obj_smhr_perioddtl.OPERATION = operation.Select;
+                _obj_smhr_perioddtl.PRDDTL_PERIOD_ID = Convert.ToInt32(rcb_Period.SelectedItem.Value);
+                DataTable dt_Details = BLL.get_PeriodDetails(_obj_smhr_perioddtl);
+                if (dt_Details.Rows.Count != 0)
+                {
+                    rcb_PeriodElements.DataSource = dt_Details;
+                    rcb_PeriodElements.DataValueField = "PRDDTL_ID";
+                    rcb_PeriodElements.DataTextField = "PRDDTL_NAME";
+                    rcb_PeriodElements.DataBind();
+                    rcb_PeriodElements.Items.Insert(0, new RadComboBoxItem("Select"));
+                    rcb_Transaction.Items.Clear();
+                    RG_Transaction.Visible = false;
+                    btn_Rollback.Visible = false;
+                }
+            }
+            else
+            {
+                rcb_PeriodElements.Items.Clear();
+                rcb_PeriodElements.Items.Insert(0, new RadComboBoxItem("", ""));
+                rcb_Transaction.Items.Clear();
+                rcb_Transaction.Items.Insert(0, new RadComboBoxItem("", ""));
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+                rcb_Period.ClearSelection();
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcb_PeriodElements_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+
+            if ((rcb_PeriodElements.SelectedIndex != 0) && (rcmb_businessunit.SelectedIndex > 0))
+            {
+                rcb_Transaction.Items.Clear();
+                _obj_smhr_payroll = new SMHR_PAYROLL();
+                _obj_smhr_payroll.OPERATION = operation.Empty;
+                _obj_smhr_payroll.MODE = 3;
+                _obj_smhr_payroll.PERIODDTLID = Convert.ToInt32(rcb_PeriodElements.SelectedItem.Value);
+                _obj_smhr_payroll.BUID = Convert.ToInt32(rcmb_businessunit.SelectedItem.Value);
+                DataTable dt_Details = BLL.get_Payroll(_obj_smhr_payroll);
+
+                _obj_smhr_payroll = new SMHR_PAYROLL();
+                _obj_smhr_payroll.MODE = 22;
+                _obj_smhr_payroll.PERIODDTLID = Convert.ToInt32(rcb_PeriodElements.SelectedItem.Value);
+                _obj_smhr_payroll.BUID = Convert.ToInt32(rcmb_businessunit.SelectedItem.Value);
+                DataTable dt = BLL.get_PayDetails(_obj_smhr_payroll);
+                if (dt.Rows.Count != 0)
+                {
+                    //_obj_smhr_payroll = new SMHR_PAYROLL();
+                    //_obj_smhr_payroll.MODE = 22;
+                    //_obj_smhr_payroll.PERIODDTLID = Convert.ToInt32(rcb_PeriodElements.SelectedItem.Value);
+                    //_obj_smhr_payroll.BUID = Convert.ToInt32(rcmb_businessunit.SelectedItem.Value);
+                    //DataTable dt = BLL.get_PayDetails(_obj_smhr_payroll);
+                    rcb_Transaction.Items.Clear();
+                    rcb_Transaction.DataSource = dt;
+                    rcb_Transaction.DataTextField = "TEMP_PAYTRAN_NAME";
+                    rcb_Transaction.DataValueField = "TEMP_PAYTRAN_ID";
+                    rcb_Transaction.DataBind();
+                    rcb_Transaction.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select"));
+                    RG_Transaction.Visible = false;
+                    btn_Rollback.Visible = false;
+                }
+                else
+                {
+                    RG_Transaction.Visible = false;
+                    btn_Rollback.Visible = false;
+                }
+            }
+            else
+            {
+                rcb_Transaction.Items.Clear();
+                rcb_Transaction.Items.Insert(0, new RadComboBoxItem("", ""));
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_businessunit_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if (rcmb_businessunit.SelectedIndex > 0)
+            {
+                rcb_Transaction.Items.Clear();
+                rcb_Transaction.Items.Insert(0, new RadComboBoxItem("", ""));
+                rcb_Period.ClearSelection();
+                rcb_PeriodElements.Items.Clear();
+                rcb_PeriodElements.Items.Insert(0, new RadComboBoxItem("", ""));
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+            }
+            else
+            {
+                rcb_Transaction.Items.Clear();
+                rcb_Transaction.Items.Insert(0, new RadComboBoxItem("", ""));
+                rcb_Period.ClearSelection();
+                rcb_PeriodElements.Items.Clear();
+                rcb_PeriodElements.Items.Insert(0, new RadComboBoxItem("", ""));
+                RG_Transaction.Visible = false;
+                btn_Rollback.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_Rollback", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

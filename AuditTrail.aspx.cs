@@ -1,0 +1,450 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using SMHR;
+using System.Text;
+using System.Collections;
+using Telerik.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Globalization;
+using System.Data;
+using PWDEncryprt;
+
+public partial class AuditTrail : System.Web.UI.Page
+{
+    SMHR_LOGINTYPE _obj_LoginType;
+    SMHR_LOGININFO _obj_LoginInfo;
+
+    private PWDEncryprt.PWDEncrypt pwdEncrypt = new PWDEncrypt();
+
+    static string track = "";
+    static string auditType = string.Empty;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsPostBack)
+            {
+                LoadSuperModules();
+                Rm_AssignSecurity.SelectedIndex = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected override void InitializeCulture()
+    {
+        BLL.SetCulture_Theme(Page, Request);
+        base.InitializeCulture();
+    }
+
+    protected void LoadSuperModules()
+    {
+        try
+        {
+            rcmb_sup_module.Items.Clear();
+            rcmb_sup_module.ClearSelection();
+            rcmb_sup_module.Text = string.Empty;
+
+            auditType = "A";
+            DataTable dtSupMod = GetAuditData(auditType);
+
+            if (dtSupMod.Rows.Count > 0)
+            {
+                rcmb_sup_module.DataSource = dtSupMod;
+                rcmb_sup_module.DataTextField = "AF_FORM_NAME";
+                rcmb_sup_module.DataValueField = "AF_ID";
+                rcmb_sup_module.DataBind();
+            }
+            rcmb_sup_module.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void LoadModules()
+    {
+        try
+        {
+            rcmb_Module.Items.Clear();
+            rcmb_Module.ClearSelection();
+            rcmb_Module.Text = string.Empty;
+
+            auditType = "A" + Convert.ToString(rcmb_sup_module.SelectedValue) + "B";
+            DataTable dtMod = GetAuditData(auditType);
+
+            if (dtMod.Rows.Count > 0)
+            {
+                rcmb_Module.DataSource = dtMod;
+                rcmb_Module.DataTextField = "AF_FORM_NAME";
+                rcmb_Module.DataValueField = "AF_ID";
+                rcmb_Module.DataBind();
+            }
+            rcmb_Module.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    
+    protected void LoadSubModules()
+    {
+        try
+        {
+            rcmb_Submodule.Items.Clear();
+            rcmb_Submodule.ClearSelection();
+            rcmb_Submodule.Text = string.Empty;
+
+            rcmb_Forms.Items.Clear();
+            rcmb_Forms.ClearSelection();
+            rcmb_Forms.Text = string.Empty;
+
+            auditType = "A" + Convert.ToString(rcmb_sup_module.SelectedValue) + "B" + Convert.ToString(rcmb_Module.SelectedValue) + "C";
+            DataTable dtSubMod = GetAuditData(auditType);
+
+            if (dtSubMod.Rows.Count > 0)
+            {
+                rcmb_Submodule.DataSource = dtSubMod;
+                rcmb_Submodule.DataTextField = "AF_FORM_NAME";
+                rcmb_Submodule.DataValueField = "AF_ID";
+                rcmb_Submodule.DataBind();
+            }
+            rcmb_Submodule.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+
+            auditType = "A" + Convert.ToString(rcmb_sup_module.SelectedValue) + "B" + Convert.ToString(rcmb_Module.SelectedValue) + "E";
+            DataTable dtForms = GetAuditData(auditType);
+
+            if (dtForms.Rows.Count > 0)
+            {
+                rcmb_Forms.DataSource = dtForms;
+                rcmb_Forms.DataTextField = "AF_FORM_NAME";
+                rcmb_Forms.DataValueField = "AF_ID";
+                rcmb_Forms.DataBind();
+            }
+            rcmb_Forms.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void LoadChildModules()
+    {
+        try
+        {
+            rcmb_childmodule.Items.Clear();
+            rcmb_childmodule.ClearSelection();
+            rcmb_childmodule.Text = string.Empty;
+
+            auditType = "A" + Convert.ToString(rcmb_sup_module.SelectedValue) + "B" + Convert.ToString(rcmb_Module.SelectedValue) + "C" + Convert.ToString(rcmb_Submodule.SelectedValue) + "D";
+            DataTable dtChildMod = GetAuditData(auditType);
+
+            if (dtChildMod.Rows.Count > 0)
+            {
+                rcmb_childmodule.DataSource = dtChildMod;
+                rcmb_childmodule.DataTextField = "AF_FORM_NAME";
+                rcmb_childmodule.DataValueField = "AF_ID";
+                rcmb_childmodule.DataBind();
+            }
+            rcmb_childmodule.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void LoadForms()
+    {
+        try
+        {
+            rcmb_Forms.Items.Clear();
+            rcmb_Forms.ClearSelection();
+            rcmb_Forms.Text = string.Empty;
+
+            auditType = "A" + Convert.ToString(rcmb_sup_module.SelectedValue) + "B" + Convert.ToString(rcmb_Module.SelectedValue) + "C" +
+                Convert.ToString(rcmb_Submodule.SelectedValue) + "D" + Convert.ToString(rcmb_childmodule.SelectedValue) + "E";
+            DataTable dtForms = GetAuditData(auditType);
+
+            if (dtForms.Rows.Count > 0)
+            {
+                rcmb_Forms.DataSource = dtForms;
+                rcmb_Forms.DataTextField = "AF_FORM_NAME";
+                rcmb_Forms.DataValueField = "AF_ID";
+                rcmb_Forms.DataBind();
+            }
+            rcmb_Forms.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void LoadAuditGrid()
+    {
+        try
+        {
+            rgAudit.DataSource = BLL.ExecuteQuery("EXEC USP_SMHR_AUDITTRAILS @OPERATION = 'GET_AUDIT_DATA', @SMHR_AUDIT_FORM_ID = " + rcmb_Forms.SelectedValue);
+            rgAudit.Visible = true;
+
+            /*DataTable dtGrid = BLL.ExecuteQuery("EXEC USP_SMHR_AUDITTRAILS @OPERATION = 'GET_AUDIT_DATA', @SMHR_AUDIT_FORM_ID = " + rcmb_Forms.SelectedValue);
+
+            DataTable dtGridNew = new DataTable();
+            DataRow drGrid = null;
+
+            if (dtGrid.Rows.Count > 0)
+            {
+                dtGridNew.Columns.Add(new DataColumn("SMHR_AUDIT_ID", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("EMP_NAME", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("LOGIN_USERNAME", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("LOGTYP_CODE", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("FORMS_NAME", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("SMHR_AUDIT_COLUMN", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("SMHR_AUDIT_TRANSACTIONDESC", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("SMHR_AUDIT_OLDVALUE", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("SMHR_AUDIT_NEWVALUE", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("DATE", typeof(string)));
+                dtGridNew.Columns.Add(new DataColumn("SMHR_AUDIT_CONTROL_COLUMN", typeof(string)));
+
+                for (int i = 0; i < dtGrid.Rows.Count; i++)
+                {
+                    drGrid = dtGridNew.NewRow();
+
+                    drGrid["SMHR_AUDIT_ID"] = Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_ID"]);
+                    drGrid["EMP_NAME"] = Convert.ToString(dtGrid.Rows[i]["EMP_NAME"]);
+                    drGrid["LOGIN_USERNAME"] = Convert.ToString(dtGrid.Rows[i]["LOGIN_USERNAME"]);
+                    drGrid["LOGTYP_CODE"] = Convert.ToString(dtGrid.Rows[i]["LOGTYP_CODE"]);
+                    drGrid["FORMS_NAME"] = Convert.ToString(dtGrid.Rows[i]["FORMS_NAME"]);
+                    drGrid["SMHR_AUDIT_COLUMN"] = Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_COLUMN"]);
+                    drGrid["SMHR_AUDIT_TRANSACTIONDESC"] = Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_TRANSACTIONDESC"]);
+                    if ((Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_COLUMN"]) == "ORGANISATION_APPLICANTS") ||
+                        (Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_COLUMN"]) == "ORGANISATION_EMPLOYEES") ||
+                        (Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_COLUMN"]) == "LOGIN_PASSWORD") ||
+                        (Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_COLUMN"]) == "LOGIN_PASS_CODE"))
+                    {
+                        drGrid["SMHR_AUDIT_OLDVALUE"] = Convert.ToString(pwdEncrypt.PasswordDecrypt(Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_OLDVALUE"])));
+                        drGrid["SMHR_AUDIT_NEWVALUE"] = Convert.ToString(pwdEncrypt.PasswordDecrypt(Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_NEWVALUE"])));
+                    }
+                    else
+                    {
+                        drGrid["SMHR_AUDIT_OLDVALUE"] = Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_OLDVALUE"]);
+                        drGrid["SMHR_AUDIT_NEWVALUE"] = Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_NEWVALUE"]);
+                    }
+                    drGrid["DATE"] = Convert.ToString(dtGrid.Rows[i]["DATE"]);
+                    drGrid["SMHR_AUDIT_CONTROL_COLUMN"] = Convert.ToString(dtGrid.Rows[i]["SMHR_AUDIT_CONTROL_COLUMN"]);
+
+                    dtGridNew.Rows.Add(drGrid);
+                }
+            }
+
+            rgAudit.DataSource = dtGrid;    //dtGridNew;
+            rgAudit.Visible = true;*/
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rgAudit_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
+    {
+        try
+        {
+            if (rcmb_Forms.SelectedIndex > 0)
+                LoadAuditGrid();
+            else
+                rgAudit.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected DataTable GetAuditData(string adtType)
+    {
+        DataTable dtAudit = new DataTable();
+        try
+        {
+            if (!(string.IsNullOrEmpty(adtType)))
+                dtAudit = BLL.ExecuteQuery("SELECT * FROM SMHR_AUDIT_FORMS WHERE AF_MODULE_TYPE = '" + adtType + "' AND AF_STATUS = 1 ORDER BY AF_FORM_NAME");
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+        return dtAudit;
+    }
+
+    protected void rcmb_sup_module_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            tr_sub_module_id.Visible = tr_childmodule_id.Visible = tr_forms_id.Visible = rgAudit.Visible = false;
+
+            if (rcmb_sup_module.SelectedIndex > 0)
+            {
+                tr_module_id.Visible = true;
+                LoadModules();
+            }
+            else
+            {
+                tr_module_id.Visible = false;
+                LoadSuperModules();
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_Module_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            tr_childmodule_id.Visible = rgAudit.Visible = false;
+
+            if (rcmb_Module.SelectedIndex > 0)
+            {
+                tr_sub_module_id.Visible = tr_forms_id.Visible = true;
+                LoadSubModules();
+            }
+            else
+            {
+                tr_sub_module_id.Visible = tr_forms_id.Visible = false;
+                LoadModules();
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_Submodule_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            tr_forms_id.Visible = true;
+            rgAudit.Visible = false;
+
+            if (rcmb_Submodule.SelectedIndex > 0)
+            {
+                tr_childmodule_id.Visible = true;
+                //LoadChildModules();
+                if (rcmb_childmodule.Items.Count <= 1)//if there is no child module, then load forms
+                {
+                    tr_childmodule_id.Visible = false;
+                    tr_forms_id.Visible = true;
+
+                    rcmb_Forms.Items.Clear();
+                    rcmb_Forms.ClearSelection();
+                    rcmb_Forms.Text = string.Empty;
+
+                    auditType = "A" + Convert.ToString(rcmb_sup_module.SelectedValue) + "B" + Convert.ToString(rcmb_Module.SelectedValue) + "C" + Convert.ToString(rcmb_Submodule.SelectedValue) + "E";
+                    DataTable dtForms = GetAuditData(auditType);
+
+                    if (dtForms.Rows.Count > 0)
+                    {
+                        rcmb_Forms.DataSource = dtForms;
+                        rcmb_Forms.DataTextField = "AF_FORM_NAME";
+                        rcmb_Forms.DataValueField = "AF_ID";
+                        rcmb_Forms.DataBind();
+                    }
+                    rcmb_Forms.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+                }
+            }
+            else
+            {
+                tr_childmodule_id.Visible = false;
+                LoadSubModules();
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_childmodule_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            rgAudit.Visible = false;
+
+            if (rcmb_childmodule.SelectedIndex > 0)
+            {
+                tr_forms_id.Visible = true;
+                LoadForms();
+            }
+            else
+            {
+                tr_forms_id.Visible = false;
+                LoadChildModules();
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_Forms_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if (rcmb_Forms.SelectedIndex > 0)
+            {
+                LoadAuditGrid();
+                rgAudit.DataBind();
+            }
+            else
+                rgAudit.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    
+    protected void ibRfrsh_Click(object sender, ImageClickEventArgs e)
+    {
+        try
+        {
+            if (rcmb_Forms.SelectedIndex > 0)
+                rcmb_Forms_SelectedIndexChanged(null, null);
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "AuditTrail", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

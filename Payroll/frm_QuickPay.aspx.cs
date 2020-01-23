@@ -1,0 +1,588 @@
+﻿using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+using Telerik.Web.UI;
+using SMHR;
+using System.Text;
+
+public partial class Payroll_frm_QuickPay : System.Web.UI.Page
+{
+    SMHR_BUSINESSUNIT _obj_smhr_businessunit;
+    SMHR_PERIOD _obj_smhr_period;
+    SMHR_PERIODDTL _obj_smhr_perioddtl;
+    SMHR_EMPLOYEE _obj_smhr_employee;
+    SMHR_PAYROLL _obj_smhr_payroll;
+
+    static DataTable dt_Details;
+    static DataTable dtdates;
+    static int days;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            Page.Validate();
+            if (!Page.IsPostBack)
+            {
+
+
+                Session.Remove("WRITEFACILITY");
+
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Quick Pay Process");//QUICKPAYPROCESS");
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    btn_Paytran.Visible = false;
+
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+                LoadCombos();
+                Loadperiod();
+                lbl_SalaryStruct.Visible = false;
+                BLL.ChangeDateFormat(Convert.ToString(Session["EMP_ID"]), rdtp_FromDate, rdtp_ToDate);
+                rfv_rbt_SalaryList.Enabled = false;
+                ddl_Period.Focus();
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadCombos()
+    {
+        try
+        {
+            SMHR_LOGININFO _obj_SMHR_LoginInfo = new SMHR_LOGININFO();
+            _obj_SMHR_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            _obj_SMHR_LoginInfo.LOGIN_ID = Convert.ToInt32(Session["USER_ID"]);
+            DataTable dt_BUDetails = BLL.get_Business_Units(_obj_SMHR_LoginInfo);
+            ddl_BusinessUnit.DataSource = dt_BUDetails;
+            ddl_BusinessUnit.DataValueField = "BUSINESSUNIT_ID";
+            ddl_BusinessUnit.DataTextField = "BUSINESSUNIT_CODE";
+            ddl_BusinessUnit.DataBind();
+            ddl_BusinessUnit.Items.Insert(0, new RadComboBoxItem("Select"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void Loadperiod()
+    {
+
+        try
+        {
+            SMHR_PERIOD _obj_smhr_period = new SMHR_PERIOD();
+            _obj_smhr_period.OPERATION = operation.Select;
+            _obj_smhr_period.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt_Details = BLL.get_PeriodHeaderDetails(_obj_smhr_period);
+            ddl_Period.DataSource = dt_Details;
+            ddl_Period.DataValueField = "PERIOD_ID";
+            ddl_Period.DataTextField = "PERIOD_NAME";
+            ddl_Period.DataBind();
+            ddl_Period.Items.Insert(0, new RadComboBoxItem("Select"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected override void InitializeCulture()
+    {
+        BLL.SetCulture_Theme(Page, Request);
+        base.InitializeCulture();
+    }
+
+    protected void ddl_BusinessUnit_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if (!(ddl_BusinessUnit.SelectedIndex > 0))
+            {
+                lbl_SalaryStruct.Visible = false;
+                rbt_SalaryList.Visible = false;
+                lbl_SalaryStruct.Visible = false;
+                ddl_Employees.Items.Clear();
+                rdtp_FromDate.SelectedDate = null;
+                rdtp_ToDate.SelectedDate = null;
+            }
+            lbl_SalaryStruct.Visible = false;
+            rbt_SalaryList.Visible = false;
+            ddl_PeriodElements.SelectedIndex = 0;
+            lbl_SalaryStruct.Visible = false;
+            rbt_SalaryList.Visible = false;
+            ddl_Employees.ClearSelection();
+            ddl_Employees.Items.Clear();
+            ddl_Employees.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Paytran_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            StringBuilder strPayroll = new StringBuilder();
+            string str;
+            int procstatus = 0;
+            for (int index = 0; index <= rbt_SalaryList.Items.Count - 1; index++)
+            {
+                if (rbt_SalaryList.Items[index].Selected)
+                {
+                    if (Convert.ToString(strPayroll) != string.Empty)
+                    {
+                        str = ",''" + rbt_SalaryList.Items[index].Value + "''";
+                        strPayroll.Append(str);
+                    }
+                    else
+                    {
+                        str = "''" + rbt_SalaryList.Items[index].Value + "''";
+                        strPayroll.Append(str);
+                    }
+                }
+            }
+
+
+            //_obj_smhr_payroll = new SMHR_PAYROLL();
+            //_obj_smhr_payroll.PERIODDTLID = Convert.ToInt32(ddl_PeriodElements.SelectedValue);
+            //_obj_smhr_payroll.MODE = 26;
+            //_obj_smhr_payroll.EMP_ID = Convert.ToInt32(ddl_Employees.SelectedValue);
+            //_obj_smhr_payroll.STARTDATE = Convert.ToDateTime(rdtp_FromDate.SelectedDate);
+            //_obj_smhr_payroll.ENDDATE = Convert.ToDateTime(rdtp_ToDate.SelectedDate);
+            //dt_Details = BLL.get_Quickpayrolltrans(_obj_smhr_payroll);
+            //if (Convert.ToInt32(dt_Details.Rows[0][0]) == 1)
+            //{
+            //    BLL.ShowMessage(this, "Payroll Already done for this Period");
+            //    return;
+            //}
+            //else
+            //{
+            //    _obj_smhr_payroll.PERIODDTLID = Convert.ToInt32(ddl_PeriodElements.SelectedValue);
+            //    _obj_smhr_payroll.MODE = 27;
+            //    _obj_smhr_payroll.EMP_ID = Convert.ToInt32(ddl_Employees.SelectedValue);
+            //    dt_Details = BLL.get_Quickpayrolltrans(_obj_smhr_payroll);
+            //    if (dt_Details.Rows.Count != 0)
+            //    {
+            //        BLL.ShowMessage(this, "Payroll Already done for this Period");
+            //        return;
+            //    }
+            //}
+
+            bool status = false;
+            try
+            {
+                _obj_smhr_employee = new SMHR_EMPLOYEE();
+                _obj_smhr_employee.EMPSALDTLS_PERIOD_ID = Convert.ToInt32(ddl_Period.SelectedValue);
+                _obj_smhr_employee.EMPSALDTLS_PRDDTL_ID = Convert.ToInt32(ddl_PeriodElements.SelectedValue);
+                _obj_smhr_employee.EMP_BUSINESSUNIT_ID = Convert.ToInt32(ddl_BusinessUnit.SelectedValue);
+                if (Convert.ToString(ddl_Employees.SelectedItem.Text) == "ALL")
+                    _obj_smhr_employee.EMP_ID = -1;
+                else if (Convert.ToString(ddl_Employees.SelectedValue) == "")
+                {
+                    BLL.ShowMessage(this, "Please Select At Least One Employee.");
+                    return;
+                }
+                else if (Convert.ToInt32(ddl_Employees.SelectedValue) > 0)
+                    _obj_smhr_employee.EMP_ID = Convert.ToInt32(ddl_Employees.SelectedValue);
+
+
+                _obj_smhr_employee.EMPSALDTLS_ID = Convert.ToInt32(Session["EMP_ID"]);
+                _obj_smhr_employee.EMPSALDTLS_DATE = DateTime.Now;
+                _obj_smhr_employee.days = Convert.ToInt32(days);
+                _obj_smhr_employee.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_smhr_employee.EMPSALDTLS_FRMDT = Convert.ToDateTime(rdtp_FromDate.SelectedDate);
+                _obj_smhr_employee.EMPSALDTLS_ENDDT = Convert.ToDateTime(rdtp_ToDate.SelectedDate);
+
+                if (Convert.ToString(strPayroll) != string.Empty)
+                {
+                    _obj_smhr_employee.EMPSALDTLS_STRUCT = Convert.ToString(strPayroll);
+                }
+                else
+                {
+                    _obj_smhr_employee.EMPSALDTLS_STRUCT = string.Empty;
+                }
+
+
+                DataTable dt_Local = BLL.ExecuteQuery("SELECT BUSINESSUNIT_LOCALISATION,HR_MASTER_CODE FROM SMHR_BUSINESSUNIT " +
+                                      "  JOIN SMHR_HR_MASTER ON " +
+                                      "  BUSINESSUNIT_LOCALISATION = HR_MASTER_ID WHERE BUSINESSUNIT_ID = '" + Convert.ToInt32(ddl_BusinessUnit.SelectedValue) + "'");
+
+                _obj_smhr_employee.CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+                if (dt_Local.Rows.Count > 0)
+                {
+                    status = BLL.set_quickpayrolltrans(_obj_smhr_employee, Convert.ToString(dt_Local.Rows[0]["HR_MASTER_CODE"]));
+                }
+                else
+                {
+                    BLL.ShowMessage(this, "Localisation is Not Defined for Selected business Unit");
+                    return;
+                }
+
+                //status = BLL.set_quickpayrolltrans(_obj_smhr_employee,);
+            }
+            catch (Exception ex)
+            {
+                status = false;
+                if (ex.Message == "NO EMPLOYEES TO RUN PAYROLL")
+                {
+                    procstatus = 1;
+                }
+                else if (ex.Message == "NOATTENDS")
+                {
+                    procstatus = 3;
+                }
+                else if (ex.Message == "NOMAPPING")
+                {
+                    procstatus = 4;
+                }
+            }
+            if (status == true)
+            {
+                BLL.ShowMessage(this, "Pay roll Process Done Successfully");
+                clearFields();
+                return;
+            }
+            else
+            {
+                if (procstatus == 1)
+                {
+                    BLL.ShowMessage(this, "No employees to process");
+                    return;
+                }
+                else if (procstatus == 3)
+                {
+                    BLL.ShowMessage(this, "Attendance is not defined for this period.");
+                    return;
+                }
+                else if (procstatus == 4)
+                {
+                    BLL.ShowMessage(this, "Payitems Mapping is not defined for this Organisation.");
+                    return;
+                }
+                else
+                {
+                    BLL.ShowMessage(this, "Error occured while performing the process");
+                    return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void clearFields()
+    {
+        try
+        {
+            ddl_Period.SelectedIndex = -1;
+            //ddl_PeriodElements.Items.Clear();
+            ddl_PeriodElements.Items.Clear();
+            ddl_PeriodElements.Items.Insert(0, new RadComboBoxItem("", ""));
+            ddl_PeriodElements.SelectedIndex = 0;
+            ddl_BusinessUnit.SelectedIndex = -1;
+            rbt_SalaryList.Items.Clear();
+            lbl_SalaryStruct.Visible = false;
+            ddl_Employees.ClearSelection();
+            ddl_Employees.Items.Clear();
+            ddl_Employees.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+            //ddl_Employees.SelectedIndex = -1;
+            rdtp_FromDate.SelectedDate = null;
+            rdtp_ToDate.SelectedDate = null;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rdtp_ToDate_SelectedDateChanged(object sender, Telerik.Web.UI.Calendar.SelectedDateChangedEventArgs e)
+    {
+        try
+        {
+            if (!(rdtp_FromDate.SelectedDate == null) && !(rdtp_ToDate.SelectedDate == null))
+            {
+                string startDateString = Convert.ToString(rdtp_FromDate.SelectedDate);
+                string endDateString = Convert.ToString(rdtp_ToDate.SelectedDate);
+                DateTime startDate = Convert.ToDateTime(startDateString);
+                DateTime endDate = Convert.ToDateTime(endDateString);
+                TimeSpan dateDifference = endDate.Subtract(startDate);
+                days = dateDifference.Days + 1;
+
+                Loademployee();
+
+
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    private void Loademployee()
+    {
+
+        try
+        {
+            for (int index = 0; index <= rbt_SalaryList.Items.Count - 1; index++)
+            {
+                if (rbt_SalaryList.Items[index].Selected && rdtp_FromDate.SelectedDate != null && rdtp_ToDate.SelectedDate != null)
+                {
+                    btn_Paytran.Visible = true;
+                    _obj_smhr_employee = new SMHR_EMPLOYEE();
+                    _obj_smhr_employee.OPERATION = operation.Check1;
+                    _obj_smhr_employee.EMP_BUSINESSUNIT_ID = Convert.ToInt32(ddl_BusinessUnit.SelectedValue);
+                    _obj_smhr_employee.EMP_SALALRYSTRUCT_ID = Convert.ToInt32(rbt_SalaryList.SelectedValue);
+                    _obj_smhr_employee.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                    _obj_smhr_employee.EMP_DOJ = Convert.ToDateTime(rdtp_FromDate.SelectedDate);
+                    _obj_smhr_employee.EMP_RELDATE = Convert.ToDateTime(rdtp_ToDate.SelectedDate);
+                    _obj_smhr_employee.EMPSALDTLS_PRDDTL_ID = Convert.ToInt32(ddl_PeriodElements.SelectedValue);
+                    DataTable dt = BLL.get_PayBusinessUnit(_obj_smhr_employee);
+                    if (dt.Rows.Count != 0)
+                    {
+                        ddl_Employees.Items.Clear();
+                        ddl_Employees.DataSource = dt;
+                        ddl_Employees.DataTextField = "EMPLOYEENAME";
+                        ddl_Employees.DataValueField = "EMP_ID";
+                        ddl_Employees.DataBind();
+                        ddl_Employees.Items.Insert(0, new RadComboBoxItem("ALL"));
+                    }
+                    else
+                    {
+                        ddl_Employees.Items.Clear();
+                        // ddl_Employees.Items.Insert(0, new RadComboBoxItem("Select"));
+                        BLL.ShowMessage(this, "No Employees To Process");
+                        btn_Paytran.Visible = false;
+                        return;
+                    }
+                }
+                else
+                {
+
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void ddl_PeriodElements_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if (ddl_PeriodElements.SelectedIndex > 0)
+            {
+                rfv_rbt_SalaryList.Enabled = true;
+                btn_Paytran.Visible = true;
+                _obj_smhr_perioddtl = new SMHR_PERIODDTL();
+                _obj_smhr_perioddtl.OPERATION = operation.Select;
+                _obj_smhr_perioddtl.PRDDTL_ID = Convert.ToInt32(ddl_PeriodElements.SelectedValue);
+                dtdates = new DataTable();
+                dtdates = BLL.get_PeriodDetails(_obj_smhr_perioddtl);
+                if (dtdates.Rows.Count != 0)
+                {
+                    rdtp_FromDate.Clear();
+                    rdtp_ToDate.Clear();
+                    rdtp_FromDate.MinDate = Convert.ToDateTime(dtdates.Rows[0]["PRDDTL_STARTDATE"]);
+                    rdtp_ToDate.MinDate = Convert.ToDateTime(dtdates.Rows[0]["PRDDTL_STARTDATE"]);
+                    rdtp_FromDate.MaxDate = Convert.ToDateTime(dtdates.Rows[0]["PRDDTL_ENDDATE"]);
+                    rdtp_ToDate.MaxDate = Convert.ToDateTime(dtdates.Rows[0]["PRDDTL_ENDDATE"]);
+                }
+                dt_Details = new DataTable();
+                _obj_smhr_employee = new SMHR_EMPLOYEE();
+                _obj_smhr_employee.OPERATION = operation.Empty;
+                _obj_smhr_employee.EMPSALDTLS_PRDDTL_ID = Convert.ToInt32(ddl_PeriodElements.SelectedValue);
+                _obj_smhr_employee.EMP_BUSINESSUNIT_ID = Convert.ToInt32(ddl_BusinessUnit.SelectedValue);
+                _obj_smhr_employee.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                dt_Details = BLL.get_PayBusinessUnit(_obj_smhr_employee);
+                if (dt_Details.Rows.Count != 0)
+                {
+                    ddl_Employees.Items.Clear();
+                    rbt_SalaryList.DataSource = dt_Details;
+                    rbt_SalaryList.DataValueField = "EMP_SALALRYSTRUCT_ID";
+                    rbt_SalaryList.DataTextField = "SALARYSTRUCT_CODE";
+                    rbt_SalaryList.DataBind();
+                    lbl_SalaryStruct.Visible = true;
+                    rbt_SalaryList.Visible = true;
+                }
+                else
+                {
+                    lbl_SalaryStruct.Visible = false;
+                    lbl_SalaryStruct.Visible = false;
+                    rbt_SalaryList.Visible = false;
+                    ddl_Employees.Items.Clear();
+                }
+            }
+            else
+            {
+                lbl_SalaryStruct.Visible = false;
+                rbt_SalaryList.Visible = false;
+                ddl_Employees.Items.Clear();
+            }
+            ddl_Employees.ClearSelection();
+            ddl_Employees.Items.Clear();
+            ddl_Employees.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+            //LoadCombos();
+
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    //protected void rbt_SalaryList_SelectedIndexChanged(object sender, EventArgs e)
+    //{
+    //    //Loademployee();
+    //}
+
+    protected void ddl_Period_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if ((ddl_BusinessUnit.SelectedIndex > 0) && (ddl_Period.SelectedIndex > 0))
+            {
+                _obj_smhr_perioddtl = new SMHR_PERIODDTL();
+                _obj_smhr_perioddtl.OPERATION = operation.Select;
+                _obj_smhr_perioddtl.PRDDTL_PERIOD_ID = Convert.ToInt32(ddl_Period.SelectedValue);
+                dt_Details = new DataTable();
+                dt_Details = BLL.get_PeriodDetails(_obj_smhr_perioddtl);
+                if (dt_Details.Rows.Count != 0)
+                {
+                    ddl_PeriodElements.DataSource = dt_Details;
+                    ddl_PeriodElements.DataValueField = "PRDDTL_ID";
+                    ddl_PeriodElements.DataTextField = "PRDDTL_NAME";
+                    ddl_PeriodElements.DataBind();
+                    ddl_PeriodElements.Items.Insert(0, new RadComboBoxItem("Select"));
+                }
+                //ddl_BusinessUnit.Items.Insert(0, new RadComboBoxItem("Select"));
+                //ddl_PeriodElements.Items.Insert(0, new RadComboBoxItem("Select"));
+            }
+            else
+            {
+                ddl_PeriodElements.ClearSelection();
+                ddl_PeriodElements.Items.Clear();
+                ddl_PeriodElements.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+                lbl_SalaryStruct.Visible = false;
+                rbt_SalaryList.Visible = false;
+                ddl_Employees.Items.Clear();
+            }
+
+            rdtp_FromDate.SelectedDate = null;
+            rdtp_ToDate.SelectedDate = null;
+            lbl_SalaryStruct.Visible = false;
+            rbt_SalaryList.Visible = false;
+            ddl_Employees.ClearSelection();
+            ddl_Employees.Items.Clear();
+            ddl_Employees.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void rbt_SalaryList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            Loademployee();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void rdtp_FromDate_SelectedDateChanged(object sender, Telerik.Web.UI.Calendar.SelectedDateChangedEventArgs e)
+    {
+        try
+        {
+            if (!(rdtp_FromDate.SelectedDate == null) && !(rdtp_ToDate.SelectedDate == null))
+            {
+                string startDateString = Convert.ToString(rdtp_FromDate.SelectedDate);
+                string endDateString = Convert.ToString(rdtp_ToDate.SelectedDate);
+                DateTime startDate = Convert.ToDateTime(startDateString);
+                DateTime endDate = Convert.ToDateTime(endDateString);
+                TimeSpan dateDifference = endDate.Subtract(startDate);
+                days = dateDifference.Days + 1;
+
+                Loademployee();
+
+
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_QuickPay", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

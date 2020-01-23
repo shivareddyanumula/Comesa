@@ -1,0 +1,13 @@
+WSReset.exe
+dism /online /cleanup-image /restorehealth
+dism /online /cleanup-image /StartComponentCleanup
+sfc /scannow
+powershell
+Get-AppXPackage -AllUsers |Where-Object {$_.InstallLocation -like "*SystemApps*"} | Foreach {Add-AppxPacka
+
+
+
+
+METHAD -2
+DISM.exe /Online /Cleanup-image /Scanhealth
+DISM.exe /Online /Cleanup-image /Restorehealth

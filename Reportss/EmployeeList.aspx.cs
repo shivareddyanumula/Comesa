@@ -1,0 +1,693 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using SMHR;
+using Telerik.Web.UI;
+
+public partial class Reportss_EmployeeList : System.Web.UI.Page
+{
+    SMHR_ORGANISATION obj_smhr_Organisation;
+    SMHR_BUSINESSUNIT obj_smhr_Businessunit;
+    SMHR_PERIOD obj_smhr_Period;
+    SMHR_LOGININFO obj_smhr_Logininfo;
+    SMHR_EMP_PAYITEMS _obj_smhr_emp_payitems;
+    SMHR_SALARYSTRUCT _obj_smhr_salaryStruct;
+    SMHR_MASTERS _obj_Smhr_Masters;
+    SMHR_DEPARTMENT _obj_SMHR_Department;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        try
+        {
+            string Control = string.Empty;
+            if (!Page.IsPostBack)
+            {
+                //code for security privilage
+                Session.Remove("WRITEFACILITY");
+
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+
+                if (Request.QueryString.HasKeys())
+                {
+                    Control = Convert.ToString(Request.QueryString["Control"]);
+                    if (Control == "1") // for EmployeeList Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("List Of Staff");
+                    }
+                    else if (Control == "2") // for EmployeeList Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("List Of Members");
+                    }
+                    else if (Control == "3")// for Emoployee Disability  Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("List Of Disabled Employees");
+                    }
+                    else if (Control == "4")// for Employee List Service   Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees By Service");
+                    }
+                    else if (Control == "5")// for Employee List County  Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees By County");
+
+                    }
+                    else if (Control == "6")// for TransferDue By Cash Report
+                    {
+
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees Due By Cash");
+                    }
+                    else if (Control == "7")// for EmployeeListAge Report
+                    {
+
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees By Age");
+
+                    }
+                    else if (Control == "8")//for EmployeeListByEthnicity Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees By Ethnicity");
+
+                    }
+                    else if (Control == "9")//for EmployeeListDepartment Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees List");//   
+                    }
+                    else if (Control == "10")//for EmployeeListDepartment Report
+                    {
+
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees By Directorate");
+                    }
+                    else if (Control == "11")//for EmployeeListDepartment Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employees By Department");
+
+                    }
+                    else if (Control == "12")//for EmployeeListDepartment Report
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employee House Allowance");
+
+                    }
+                    else if (Control == "13")
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Allocation Code");
+
+                    }
+                    else if (Control == "14")
+                    {
+                        _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employee Type");
+
+                    }
+                }
+
+                //_obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employee Income Department Wise");
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                    return;
+                }
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    // Rg_Countries.MasterTableView.CommandItemDisplay = GridCommandItemDisplay.None;
+                    btn_Generate.Visible = false;
+                    //btn_Update.Visible = false;
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                    return;
+                }
+
+                //Control = Convert.ToString(Request.QueryString["Control"]);
+                if (Control == "1") // for EmployeeList Report d
+                {
+                    lbl_header.Text = "List Of Staff";
+                    trSalStruct.Visible = true;
+                    trCounty.Visible = false;
+                  
+                   
+                }
+                else if (Control == "2") // for EmployeeList Report d
+                {
+                    lbl_header.Text = "List Of Members";
+                    trSalStruct.Visible = true;
+                    trCounty.Visible = false;
+                    
+                }
+                else if (Control == "3")// for Emoployee Disability  Report d
+                {
+                    lbl_header.Text = "Employee On Disability Tax Exemption";
+                    trSalStruct.Visible = true;
+                    trCounty.Visible = false;
+                    
+                }
+                else if (Control == "4")// for Employee List Service   Report d
+                {
+                    lbl_header.Text = "Employee List by Service";
+                    trSalStruct.Visible = true;
+                    trCounty.Visible = false;
+                   
+                }
+                else if (Control == "5")// for Employee List County  Report d
+                {
+                  //  lbl_header.Text = "Employee List by County";
+                    lbl_header.Text = "Employee List by District";
+                    trSalStruct.Visible = false;
+                    trCounty.Visible = true;
+                   
+                }
+                else if (Control == "6")// for TransferDue By Cash Report d
+                {
+                    lbl_header.Text = "Transfer Due by Cash";
+                    trSalStruct.Visible = false;
+                    trCounty.Visible = false;
+                    trPaymentmode.Visible = true;
+                    rcmb_PaymentMode.SelectedIndex = 0;
+                    
+                }
+                else if (Control == "7")// for EmployeeListAge Report d
+                {
+                    lbl_header.Text = "Employee List by Age";
+                    trSalStruct.Visible = false;
+                    trCounty.Visible = false;
+                    trAgeRange.Visible = true;
+                    trFrom.Visible = true;
+                    trTo.Visible = true;
+                    
+                }
+                else if (Control == "8")//for EmployeeListByEthnicity Report d
+                {
+                    lbl_header.Text = "Employee List by Ethnicity";
+                    trSalStruct.Visible = false;
+                    trCounty.Visible = false;
+                    trTribe.Visible = true;
+                   
+                }
+                else if (Control == "9" )//for EmployeeListDepartment Report 
+                {
+                    lbl_header.Text = "Employee List";
+                   
+                }
+                else if (Control == "10")//for EmployeeListDepartment Report d
+                {
+                    lbl_header.Text = "Employee List by Directorate";
+                    trDirectorate.Visible = true;
+                   
+
+                }
+                else if (Control == "11")//for EmployeeListDepartment Report d
+                {
+                    lbl_header.Text = "Employee List by Department";
+                    trDirectorate.Visible = true;
+                    trDepartment.Visible = true;
+                   
+                }
+                else if (Control == "12") //for Employee House Allowance report
+                {
+                    lbl_header.Text = "Employee House Allowance";
+                }
+                else if (Control == "13") //for Allocation Code report
+                {
+                    lbl_header.Text = "Allocation Code";
+                }
+                if (Control == "14") // for EmployeeList Report d
+                {
+                    lbl_header.Text = "Employee Type";
+                    trSalStruct.Visible = true;
+                    trCounty.Visible = false;
+                    trEmployeeType.Visible = true;
+                }
+                LoadBusinessUnit();
+                LoadEmployeeTypes();
+                LoadSalStruct();
+                LoadCounty();
+                LoadTribe();
+            }
+            Page.Validate();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadBusinessUnit()
+    {
+        string qrystrng = string.Empty;
+        try
+        {
+            obj_smhr_Businessunit = new SMHR_BUSINESSUNIT();
+            obj_smhr_Period = new SMHR_PERIOD();
+            obj_smhr_Logininfo = new SMHR_LOGININFO();
+            obj_smhr_Logininfo.LOGIN_ID = Convert.ToInt32(Session["USER_ID"]);
+            obj_smhr_Logininfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt_BUDetails = BLL.get_Business_Units(obj_smhr_Logininfo);
+            rcmb_BusinessUnit.DataSource = dt_BUDetails;
+            rcmb_BusinessUnit.DataValueField = "BUSINESSUNIT_ID";
+            rcmb_BusinessUnit.DataTextField = "BUSINESSUNIT_CODE";
+            rcmb_BusinessUnit.DataBind();
+
+
+            if (Request.QueryString.HasKeys())
+            {
+                qrystrng = Convert.ToString(Request.QueryString["Control"]);
+            }
+            if (qrystrng == "10" || qrystrng == "11" || qrystrng == "14")
+            {
+                rcmb_BusinessUnit.Items.Insert(0, new RadComboBoxItem("Select"));
+            }
+            else
+            {
+             //   rcmb_BusinessUnit.Items.Insert(0, new RadComboBoxItem(Convert.ToString(Session["ORG_NAME"])));
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+
+
+    }
+
+    private void LoadEmployeeTypes()
+    {
+        try
+        {
+            SMHR_EMPLOYEETYPE _obj_Smhr_EMPLOYEETYPE = new SMHR_EMPLOYEETYPE();
+            _obj_Smhr_EMPLOYEETYPE.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            //_obj_Smhr_EMPLOYEETYPE.EMPLOYEETYPE_ID = Convert.ToInt32(ddl_EmpStatus.SelectedValue);
+            _obj_Smhr_EMPLOYEETYPE.OPERATION = operation.Select;
+            DataTable dtEmpType = BLL.get_EmployeeType(_obj_Smhr_EMPLOYEETYPE);
+            ddl_EmpStatus.Items.Clear();
+            if (dtEmpType.Rows.Count > 0)
+            {
+                ddl_EmpStatus.DataSource = dtEmpType;
+                ddl_EmpStatus.DataTextField = "EMPLOYEETYPE_CODE";
+                ddl_EmpStatus.DataValueField = "EMPLOYEETYPE_ID";
+                ddl_EmpStatus.DataBind();
+               // ddl_EmpStatus.Items.Insert(0, new RadComboBoxItem("All", "-1"));
+                string qrystrng = string.Empty;
+                if (Request.QueryString.HasKeys())
+                {
+                    qrystrng = Convert.ToString(Request.QueryString["Control"]);
+                }
+                if (qrystrng == "3")
+                {
+                    ddl_EmpStatus.Items.Insert(0, new RadComboBoxItem("Select", "-1"));
+                }
+                else
+                {
+                    ddl_EmpStatus.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("All", "-1"));
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmemployeeadd", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadSalStruct()
+    {
+         try
+        {
+        //Salary Structure
+        rcmb_SalStruct.Items.Clear();
+        _obj_smhr_salaryStruct = new SMHR_SALARYSTRUCT();
+        _obj_smhr_salaryStruct.ISDELETED = false;
+        _obj_smhr_salaryStruct.OPERATION = operation.Select;
+        _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+        DataTable dt_Details = BLL.get_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+        rcmb_SalStruct.DataSource = dt_Details;
+        rcmb_SalStruct.DataTextField = "SALARYSTRUCT_CODE";
+        rcmb_SalStruct.DataValueField = "SALARYSTRUCT_ID";
+        rcmb_SalStruct.DataBind();
+
+        string qrystrng = string.Empty;
+        if (Request.QueryString.HasKeys())
+        {
+            qrystrng = Convert.ToString(Request.QueryString["Control"]);
+        }
+        if (qrystrng == "3")
+        {
+            rcmb_SalStruct.Items.Insert(0, new RadComboBoxItem("Select", "-1"));
+        }
+        else
+        {
+            rcmb_SalStruct.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("All", "-1"));
+        }
+        }
+         catch (Exception ex)
+         {
+             SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+             Response.Redirect("~/Frm_ErrorPage.aspx");
+         }
+        
+    }
+    private void LoadCounty()
+    {
+        try
+        {
+        SMHR_COUNTY _obj_Smhr_County = new SMHR_COUNTY();
+        _obj_Smhr_County.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+        _obj_Smhr_County.OPERATION = operation.Select;
+        DataTable dt = BLL.get_County(_obj_Smhr_County);
+        rcmb_County.DataSource = dt;
+        rcmb_County.DataTextField = "COUNTY_CODE";
+        rcmb_County.DataValueField = "COUNTY_ID";
+        rcmb_County.DataBind();
+        rcmb_County.Items.Insert(0, new RadComboBoxItem("ALL"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void LoadTribe()
+    {
+        try
+        { 
+        _obj_Smhr_Masters = new SMHR_MASTERS();
+        _obj_Smhr_Masters.OPERATION = operation.Chk;
+        _obj_Smhr_Masters.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+        //DataTable dt_Details = new DataTable();
+        DataTable dt_Details = BLL.get_MasterRecords(_obj_Smhr_Masters);
+        rcmb_Tribe.DataSource = dt_Details;
+        rcmb_Tribe.DataTextField = "HR_MASTER_CODE";
+        rcmb_Tribe.DataValueField = "HR_MASTER_ID";
+        rcmb_Tribe.DataBind();
+        rcmb_Tribe.Items.Insert(0, new RadComboBoxItem("ALL"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void Load_Directorate()
+    {
+        try { 
+        rcmb_Directorate.Items.Clear();
+        if (Convert.ToString(Session["ORG_ID"]) != string.Empty)
+        {
+            if (rcmb_BusinessUnit.SelectedIndex > 0)
+            {
+                SMHR_DIRECTORATE _obj_Smhr_Directorate = new SMHR_DIRECTORATE();
+                _obj_Smhr_Directorate.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_Directorate.BUSINESSUNIT_ID = Convert.ToInt32(rcmb_BusinessUnit.SelectedValue);
+                DataTable DT = BLL.get_Directorate(_obj_Smhr_Directorate);
+                if (DT.Rows.Count > 0)
+                {
+                    rcmb_Directorate.DataTextField = "DIRECTORATE_CODE";
+                    rcmb_Directorate.DataValueField = "DIRECTORATE_ID";
+                    rcmb_Directorate.DataSource = DT;
+                    rcmb_Directorate.DataBind();
+                    rcmb_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+                }
+                else
+                {
+                    rcmb_Directorate.Items.Clear();
+                    rcmb_Directorate.Text = string.Empty;
+                    rcmb_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+                }
+            }
+            else
+            {
+                rcmb_Directorate.Items.Clear();
+                rcmb_Directorate.Text = string.Empty;
+                //rcmb_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+            }
+        }
+        else
+        {
+           
+            rcmb_Directorate.Text = string.Empty;
+            rcmb_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+        }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+
+    }
+    private void LoadDepartments()
+    {
+        rcmb_Department.Items.Clear();
+        try
+        {
+            _obj_SMHR_Department = new SMHR_DEPARTMENT();
+            //_obj_SMHR_Department.MODE = 9;
+            _obj_SMHR_Department.MODE = 16;
+            _obj_SMHR_Department.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"].ToString());
+            _obj_SMHR_Department.BUID = Convert.ToInt32(rcmb_BusinessUnit.SelectedItem.Value);
+
+            if (rcmb_BusinessUnit.SelectedIndex > 0 && rcmb_Directorate.SelectedIndex > 0)
+            {
+                _obj_SMHR_Department.MODE = 7;
+                _obj_SMHR_Department.DIRECTORATE_ID = Convert.ToInt32(rcmb_Directorate.SelectedItem.Value);
+            }
+            else
+            {
+                _obj_SMHR_Department.DIRECTORATE_ID = 0;
+            }
+            DataTable DT = BLL.get_Department(_obj_SMHR_Department);
+            if (DT.Rows.Count > 0)
+            {
+                rcmb_Department.DataSource = DT;
+                rcmb_Department.DataValueField = "DEPARTMENT_ID";
+                rcmb_Department.DataTextField = "DEPARTMENT_NAME";
+                rcmb_Department.DataBind();
+                rcmb_Department.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+            }
+            else
+            {
+                rcmb_Department.Items.Clear();
+                rcmb_Department.Text = string.Empty;
+                rcmb_Department.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+            }
+
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+            return;
+        }
+    }
+    protected void rcmb_BusinessUnit_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string qrystrng = string.Empty;
+        try
+        {
+            if (Request.QueryString.HasKeys())
+            {
+                qrystrng = Convert.ToString(Request.QueryString["Control"]);
+            }
+            if (qrystrng == "10" || qrystrng == "11")
+            {
+                if (rcmb_BusinessUnit.SelectedIndex > 0)
+                {
+                    Load_Directorate();
+                }
+                else
+                {
+                    rcmb_Directorate.Items.Clear();
+                    rcmb_Directorate.Text = string.Empty;
+                    rcmb_Department.Items.Clear();
+                    rcmb_Department.Text = string.Empty;
+                    //rcmb_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+                    //rcmb_Department.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+                    // rad_Directorate.SelectedIndex = 0;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void rcmb_Directorate_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            string qrystrng = String.Empty;
+            if (Request.QueryString.HasKeys())
+            {
+                qrystrng = Convert.ToString(Request.QueryString["Control"]);
+            }
+            if (qrystrng == "11")
+            {
+                if (rcmb_Directorate.SelectedIndex > 0)
+                {
+                    LoadDepartments();
+                }
+                else
+                {
+                    rcmb_Department.Items.Clear();
+                    rcmb_Department.Text = string.Empty;
+                    //rcmb_Department.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Generate_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string control = String.Empty;
+            if (Request.QueryString.HasKeys())
+            {
+                control = Convert.ToString(Request.QueryString["control"]);
+            }
+            if (control == "1" || control == "2" || control == "3" || control == "4")
+            {
+
+                if (control == "1" || control == "2")
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPop('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "','" + Convert.ToString(rcmb_SalStruct.SelectedValue) + "','" + Convert.ToString(Request.QueryString["Control"]) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopE('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "', '" + Convert.ToString(rcmb_SalStruct.SelectedValue) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+                }
+
+            }
+
+            else if (control == "5")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopC('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "', '" + Convert.ToString(rcmb_County.SelectedValue) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+
+            }
+            else if (control == "6" || control == "12" || control == "13")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopEC('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "', '" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+            }
+            else if (control == "7")
+            {
+                if (txt_From.Text==string.Empty)
+                {
+                    ShowMessage(this, "Please Enter From Value");
+                    return;
+                }
+                if (txt_To.Text == string.Empty)
+                {
+                    ShowMessage(this, "Please Enter To Value");
+                    return;
+                }
+                if (Convert.ToInt32(txt_To.Text) < Convert.ToInt32(txt_From.Text))
+                {
+                    ShowMessage(this, "To Value Must be Greater than or Equal to From Value ");
+                    return;
+                }
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopA('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "','" + Convert.ToString(txt_From.Text) + "','" + Convert.ToString(txt_To.Text) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+            }
+            else if (control == "8")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopT('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "', '" + Convert.ToString(rcmb_Tribe.SelectedValue) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+            }
+            else if (control == "9")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopl('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "', '" + Convert.ToString(Request.QueryString["Control"]) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+            }
+            else if (control == "10")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopDI('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "','" + Convert.ToString(rcmb_Directorate.SelectedValue) + "','" + Convert.ToString(Request.QueryString["Control"]) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+            }
+            else if (control == "11")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPopDE('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "','" + Convert.ToString(rcmb_Directorate.SelectedValue) + "','" + Convert.ToString(rcmb_Department.SelectedValue) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+            }
+            else if (control == "14")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPop('" + Convert.ToInt32(Session["ORG_ID"]) + "','" + Convert.ToString(rcmb_BusinessUnit.SelectedValue) + "','" + Convert.ToString(rcmb_SalStruct.SelectedValue) + "','" + Convert.ToString(ddl_EmpStatus.SelectedValue) + "','" + Convert.ToString(Request.QueryString["Control"]) + "');", true);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+
+    }
+
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            rcmb_BusinessUnit.ClearSelection();
+            rcmb_Directorate.Items.Clear();
+            rcmb_Directorate.Text = string.Empty;
+            rcmb_Department.Items.Clear();
+            rcmb_Department.Text = string.Empty;
+            rcmb_SalStruct.SelectedIndex = 0;
+            ddl_EmpStatus.SelectedIndex = -1;
+            rcmb_County.ClearSelection();
+            rcmb_Tribe.ClearSelection();
+            txt_From.Text = string.Empty;
+            txt_To.Text = string.Empty;
+            rcmb_PaymentMode.SelectedIndex = 0;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeList", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    public static void ShowMessage(Control ctrl, string Msg)
+    {
+        ScriptManager.RegisterStartupScript(ctrl, ctrl.GetType(), Guid.NewGuid().ToString(), "alert('" + Msg + "');", true);
+    }
+
+}

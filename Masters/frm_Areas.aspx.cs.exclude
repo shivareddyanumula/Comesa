@@ -1,0 +1,349 @@
+﻿using SMHR;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Telerik.Web.UI;
+
+public partial class Masters_frm_Areas : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!(IsPostBack))
+        {
+            LoadEquipmentsGrid();
+            //LoadBusinessUnit();
+        }
+    }
+    protected void Load_Directorate()
+    {
+        rad_Directorate.Items.Clear();
+        if (Convert.ToString(Session["ORG_ID"]) != string.Empty)
+        {
+            if (rcmb_EmpReg_BU.SelectedIndex > 0)
+            {
+                SMHR_DIRECTORATE _obj_Smhr_Directorate = new SMHR_DIRECTORATE();
+                _obj_Smhr_Directorate.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_Directorate.BUSINESSUNIT_ID = Convert.ToInt32(rcmb_EmpReg_BU.SelectedValue);
+                DataTable DT = BLL.get_Directorate(_obj_Smhr_Directorate);
+                rad_Directorate.DataTextField = "DIRECTORATE_CODE";
+                rad_Directorate.DataValueField = "DIRECTORATE_ID";
+                rad_Directorate.DataSource = DT;
+                rad_Directorate.DataBind();
+                rad_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+            }
+            else
+            {
+                rad_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+            }
+        }
+        else
+        {
+            rad_Directorate.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+        }
+
+    }
+    private void LoadDivision()
+    {
+        if (rad_Department.SelectedValue != null)
+        {
+            rad_SubDepartment.Items.Clear();
+            _obj_SMHR_BusinessUnit = new SMHR_BUSINESSUNIT();
+            _obj_SMHR_BusinessUnit.OPERATION = operation.Select1;
+            _obj_SMHR_BusinessUnit.BUID = Convert.ToInt32(rcmb_EmpReg_BU.SelectedValue);
+            if (rad_Department.SelectedIndex > 0)
+            {
+                _obj_SMHR_BusinessUnit.DEPARTMENT_ID = Convert.ToInt32(rad_Department.SelectedValue);
+            }
+            else
+            {
+                _obj_SMHR_BusinessUnit.DEPARTMENT_ID = 0;
+            }
+            _obj_SMHR_BusinessUnit.DIRECTORATE_ID = Convert.ToInt32(rad_Directorate.SelectedValue);
+            _obj_SMHR_BusinessUnit.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable Dt_Divisions = BLL.Get_Divisions(_obj_SMHR_BusinessUnit);
+            if (Dt_Divisions.Rows.Count > 0)
+            {
+
+                rad_SubDepartment.DataSource = Dt_Divisions;
+                rad_SubDepartment.DataTextField = "SMHR_DIV_CODE";
+                rad_SubDepartment.DataValueField = "SMHR_DIV_ID";
+                rad_SubDepartment.DataBind();
+            }
+            rad_SubDepartment.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+        else
+            rad_SubDepartment.Items.Clear();
+    }
+    protected void rcmb_EmpReg_BU_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (rcmb_EmpReg_BU.SelectedIndex > 0)
+        {
+            Load_Directorate();
+        }
+        else
+        {
+            rad_Directorate.ClearSelection();
+            rad_Directorate.Items.Clear();
+            rad_Directorate.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+            rad_Department.ClearSelection();
+            rad_Department.Items.Clear();
+            rad_Department.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+            rad_SubDepartment.Items.Clear();
+            rad_SubDepartment.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+    }
+    protected void rad_SubDepartment_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (rad_SubDepartment.SelectedIndex > 0)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+    protected void rad_Department_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        if (rad_Department.SelectedIndex > 0)
+        {
+            LoadDivision();
+
+        }
+        else
+        {
+            rad_SubDepartment.ClearSelection();
+            rad_SubDepartment.Items.Clear();
+            rad_SubDepartment.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+        }
+    }
+    protected void rad_Directorate_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        rad_Department.Items.Clear();
+        if (rad_Directorate.SelectedIndex > 0)
+        {
+            LoadDepartment();
+        }
+        else
+        {
+            rad_Department.Items.Clear();
+            //rad_Department.Items.Insert(0, new RadComboBoxItem("Select", "0"));           
+            rad_SubDepartment.Items.Clear();
+            rad_SubDepartment.Items.Insert(0, new RadComboBoxItem("Select", "0"));
+
+        }
+    }
+    private void LoadBusinessUnit()
+    {
+        _obj_SMHR_BusinessUnit = new SMHR_BUSINESSUNIT();
+        try
+        {
+            if ((Convert.ToInt32(Session["EMP_ID"]) == 0))
+            {
+                rcmb_EmpReg_BU.Items.Clear();
+                _obj_SMHR_LoginInfo = new SMHR_LOGININFO();
+                _obj_SMHR_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_SMHR_LoginInfo.LOGIN_ID = Convert.ToInt32(Session["USER_ID"]);
+                DataTable dt_BUDetails = BLL.get_Business_Units(_obj_SMHR_LoginInfo);
+                if (dt_BUDetails.Rows.Count > 0)
+                {
+                    rcmb_EmpReg_BU.DataSource = dt_BUDetails;
+                    rcmb_EmpReg_BU.DataValueField = "BUSINESSUNIT_ID";
+                    rcmb_EmpReg_BU.DataTextField = "BUSINESSUNIT_CODE";
+                    rcmb_EmpReg_BU.DataBind();
+                }
+                rcmb_EmpReg_BU.Items.Insert(0, new RadComboBoxItem("Select"));
+
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_jobrequisition", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+            return;
+        }
+    }
+    private void LoadDepartment()
+    {
+        if (rcmb_EmpReg_BU.SelectedIndex != 0)
+        {
+            obj_SMHR_Department = new SMHR_DEPARTMENT();
+            obj_SMHR_Department.MODE = 7;
+            obj_SMHR_Department.DIRECTORATE_ID = Convert.ToInt32(rad_Directorate.SelectedValue);
+            obj_SMHR_Department.BUID = Convert.ToInt32(rcmb_EmpReg_BU.SelectedValue);
+            DataTable dt = BLL.get_Department(obj_SMHR_Department);
+            if (dt.Rows.Count > 0)
+            {
+                rad_Department.DataSource = dt;
+                rad_Department.DataTextField = "DEPARTMENT_NAME";
+                rad_Department.DataValueField = "DEPARTMENT_ID";
+                rad_Department.DataBind();
+                rad_Department.Items.Insert(0, new RadComboBoxItem("Select"));
+            }
+            else
+            {
+                rfv_Department.Enabled = false;
+                rad_Department.Items.Insert(0, new RadComboBoxItem("Select"));
+            }
+        }
+        else
+        {
+            rad_Department.Items.Insert(0, new RadComboBoxItem("Select"));
+
+        }
+    }
+    protected void BTN_SAVE_Click(object sender, EventArgs e)
+    {
+        bool status = false;
+        switch (((Button)sender).ID.ToUpper())
+        {
+            case "BTN_SAVE":
+                _obj_smhr_equipment = new SMHR_EQUIPMENT();
+                _obj_smhr_equipment.OPERATION = operation.Insert;
+                _obj_smhr_equipment.EQUIPMENT_NAME = Convert.ToString(rad_EquipmentName.Text);
+                _obj_smhr_equipment.EQUIPMENT_EXPIRYDATE = Convert.ToDateTime(rdtp_ExpiryDate.SelectedDate);
+
+                _obj_smhr_equipment.EQUIPMENT_DIRECTORATE_ID = Convert.ToInt32(rad_Directorate.SelectedValue);
+                if (rad_Department.SelectedIndex > 0)
+                {
+                    _obj_smhr_equipment.EQUIPMENT_DEPARTMENT_ID = Convert.ToInt32(rad_Department.SelectedValue);
+                }
+                else
+                {
+                    _obj_smhr_equipment.EQUIPMENT_DEPARTMENT_ID = 0;
+                }
+                if (rad_SubDepartment.SelectedIndex > 0)
+                {
+                    _obj_smhr_equipment.EQUIPMENT_SUBDEPARTMNET = Convert.ToInt32(rad_SubDepartment.SelectedValue);
+                }
+                else
+                {
+                    _obj_smhr_equipment.EQUIPMENT_SUBDEPARTMNET = 0;
+                }
+                _obj_smhr_equipment.EQUIPMENT_CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+                _obj_smhr_equipment.EQUIPMENT_CREATEDDATE = DateTime.Now;
+                _obj_smhr_equipment.EQUIPMENT_ISACTIVE = Convert.ToBoolean(rad_IsActive.Checked);
+                status = BLL.set_EquipmentMaster(_obj_smhr_equipment);
+                if (status == true)
+                {
+                    BLL.ShowMessage(this, "Information Successfully Saved");
+                }
+                break;
+            case "BTN_UPDATE":
+                _obj_smhr_equipment = new SMHR_EQUIPMENT();
+                _obj_smhr_equipment.OPERATION = operation.Update;
+                _obj_smhr_equipment.EQUIPMENT_NAME = Convert.ToString(rad_EquipmentName.Text);
+                _obj_smhr_equipment.EQUIPMENT_EXPIRYDATE = Convert.ToDateTime(rdtp_ExpiryDate.SelectedDate);
+                _obj_smhr_equipment.EQUIPMENT_DIRECTORATE_ID = Convert.ToInt32(rad_Directorate.SelectedValue);
+                if (rad_Department.SelectedIndex > 0)
+                {
+                    _obj_smhr_equipment.EQUIPMENT_DEPARTMENT_ID = Convert.ToInt32(rad_Department.SelectedValue);
+                }
+                else
+                {
+                    _obj_smhr_equipment.EQUIPMENT_DEPARTMENT_ID = 0;
+                }
+                if (rad_SubDepartment.SelectedIndex > 0)
+                {
+                    _obj_smhr_equipment.EQUIPMENT_SUBDEPARTMNET = Convert.ToInt32(rad_SubDepartment.SelectedValue);
+                }
+                else
+                {
+                    _obj_smhr_equipment.EQUIPMENT_SUBDEPARTMNET = 0;
+                }
+                _obj_smhr_equipment.EQUIPMENT_MODIFIEDBY = Convert.ToInt32(Session["USER_ID"]);
+                _obj_smhr_equipment.EQUIPMENT_MODIFIEDDATE = DateTime.Now;
+                _obj_smhr_equipment.EQUIPMENT_ID = Convert.ToInt32(lbl_EquipmentID.Text);
+                _obj_smhr_equipment.EQUIPMENT_ISACTIVE = Convert.ToBoolean(rad_IsActive.Checked);
+                status = BLL.set_EquipmentMaster(_obj_smhr_equipment);
+                if (status == true)
+                {
+                    BLL.ShowMessage(this, "Information Updated Successfully");
+                }
+                break;
+        }
+        Rm_HDPT_page.SelectedIndex = 0;
+        LoadEquipmentsGrid();
+        Rg_Equipment.DataBind();
+    }
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        ClearControls();
+    }
+    protected void lnk_Edit(object sender, CommandEventArgs e)
+    {
+        ClearControls();
+        rcmb_EmpReg_BU.Enabled = false;
+        rad_Directorate.Enabled = false;
+        rad_Department.Enabled = false;
+        rad_SubDepartment.Enabled = false;
+        rad_EquipmentName.Enabled = false;
+        rdtp_ExpiryDate.Enabled = false;
+        rad_IsActive.Enabled = true;
+        _obj_smhr_equipment = new SMHR_EQUIPMENT();
+        _obj_smhr_equipment.EQUIPMENT_ID = Convert.ToInt32(e.CommandArgument);
+        DataTable dt = BLL.get_Equipment(_obj_smhr_equipment);
+        LoadBusinessUnit();
+        lbl_EquipmentID.Text = Convert.ToString(dt.Rows[0]["Equipment_id"]);
+        rad_EquipmentName.Text = Convert.ToString(dt.Rows[0]["Equipment_name"]);
+        rad_IsActive.Checked = Convert.ToBoolean(dt.Rows[0]["EQUIPMENT_ISACTIVE"]);
+        rcmb_EmpReg_BU.SelectedValue = Convert.ToString(dt.Rows[0]["BUSINESSUNIT_ID"]);
+        Load_Directorate();
+        rad_Directorate.SelectedValue = Convert.ToString(dt.Rows[0]["EQUIPMENT_DIRECTORATE_ID"]);
+        LoadDepartment();
+        rad_Department.SelectedValue = Convert.ToString(dt.Rows[0]["EQUIPMENT_DEPARTMENT_ID"]);
+        LoadDivision();
+        rad_SubDepartment.SelectedValue = Convert.ToString(dt.Rows[0]["EQUIPMENT_SUBDEPARTMNET"]);
+        rdtp_ExpiryDate.SelectedDate = Convert.ToDateTime(dt.Rows[0]["EQUIPMENT_EXPIRYDATE"]);
+        Rm_HDPT_page.SelectedIndex = 1;
+        rad_IsActive.Enabled = true;
+        BTN_SAVE.Visible = false;
+        btn_Update.Visible = true;
+
+    }
+    protected void ClearControls()
+    {
+        rad_Directorate.Items.Clear();
+        rad_Directorate.Items.Insert(0, new RadComboBoxItem("Select"));
+        rad_Department.Items.Clear();
+        rad_Department.Items.Insert(0, new RadComboBoxItem("Select"));
+        rad_SubDepartment.Items.Clear();
+        rad_SubDepartment.Items.Insert(0, new RadComboBoxItem("Select"));
+        rad_EquipmentName.Text = string.Empty;
+        BTN_SAVE.Visible = false;
+        rad_IsActive.Checked = false;
+        Rm_HDPT_page.SelectedIndex = 0;
+    }
+    protected void lnk_Add_Command(object sender, CommandEventArgs e)
+    {
+        ClearControls();
+        rad_EquipmentName.Enabled = true;
+        rcmb_EmpReg_BU.ClearSelection();
+        LoadBusinessUnit();
+        rcmb_EmpReg_BU.Enabled = true;
+        rad_IsActive.Enabled = true;
+        rad_SubDepartment.Enabled = true;
+        rad_Department.Enabled = true;
+        rad_Directorate.Enabled = true;
+        BTN_SAVE.Visible = true;
+        btn_Cancel.Visible = true;
+        btn_Update.Visible = false;
+        rad_IsActive.Checked = true;
+        rad_IsActive.Enabled = false;
+        rdtp_ExpiryDate.Clear();
+        rdtp_ExpiryDate.Enabled = true;
+        Rm_HDPT_page.SelectedIndex = 1;
+
+    }
+    protected void LoadEquipmentsGrid()
+    {
+        _obj_smhr_equipment = new SMHR_EQUIPMENT();
+        _obj_smhr_equipment.OPERATION = operation.GET_ALLEQUIPMENTS;
+        Rg_Equipment.DataSource = BLL.get_AllEquipments(_obj_smhr_equipment);
+        Rg_Equipment.DataBind();
+    }
+}

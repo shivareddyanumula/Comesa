@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Configuration;
+using System.Net;
+using SMHR;
+using Telerik.Web.UI;
+using System.Data;
+
+public partial class Reportss_ProvisionalPayslipBefore : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        try
+        {
+            Page.Validate();
+            if (!Page.IsPostBack)
+            {
+                LoadEmployees();
+            }
+        }
+          
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "ProvisionalReportBefore", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    private void LoadEmployees()
+    {
+        try
+        {
+            DataTable dtEMPData = BLL.get_EmployeeBySearchString(Convert.ToInt32(Session["ORG_ID"]), string.Empty);
+            rcmb_Employee.DataSource = dtEMPData;
+            rcmb_Employee.DataTextField =  "EMPNAME";
+            rcmb_Employee.DataValueField = "EMP_ID";
+            rcmb_Employee.DataBind();
+            rcmb_Employee.Items.Insert(0, new RadComboBoxItem("Select"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeData", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+
+    protected void rcmb_Employee_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        DataTable dtEMPData1 = BLL.get_Employeeorgbusiness(Convert.ToInt32(rcmb_Employee.SelectedValue));
+        Session["emp_businessunit_id"] = dtEMPData1.Rows[0]["emp_businessunit_id"].ToString();
+        Session["emp_organistation_id"] = dtEMPData1.Rows[0]["emp_organisation_id"].ToString();
+
+
+    }
+
+    protected void btn_Generate_Click(object sender, EventArgs e)
+    {
+        try
+        {
+
+            DataTable dtEMPData2 = BLL.USP_SMHR_EMP_BEFORE_PROVISION_TEMP(Convert.ToInt32(rcmb_Employee.SelectedValue));
+            DataTable dtEMPData3 = BLL.USP_SMHR_PERIODDETAILS_emp("GetDateData");
+            Session["PRDDTL_PERIOD_ID"] = dtEMPData3.Rows[0]["PRDDTL_PERIOD_ID"].ToString();
+            Session["PRDDTL_ID"] = dtEMPData3.Rows[0]["PRDDTL_ID"].ToString();
+
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "ShowPop('" + Convert.ToString(rcmb_Employee.SelectedValue) + "','" + Session["emp_organistation_id"] + "', '" + Session["emp_businessunit_id"] + "', '" + Session["PRDDTL_PERIOD_ID"] + Session["PRDDTL_ID"] + "');", true);
+          
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "EmployeeData", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            rcmb_Employee.SelectedIndex = 0;
+            
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "ProvisionalPayslipBefore", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+
+    }
+}

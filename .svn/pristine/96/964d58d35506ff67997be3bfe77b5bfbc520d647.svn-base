@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btn_Cancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btn_Save.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="btn_Update.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="lblAddress.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="lblApplicant.Text" xml:space="preserve">
+    <value>Applicant&amp;nbsp;Details</value>
+  </data>
+  <data name="lblBloodGroup.Text" xml:space="preserve">
+    <value>Blood&amp;nbsp;Group</value>
+  </data>
+  <data name="lblCategory.Text" xml:space="preserve">
+    <value>Qualification</value>
+  </data>
+  <data name="lblCode.Text" xml:space="preserve">
+    <value>Applicant&amp;nbsp;Code</value>
+  </data>
+  <data name="lblCompanyName.Text" xml:space="preserve">
+    <value>Company&amp;nbsp;Name</value>
+  </data>
+  <data name="lblConCompany.Text" xml:space="preserve">
+    <value>Company&amp;nbsp;Name</value>
+  </data>
+  <data name="lblContactPerson.Text" xml:space="preserve">
+    <value>Contact&amp;nbsp;Person</value>
+  </data>
+  <data name="lblDOB.Text" xml:space="preserve">
+    <value>Date&amp;nbsp;of&amp;nbsp;Birth</value>
+  </data>
+  <data name="lblFirstName.Text" xml:space="preserve">
+    <value>First&amp;nbsp;Name</value>
+  </data>
+  <data name="lblGender.Text" xml:space="preserve">
+    <value>Gender</value>
+  </data>
+  <data name="lblGrade.Text" xml:space="preserve">
+    <value>Grade</value>
+  </data>
+  <data name="lblInstitute.Text" xml:space="preserve">
+    <value>Institute</value>
+  </data>
+  <data name="lblJoinDate.Text" xml:space="preserve">
+    <value>Joining&amp;nbsp;Date</value>
+  </data>
+  <data name="lblJoinDesc.Text" xml:space="preserve">
+    <value>Join&amp;nbsp;Position</value>
+  </data>
+  <data name="lblJoinSalary.Text" xml:space="preserve">
+    <value>Join&amp;nbsp;Salary</value>
+  </data>
+  <data name="lblLanguage.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="lblLastName.Text" xml:space="preserve">
+    <value>Last&amp;nbsp;Name</value>
+  </data>
+  <data name="lblLastUsed.Text" xml:space="preserve">
+    <value>Last&amp;nbsp;Used</value>
+  </data>
+  <data name="lblMaritalStatus.Text" xml:space="preserve">
+    <value>Marital&amp;nbsp;Status</value>
+  </data>
+  <data name="lblMiddleName.Text" xml:space="preserve">
+    <value>Middle&amp;nbsp;Name</value>
+  </data>
+  <data name="lblNationality.Text" xml:space="preserve">
+    <value>Nationality</value>
+  </data>
+  <data name="lblPercentage.Text" xml:space="preserve">
+    <value>Percentage</value>
+  </data>
+  <data name="lblPhoneNumber.Text" xml:space="preserve">
+    <value>Phone&amp;nbsp;Number</value>
+  </data>
+  <data name="lblReason.Text" xml:space="preserve">
+    <value>Reason&amp;nbsp;for&amp;nbsp;Relieving</value>
+  </data>
+  <data name="lblReferred.Text" xml:space="preserve">
+    <value>Referred</value>
+  </data>
+  <data name="lblRelDesc.Text" xml:space="preserve">
+    <value>Relieving&amp;nbsp;Position</value>
+  </data>
+  <data name="lblRelieveDate.Text" xml:space="preserve">
+    <value>Relieving&amp;nbsp;Date</value>
+  </data>
+  <data name="lblReligion.Text" xml:space="preserve">
+    <value>Religion</value>
+  </data>
+  <data name="lblRemarks.Text" xml:space="preserve">
+    <value>Remarks</value>
+  </data>
+  <data name="lblSkill.Text" xml:space="preserve">
+    <value>Skill</value>
+  </data>
+  <data name="lblStatus.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="lbltitle.Text" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="lbl_Address.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="lbl_conserial.Text" xml:space="preserve">
+    <value>Serial</value>
+  </data>
+  <data name="lbl_Employee.Text" xml:space="preserve">
+    <value>Employee</value>
+  </data>
+  <data name="lbl_Read.Text" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="lbl_Relationship.Text" xml:space="preserve">
+    <value>Relationship</value>
+  </data>
+  <data name="lbl_Serial.Text" xml:space="preserve">
+    <value>Serial</value>
+  </data>
+  <data name="lbl_Speak.Text" xml:space="preserve">
+    <value>Speak</value>
+  </data>
+  <data name="lbl_Understand.Text" xml:space="preserve">
+    <value>Understand</value>
+  </data>
+  <data name="lbl_Write.Text" xml:space="preserve">
+    <value>Write</value>
+  </data>
+  <data name="lblRelSalary.Text" xml:space="preserve">
+    <value>Relieving&amp;nbsp;Salary</value>
+  </data>
+  <data name="lblYearPass.Text" xml:space="preserve">
+    <value>Year&amp;nbsp;of&amp;nbsp;Pass</value>
+  </data>
+  <data name="lbl_Upload.Text" xml:space="preserve">
+    <value>Upload Resume</value>
+  </data>
+  <data name="lbl_Category.Text" xml:space="preserve">
+    <value>Qualification</value>
+  </data>
+  <data name="lbl_Grade.Text" xml:space="preserve">
+    <value>Grade</value>
+  </data>
+  <data name="lbl_Percentage.Text" xml:space="preserve">
+    <value>Percentage (%)</value>
+  </data>
+  <data name="lbl_YearPass.Text" xml:space="preserve">
+    <value>Year of Pass</value>
+  </data>
+  <data name="rfv_Category.ErrorMessage" xml:space="preserve">
+    <value>Choose Qualification</value>
+  </data>
+  <data name="rfv_grade.ErrorMessage" xml:space="preserve">
+    <value>Choose Grade</value>
+  </data>
+  <data name="rfv_Institute.ErrorMessage" xml:space="preserve">
+    <value>Enter Institute/University</value>
+  </data>
+  <data name="rfv_LastUsed.ErrorMessage" xml:space="preserve">
+    <value>Enter Skill Last Used Date</value>
+  </data>
+  <data name="rfv_percentage.ErrorMessage" xml:space="preserve">
+    <value>Enter Percentage</value>
+  </data>
+  <data name="rfv_Skill.ErrorMessage" xml:space="preserve">
+    <value>Choose Skill</value>
+  </data>
+  <data name="rfv_yearofpass.ErrorMessage" xml:space="preserve">
+    <value>Enter Year of Pass</value>
+  </data>
+  <data name="rfv_Address_C.ErrorMessage" xml:space="preserve">
+    <value>Enter Contact Address</value>
+  </data>
+  <data name="rfv_Company_C.ErrorMessage" xml:space="preserve">
+    <value>Enter Company Name</value>
+  </data>
+  <data name="rfv_ContactName.ErrorMessage" xml:space="preserve">
+    <value>Enter Contact Name</value>
+  </data>
+  <data name="rfv_PhoneNumber.ErrorMessage" xml:space="preserve">
+    <value>Enter Phone Number</value>
+  </data>
+  <data name="rfv_Serail_C.ErrorMessage" xml:space="preserve">
+    <value>Enter Contact Serial</value>
+  </data>
+  <data name="rfv_Language.ErrorMessage" xml:space="preserve">
+    <value>Choose Language</value>
+  </data>
+  <data name="rfv_CompanyName.ErrorMessage" xml:space="preserve">
+    <value>Enter Experience Company Name</value>
+  </data>
+  <data name="rfv_Employee.ErrorMessage" xml:space="preserve">
+    <value>Choose Employee</value>
+  </data>
+  <data name="rfv_JoinDate.ErrorMessage" xml:space="preserve">
+    <value>Enter Join Date</value>
+  </data>
+  <data name="rfv_JoinDesc.ErrorMessage" xml:space="preserve">
+    <value>Enter Join Position</value>
+  </data>
+  <data name="rfv_JoinSalary.ErrorMessage" xml:space="preserve">
+    <value>Enter Join Salary</value>
+  </data>
+  <data name="rfv_ReasonRelieve.ErrorMessage" xml:space="preserve">
+    <value>Enter Reason for Relieving</value>
+  </data>
+  <data name="rfv_Relationship.ErrorMessage" xml:space="preserve">
+    <value>Choose Relationship</value>
+  </data>
+  <data name="rfv_RelDesc.ErrorMessage" xml:space="preserve">
+    <value>Enter Relieving Position</value>
+  </data>
+  <data name="rfv_RelieveDate.ErrorMessage" xml:space="preserve">
+    <value>Enter Relieving Date</value>
+  </data>
+  <data name="rfv_RelSalary.ErrorMessage" xml:space="preserve">
+    <value>Enter Relieving Salary</value>
+  </data>
+  <data name="rfv_Serial_E.ErrorMessage" xml:space="preserve">
+    <value>Enter Experience Serial </value>
+  </data>
+  <data name="rfv_BU.ErrorMessage" xml:space="preserve">
+    <value>Choose BusinessUnit</value>
+  </data>
+</root>

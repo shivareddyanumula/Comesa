@@ -1,0 +1,1 @@
+﻿setTimeout("myBar.loaded('Validating Information')", 1500);

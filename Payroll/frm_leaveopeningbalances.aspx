@@ -1,0 +1,135 @@
+<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true"
+    CodeFile="frm_leaveopeningbalances.aspx.cs" Inherits="Payroll_frm_leaveopeningbalances"
+    Culture="auto" UICulture="auto" %>
+
+<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="cphDefault" runat="Server">
+    <br />
+    <telerik:RadMultiPage ID="rmpLOB" runat="server" SelectedIndex="0">
+        <telerik:RadPageView ID="rpvLOBMain" runat="server" Selected="true">
+            <table align="center">
+                <tr>
+                    <td align="center" colspan="3">
+                        <asp:Label ID="Label1" runat="server" Text="Leave Opening Balances" Font-Bold="true"></asp:Label>
+                        <br />
+                        <br />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <asp:Label ID="lbl_BusinessUnit" runat="server" Text="Business&nbsp;Unit"></asp:Label>
+                    </td>
+                    <td>
+                        <b>:</b>
+                    </td>
+                    <td>
+                        <telerik:RadComboBox ID="rcmb_BUID" runat="server" Skin="WebBlue" AutoPostBack="true"
+                            MarkFirstMatch="true" Filter="Contains"
+                            OnSelectedIndexChanged="rcmb_BUID_SelectedIndexChanged">
+                        </telerik:RadComboBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <asp:Label ID="Label3" runat="server" Text="Period"></asp:Label>
+                    </td>
+                    <td>
+                        <b>:</b>
+                    </td>
+                    <td>
+                        <telerik:RadComboBox ID="rcmb_Period" runat="server" Skin="WebBlue" AutoPostBack="true"
+                            MarkFirstMatch="true" Filter="Contains"
+                            OnSelectedIndexChanged="rcmb_Period_SelectedIndexChanged">
+                        </telerik:RadComboBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <asp:Label ID="lblLeaveStruct" runat="server" Text="Leave Structure"></asp:Label>
+                    </td>
+                    <td>
+                        <b>:</b>
+                    </td>
+                    <td>
+                        <telerik:RadComboBox ID="rcmbLeaveStruct" runat="server" Skin="WebBlue" AutoPostBack="true"
+                            MarkFirstMatch="true" Filter="Contains"
+                            OnSelectedIndexChanged="rcmbLeaveStruct_SelectedIndexChanged">
+                        </telerik:RadComboBox>
+                    </td>
+                </tr>
+            </table>
+            <table align="center">
+                <tr>
+                    <td>
+                        <telerik:RadGrid ID="Rg_Details" runat="server" Skin="WebBlue" AllowPaging="true"
+                            OnNeedDataSource="Rg_Details_NeedDataSource" AllowFilteringByColumn="true" PageSize="10">
+                            <MasterTableView CommandItemDisplay="None">
+                                <Columns>
+                                    <telerik:GridTemplateColumn UniqueName="ColEdit" AllowFiltering="false">
+                                        <ItemTemplate>
+                                            <asp:LinkButton ID="lnk_Edit" runat="server" CommandArgument='<%# Eval("EMPLOYEE ID") %>'
+                                                OnCommand="lnk_Edit_Command" meta:resourcekey="lnk_Edit" CommandName='<%# Eval("CURRENTBALANCE") %>'>Edit</asp:LinkButton>
+                                        </ItemTemplate>
+                                    </telerik:GridTemplateColumn>
+                                </Columns>
+                            </MasterTableView>
+                        </telerik:RadGrid>
+                        <%--<telerik:RadGrid ID="Rg_Details" runat="server" AutoGenerateEditColumn="true" Skin="WebBlue"
+                    OnColumnCreated="Rg_Details_ColumnCreated" OnNeedDataSource="Rg_Details_NeedDataSource"
+                    OnUpdateCommand="Rg_Details_UpdateCommand" EnableViewState="true" OnEditCommand="Rg_Details_EditCommand"
+                    OnPreRender="Rg_Details_PreRender" ClientSettings-Scrolling-AllowScroll="true"
+                    ClientSettings-Scrolling-UseStaticHeaders="true">
+                    <MasterTableView EditMode="EditForms" AutoGenerateColumns="true">
+                    </MasterTableView>
+                </telerik:RadGrid>--%>
+                    </td>
+                </tr>
+            </table>
+            <table align="center">
+                <tr runat="server" style="display: none">
+                    <td>
+                        <asp:Button ID="btn_Update" runat="server" Text="Update" Visible="false" OnClick="btn_Update_Click" />
+                        <%--<asp:Button ID="btn_Save" runat="server" Text="Save" Visible="false" OnClick="btn_Save_Click" />--%>
+                        <asp:Button ID="btn_Finalise" runat="server" Text="Save" Visible="false" OnClick="btn_Finalise_Click" />
+                        <asp:Button ID="btn_Cancel" runat="server" Text="Cancel" Visible="false"
+                            OnClick="btn_Cancel_Click" />
+                    </td>
+                </tr>
+            </table>
+        </telerik:RadPageView>
+        <telerik:RadPageView ID="rpvLOBControls" runat="server">
+            <table align="center">
+                <tr>
+                    <td>
+                        <asp:Label ID="lblEmp" runat="server" Text="Employee"></asp:Label>
+                    </td>
+                    <td>
+                        <b>:</b>
+                    </td>
+                    <td>
+                        <telerik:RadComboBox runat="server" ID="rcbEmp" Enabled="false" Filter="Contains"></telerik:RadComboBox>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <asp:Label ID="lblOpenBal" runat="server" Text="Open Balance"></asp:Label>
+                    </td>
+                    <td>
+                        <b>:</b>
+                    </td>
+                    <td>
+                        <telerik:RadNumericTextBox runat="server" ID="rntbOpenBal" MinValue="0" MaxLength="4"></telerik:RadNumericTextBox>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr runat="server">
+                    <td colspan="4" align="center">
+                        <asp:Button ID="btnUpdate" runat="server" Text="Update" OnClick="btnUpdate_Click" />
+                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" />
+                    </td>
+                </tr>
+            </table>
+        </telerik:RadPageView>
+    </telerik:RadMultiPage>
+</asp:Content>

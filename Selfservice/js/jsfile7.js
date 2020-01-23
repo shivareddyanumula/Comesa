@@ -1,0 +1,1 @@
+﻿setTimeout("myBar.loaded('Successfull')", 1500);

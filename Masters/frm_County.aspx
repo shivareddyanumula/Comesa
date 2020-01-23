@@ -1,0 +1,227 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true" CodeFile="frm_County.aspx.cs" Inherits="Masters_frm_County" Culture="auto"
+    UICulture="auto" %>
+
+<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+
+<asp:Content ID="cnt_County" ContentPlaceHolderID="cphDefault" runat="Server">
+    <telerik:RadAjaxManagerProxy ID="RAM_County" runat="server">
+        <AjaxSettings>
+            <telerik:AjaxSetting AjaxControlID="Rg_County">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="lnk_Edit">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="lnk_Add">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="btn_Cancel">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="btn_Save">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="btn_Update">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+        </AjaxSettings>
+    </telerik:RadAjaxManagerProxy>
+    <table align="center" style="vertical-align: top;">
+        <tr>
+            <td>
+                <telerik:RadWindowManager ID="RWM_POSTREPLY1" runat="server" Style="z-index: 8000">
+                </telerik:RadWindowManager>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <asp:Label ID="lbl_CountyHeader" runat="server" Text="District" Font-Bold="True"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <telerik:RadMultiPage ID="Rm_CY_page" runat="server" SelectedIndex="0" Style="z-index: 10"
+                    Width="990px" Height="490px" ScrollBars="Auto">
+                    <telerik:RadPageView ID="Rp_CY_ViewMain" runat="server" Selected="True">
+                        <asp:UpdatePanel ID="updPanel1" runat="server">
+                            <ContentTemplate>
+                                <table align="center" width="50%">
+                                    <tr>
+                                        <td>
+                                            <telerik:RadGrid ID="Rg_Counties" runat="server" AutoGenerateColumns="False"
+                                                GridLines="None" Skin="WebBlue" OnNeedDataSource="Rg_Counties_NeedDataSource"
+                                                AllowPaging="True" AllowFilteringByColumn="true">
+                                                <MasterTableView CommandItemDisplay="Top">
+                                                    <Columns>
+                                                        <telerik:GridBoundColumn DataField="County_ID" UniqueName="County_ID" HeaderText="ID"
+                                                            meta:resourcekey="County_ID" Visible="False">
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="COUNTRY_CODE" UniqueName="COUNTRY_CODE" HeaderText="Country"
+                                                            meta:resourcekey="COUNTRY_CODE">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="COUNTY_CODE" UniqueName="COUNTY_CODE" HeaderText="Name"
+                                                            meta:resourcekey="COUNTY_CODE">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="COUNTY_NAME" UniqueName="COUNTY_NAME" HeaderText="Description"
+                                                            meta:resourcekey="COUNTY_NAME">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridTemplateColumn UniqueName="ColEdit" meta:resourcekey="GridTemplateColumnResource1" AllowFiltering="false">
+                                                            <ItemTemplate>
+                                                                <asp:LinkButton ID="lnk_Edit" runat="server" CommandArgument='<%# Eval("COUNTY_ID") %>'
+                                                                    OnCommand="lnk_Edit_Command" meta:resourcekey="lnk_Edit">Edit</asp:LinkButton>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                    </Columns>
+                                                    <EditFormSettings>
+                                                        <EditColumn CancelImageUrl="Cancel.gif" EditImageUrl="Edit.gif" InsertImageUrl="Update.gif"
+                                                            UpdateImageUrl="Update.gif">
+                                                        </EditColumn>
+                                                    </EditFormSettings>
+                                                    <CommandItemTemplate>
+                                                        <div align="right">
+                                                            <asp:LinkButton ID="lnk_Add" runat="server" meta:resourceKey="lnk_Add" OnCommand="lnk_Add_Command">Add</asp:LinkButton>
+                                                        </div>
+                                                    </CommandItemTemplate>
+                                                </MasterTableView>
+                                                <PagerStyle AlwaysVisible="True" />
+                                                <FilterMenu Skin="WebBlue">
+                                                </FilterMenu>
+                                                <HeaderContextMenu Skin="WebBlue">
+                                                </HeaderContextMenu>
+                                            </telerik:RadGrid>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                            <%--  <table>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                    <td><a id="D2" runat="server"
+                                                        href="~/Masters/Importsheets/County_Template.xlsx">Download County Details Template</a> </td>
+                                                    <td><strong>:</strong></td>
+                                                    <td>
+                                                        <asp:FileUpload ID="FileUpload1" runat="server" />
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button ID="btn_Imp_Businessunit" runat="server" Text="Import"
+                                                            OnClick="Btn_Imp_Businessunit_click" />
+                                                    </td>
+                                                </tr>
+                                            </table>--%>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ContentTemplate>
+                            <Triggers>
+                                <%--<asp:PostBackTrigger ControlID="btn_Imp_Businessunit" />--%>
+                            </Triggers>
+                        </asp:UpdatePanel>
+                    </telerik:RadPageView>
+                    <telerik:RadPageView ID="Rp_CY_ViewDetails" runat="server">
+                        <table align="center" width="30%">
+                            <tr>
+                                <td colspan="3" align="center" style="font-weight: bold;"></td>
+                            </tr>
+                            <tr id="tr_rcmb_County" runat="server">
+                                <td id="Td1" runat="server" valign="top">
+                                    <asp:Label ID="lbl_Country" runat="server" Text="Country" meta:resourcekey="lbl_Country"></asp:Label>
+                                </td>
+                                <td id="Td2" runat="server" valign="top">
+                                    <b>:</b>
+                                </td>
+                                <td id="Td3" runat="server" valign="top">
+                                    <telerik:RadComboBox ID="rcmb_Country" runat="server" meta:resourcekey="rcmb_Country"
+                                        Skin="WebBlue" MaxHeight="250" Filter="Contains">
+                                    </telerik:RadComboBox>
+                                    <td>
+                                        <asp:RequiredFieldValidator ID="rfv_rcmb_Country" runat="server" ControlToValidate="rcmb_Country"
+                                            ErrorMessage="Please Select Country" InitialValue="Select" Text="*" ValidationGroup="Controls"></asp:RequiredFieldValidator>
+                                    </td>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    <asp:Label ID="lbl_CountyID" runat="server" Visible="False" meta:resourcekey="lbl_CountyID"></asp:Label>
+                                    <asp:Label ID="lbl_CountyCode" runat="server" Text="Name" meta:resourcekey="lbl_CountyCode"></asp:Label>
+                                </td>
+                                <td valign="top"><b>:</b>
+                                </td>
+                                <td valign="top">
+                                    <telerik:RadTextBox ID="rtxt_CountyCode" runat="server"
+                                        Skin="WebBlue" MaxLength="100">
+                                    </telerik:RadTextBox>
+                                    <td>
+                                        <asp:RequiredFieldValidator ID="rfv_rtxt_CountyCode" ControlToValidate="rtxt_CountyCode"
+                                            runat="server" ValidationGroup="Controls" ErrorMessage="Please Enter the Name"
+                                            meta:resourcekey="rfv_rtxt_CountyCode">*</asp:RequiredFieldValidator>
+                                        <asp:RegularExpressionValidator ID="rev_Code" runat="server" ControlToValidate="rtxt_CountyCode" ErrorMessage="Enter only Alphabets for County Name"
+                                            ValidationExpression="^[a-zA-Z0-9\s]+$" ValidationGroup="Controls">*</asp:RegularExpressionValidator>
+                                    </td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    <asp:Label ID="lbl_CountyName" runat="server" Text="Description" meta:resourcekey="lbl_CountyDesc"></asp:Label>
+                                </td>
+                                <td valign="top"><b>:</b>
+                                </td>
+                                <td valign="top">
+                                    <telerik:RadTextBox ID="rtxt_CountyName" runat="server"
+                                        Skin="WebBlue" MaxLength="100">
+                                    </telerik:RadTextBox>
+                                    <%--  <asp:RequiredFieldValidator ID="rfv_rtxt_CountyName" ControlToValidate="rtxt_CountyName"
+                                        runat="server" ValidationGroup="Controls" 
+                                        ErrorMessage="Name cannot be Empty" 
+                                        meta:resourcekey="rfv_rtxt_CountyName">*</asp:RequiredFieldValidator>--%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" colspan="3">
+                                    <asp:Button ID="btn_Update" runat="server" meta:resourcekey="btn_Edit" OnClick="btn_Save_Click"
+                                        Text="Update" Visible="False" ValidationGroup="Controls"  UseSubmitBehavior="false" /><%--OnClientClick="disableButton(this,'Controls')"--%>
+                                    <asp:Button ID="btn_Save" runat="server" meta:resourcekey="btn_Save" OnClick="btn_Save_Click"
+                                        Text="Save" Visible="False" ValidationGroup="Controls" UseSubmitBehavior="false" />
+                                    <asp:Button ID="btn_Cancel" runat="server" meta:resourcekey="btn_Cancel" OnClick="btn_Cancel_Click"
+                                        Text="Cancel" />
+                                    <asp:ValidationSummary ID="vs_County" runat="server" ShowMessageBox="True" ShowSummary="False"
+                                        ValidationGroup="Controls" />
+                                </td>
+                            </tr>
+                        </table>
+                    </telerik:RadPageView>
+                </telerik:RadMultiPage>
+            </td>
+        </tr>
+
+    </table>
+</asp:Content>
+<%--<asp:Content ID="Content2" ContentPlaceHolderID="cphDefault" Runat="Server">
+</asp:Content>--%>

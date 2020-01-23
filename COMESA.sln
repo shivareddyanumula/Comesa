@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "COMESA", ".", "{B5196341-78C9-4A08-B020-FFCFFD2B11CF}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_49696"
+		Debug.AspNetCompiler.PhysicalPath = "..\SVN_CODE_COMESA\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49696\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_49696"
+		Release.AspNetCompiler.PhysicalPath = "..\SVN_CODE_COMESA\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49696\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "49696"
+		SlnRelativePath = "..\SVN_CODE_COMESA\"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5196341-78C9-4A08-B020-FFCFFD2B11CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5196341-78C9-4A08-B020-FFCFFD2B11CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

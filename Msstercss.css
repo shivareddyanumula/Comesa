@@ -1,0 +1,544 @@
+
+/* CSS Document 
+
+body {
+	margin:0;
+	padding:0;
+}*/
+
+
+.header
+{
+	padding: 0;
+	width: 100%;
+	margin: 0 auto;
+	height: 148px;
+}
+
+.Inrhdrtopbg1
+{
+	width: 100%;
+	margin: 0 auto;
+	height: 28px;
+}
+
+.Inrhdrtopbg2
+{
+	padding: 0;
+	width: 100%;
+	margin: 0 auto;
+	height: 120px;
+}
+
+.Inrklogo
+{
+	width: 15%;
+	padding: 0px;
+	float: left;
+}
+
+.Inrktitle
+{
+	position: relative;
+	width: 62%;
+	float: left;
+	text-align: center;
+	vertical-align: middle;
+	margin-top: 35px;
+}
+
+.Inrsmhrlogo
+{
+	width: 20%;
+	padding-right:5px;
+	float: right;
+	text-align: right;
+}
+
+
+.redbg2
+{
+	width: 100%;
+	margin: 0 auto;
+	height: 30px;
+	background-image: url(images/redbg2.png);
+    background-color: #2965AE;
+	padding: 0;
+}
+
+.toptitle2
+{
+	width: 100%;
+	margin: 0 auto;
+	height: 28px;
+	font-family: candara;
+	font-size: 20px;
+	line-height: 20px;
+	color: #FFF; /*text-shadow: 2px 2px #1d1c1c;*/
+	padding-top: 2px;
+	text-align: center;
+}
+
+.toptitle3
+{
+	width: 70%;
+	margin: 0 auto;
+	height: 28px;
+	font-family: candara;
+	font-size: 18px;
+	line-height: 24px;
+	color: #FFF;
+	float: left;
+}
+
+
+
+.toptitle4
+{
+	width: 30%;
+	margin: 0 auto;
+	height: 28px;
+	font-family: candara;
+	font-size: 18px;
+	line-height: 28px;
+	color: #FFF;
+	float: right;
+}
+
+
+
+.middlebox1
+{
+	height: 355px;
+	width: 100%;
+	margin: 0 auto;
+}
+
+.middlebox2
+{
+	height: 355px;
+	width: 100%;
+	margin: 0 auto;
+	background-image: url(images/middlebg1.png);
+	background-repeat: no-repeat;
+}
+
+.middlebox3
+{
+	width: 100%;
+	margin: 0 auto;
+	height: 600px;
+	/*background-image: url(images/mid-bg-inner-page2.png);*/
+	background-position: right;
+	background-repeat: no-repeat;
+}
+
+
+
+.loginbox1
+{
+	width: 442px;
+	height: 350px;
+	padding: 0px;
+	float: right;
+	margin-top: 0px;
+	margin-right: 80px;
+	background-image: url(images/login-bg2a.png);
+}
+
+.loginbox2
+{
+	width: 272px;
+	height: 49px;
+	margin-top: 48px;
+	padding-left: 170px;
+}
+
+.loginex
+{
+	-webkit-text-fill-color: #fff;
+	-webkit-text-stroke-color: #1d1c1c;
+	-webkit-text-stroke-width: 1px; /* text-fill-color: #fff;     text-stroke-color: #1d1c1c;     text-stroke-width: 1px;*/
+	font-family: candara;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+
+.logintext1
+{
+	width: 390px;
+	height: 50px;
+	padding-left: 30px;
+	margin-top: 10px;
+}
+
+.logintext2
+{
+	width: 390px;
+	height: 30px;
+	margin-top: 5px;
+}
+
+.logintext3
+{
+	width: 380px;
+	height: 50px;
+	margin-top: 5px;
+	margin-left: 30px;
+}
+
+.buttontext
+{
+	width: 135px;
+	padding-left: 15px;
+	height: 30px;
+	font-family: candara;
+	font-size: 16px;
+	color: #000;
+	line-height: 30px;
+	float: left;
+	margin-top: 10px;
+}
+.buttext2
+{
+	width: 112px;
+	height: 46px;
+	margin-left: 3px;
+	float: left;
+}
+
+
+.signin1
+{
+	width: 210px;
+	height: 30px;
+	margin-left: 230px;
+	font-family: candara;
+	font-size: 16px;
+	color: #000;
+	line-height: 16px;
+}
+
+
+
+.usernamebox
+{
+	width: 140px;
+	height: 50px;
+	padding-left: 10px;
+	float: left;
+}
+
+.textfield
+{
+	width: 220px;
+	height: 45px;
+	float: left;
+	margin-top: 3px;
+	background-image: url(images/textfieldbg1.png);
+}
+
+
+.search-box
+{
+	margin-top: 5px;
+	margin-left: 15px;
+	padding: 4px 4px 4px 8px;
+	width: 175px;
+	height: 24px;
+	background-color: transparent;
+	border: none;
+	font-family: candara;
+	font-size: 14px;
+	font-weight: normal;
+	color: #1a1a1a;
+	line-height: 20px;
+}
+
+.footerbox1
+{
+	width: 100%;
+	margin: 0 auto;
+	height: 120px;
+	background-color: #006600;
+}
+
+.footerinnerpage1a
+{
+	width: 100%;
+	margin: 0 auto;
+	height: 30px;
+	background-color: #0b6c09;
+}
+
+.footertextbox2
+{
+	width: 100%;
+	margin: 0 auto;
+	height: 120px;
+}
+
+
+
+
+.footertextbox3
+{
+	width: 500px;
+	height: 40px;
+	float: left;
+	font-family: candara;
+	font-size: 14px;
+	color: #FFF;
+	margin-left: 10px;
+	margin-top: 5px;
+}
+
+.footertextbox4
+{
+	width: 530px;
+	height: 40px;
+	float: right;
+	font-family: candara;
+	font-size: 14px;
+	color: #FFF;
+	margin-left: 10px;
+	margin-top: 5px;
+	text-align: right;
+	padding-right: 15px;
+}
+
+
+.footertextbox5
+{
+	width: 500px;
+	height: 20px;
+	float: right;
+	font-family: candara;
+	font-size: 14px;
+	color: #FFF;
+	text-align: right;
+	margin-top: 40px;
+	padding-right: 15px;
+}
+
+.footerbg1
+{
+	width: 500px;
+	height: 120px;
+	float: left;
+}
+
+.footerbg2
+{
+	width: 780px;
+	height: 120px;
+	float: right;
+}
+
+
+
+/* inner page */
+
+
+
+.leftbox1a
+{
+	width: 271px;
+	margin: 0;
+	padding: 0;
+	height: auto;
+}
+
+
+.leftbox2a
+{
+	width: 271px;
+	margin: 0;
+	padding: 0;
+	height: 162px;
+}
+
+.lefthdr1
+{
+	width: 266px;
+	height: 30px;
+	background-image: url(images/menubg1.png);
+	font-family: candara;
+	font-size: 18px;
+	color: #FFF;
+	line-height: 30px;
+	padding-left: 5px;
+}
+
+.lefthdr2
+{
+	width: 266px;
+	height: 30px;
+	background-image: url(images/menubg3.png);
+	font-family: candara;
+	font-size: 18px;
+	color: #FFF;
+	line-height: 30px;
+	padding-left: 5px;
+}
+
+.lefthdr3
+{
+	width: 266px;
+	height: 30px;
+	background-image: url(images/menubg4.png);
+	font-family: candara;
+	font-size: 18px;
+	color: #FFF;
+	line-height: 30px;
+	padding-left: 5px;
+}
+
+.lefthdr3a
+{
+	width: 266px;
+	height: 30px;
+	background-image: url(images/menubg4a.png);
+	font-family: candara;
+	font-size: 18px;
+	color: #FFF;
+	line-height: 30px;
+	padding-left: 5px;
+}
+
+a:link {
+ text-decoration: none;
+}
+
+a:hover {
+ text-decoration: underline;
+}
+
+.left1
+{
+	width: 272px;
+	margin: 0;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	background-color: #2D64AC;/*#32784c;*/
+	float: left;
+}
+
+.rightsidebox1a
+{
+	width: 800px;
+	height: 130px;
+	margin-top: 10px;
+	margin-left: 5px;
+	padding: 0;
+	background-image: url(images/rightbg2.png);
+	background-repeat: no-repeat;
+	float: left;
+}
+
+.rightboxtext1a
+{
+	width: 700px;
+	height: auto;
+	font-family: candara;
+	font-size: 28px;
+	color: #2D64AC;
+	line-height: 24px;
+	padding: 5px;
+	margin: 10px;
+}
+
+.rightboxtext1b
+{
+	width: 700px;
+	height: auto;
+	font-family: candara;
+	font-size: 28px;
+	color: #0096d3;
+	line-height: 20px;
+	padding: 5px;
+	margin: 10px;
+}
+
+/* left menu */
+
+
+.glossymenu, .glossymenu li ul
+{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 271px;
+	margin-top: 5px;
+	background-color: #2D64AC;  /*#32784c;*/ /*WIDTH OF MAIN MENU ITEMS*/
+}
+
+.glossymenu li
+{
+	position: relative;
+	margin-bottom: 4px;
+}
+
+.glossymenu li a
+{
+	background-image: url(images/verticalmenubg1.png);
+	background-repeat: no-repeat;
+	font: bold 12px Verdana, Helvetica, sans-serif;
+	color: white;
+	display: block;
+	width: 236px;
+	padding: 5px 0;
+	padding-left: 35px;
+	text-decoration: none;
+}
+
+.glossymenu li ul
+{
+	/*SUB MENU STYLE*/
+	position: absolute;
+	width: 271px;
+	height: auto; /*WIDTH OF SUB MENU ITEMS*/
+	left: 0;
+	top: 0;
+	display: none;
+}
+
+.glossymenu li ul li
+{
+	float: left;
+}
+
+.glossymenu li ul a
+{
+	width: 271px; /*WIDTH OF SUB MENU ITEMS - 10px padding-left for A elements */
+}
+
+.glossymenu .arrowdiv
+{
+	position: absolute;
+	right: 2px;
+	background: transparent url(images/arrow.gif) no-repeat center right;
+}
+
+.glossymenu li a:visited, .glossymenu li a:active
+{
+	color: white;
+}
+
+.glossymenu li a:hover
+{
+	background-image: url(Images/verticalmenubg2.png);
+}
+
+/* Holly Hack for IE \*/
+* html .glossymenu li
+{
+	float: left;
+	height: 1%;
+}
+* html .glossymenu li a
+{
+	height: 1%;
+}
+/* End */

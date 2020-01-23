@@ -1,0 +1,420 @@
+﻿using SMHR;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Telerik.Web.UI;
+using System.Text.RegularExpressions;
+
+public partial class Security_Module : System.Web.UI.Page
+{
+    SMHR_Module_MailID _obj_smhr_Module_MailID;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        try
+        {
+            if (!IsPostBack)
+            {
+
+                //code for security privilage
+                Session.Remove("WRITEFACILITY");
+
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Email Configuration");
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    RG_ModuleMailID.MasterTableView.CommandItemDisplay = GridCommandItemDisplay.None;
+                    btn_Save.Visible = false;
+                    //btn_Update.Visible = false;
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+                LoadGrid();
+                RG_ModuleMailID.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "Module", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    private DataTable CreateGridDataTable()
+    {
+        DataTable dt = new DataTable();
+        try
+        {
+            dt.Columns.Add("Module_MailID_ModuleID", typeof(int));
+            dt.Columns.Add("Module_MailID_EmailIDS", typeof(string));
+            dt.Columns.Add("Module_MailID_AdminEMailID", typeof(string));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "Module", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+        return dt;
+    }
+    private void LoadGrid()
+    {
+        try
+        {
+            _obj_smhr_Module_MailID = new SMHR_Module_MailID();
+            _obj_smhr_Module_MailID.OPERATION = operation.Select;
+            _obj_smhr_Module_MailID.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable DT = BLL.get_MailID(_obj_smhr_Module_MailID);
+            RG_ModuleMailID.DataSource = DT;
+            RG_ModuleMailID.DataBind();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "Module", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    public static bool isValidEmail(string inputEmail)
+    {
+
+        string strRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
+              @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
+              @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+        Regex re = new Regex(strRegex);
+        if (re.IsMatch(inputEmail))
+            return (true);
+        else
+            return (false);
+
+    }
+    protected void btn_Save_Click(object sender, EventArgs e)
+    {
+        //try
+        //{
+        //    _obj_smhr_Module_MailID = new SMHR_Module_MailID();
+        //    DataTable dt = CreateGridDataTable();
+        //    RadTextBox rnEmailID;
+        //    RadTextBox rtxtAdminMail;
+        //    foreach (GridDataItem g in RG_ModuleMailID.Items)
+        //    {
+        //        rnEmailID = new RadTextBox();
+        //        rnEmailID = g.FindControl("txt_Mail") as RadTextBox;
+
+        //        rtxtAdminMail = new RadTextBox();
+        //        rtxtAdminMail = g.FindControl("txt_AdminMail") as RadTextBox;
+
+        //        string[] strEmailIDs = rnEmailID.Text.Split(';');
+        //        string[] strAdminEmailIDs = rtxtAdminMail.Text.Split(';');
+
+        //        foreach (string s in strEmailIDs)
+        //        {
+        //            if (!string.IsNullOrEmpty(s) && !isValidEmail(s))
+        //            {
+        //                BLL.ShowMessage(this, "Please enter valid emailid for " + g.Cells[3].Text);
+        //                return;
+        //            }
+        //        }
+        //        foreach (string s in strAdminEmailIDs)
+        //        {
+        //            if (!string.IsNullOrEmpty(s) && !isValidEmail(s))
+        //            {
+        //                BLL.ShowMessage(this, "Please enter valid emailid for " + g.Cells[2].Text);
+        //                return;
+        //            }
+        //        }
+        //        foreach (string s in strAdminEmailIDs)
+        //        {
+        //            if (!string.IsNullOrEmpty(s))
+        //            {
+        //                BLL.ShowMessage(this, "Please Enter E-mailid");
+        //            }
+        //        }
+
+        //        TextBox txt = RG_ModuleMailID.FindControl("txt_AdminMail") as TextBox;
+        //        if (txt.Text == null || txt.Text == "")
+        //        {
+        //            BLL.ShowMessage(this, "Please Enter E-mailid");
+        //        }
+        //        dt.Rows.Add(Convert.ToInt32(g.Cells[2].Text), rnEmailID.Text, rtxtAdminMail.Text);
+        //    }
+        //    _obj_smhr_Module_MailID.MODULEMAILIDS = dt;
+        //    _obj_smhr_Module_MailID.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+        //    _obj_smhr_Module_MailID.CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+        //    _obj_smhr_Module_MailID.CREATEDDATE = DateTime.Now;
+        //    _obj_smhr_Module_MailID.LASTMDFBY = Convert.ToInt32(Session["USER_ID"]);
+        //    _obj_smhr_Module_MailID.LASTMDFDATE = DateTime.Now;
+        //    _obj_smhr_Module_MailID.OPERATION = operation.Insert;
+        //    if (BLL.set_MailID(_obj_smhr_Module_MailID))
+        //        BLL.ShowMessage(this, "Information Saved Successfully");
+        //    else
+        //        BLL.ShowMessage(this, "Information Not Saved");
+        //}
+        //catch (Exception ex)
+        //{
+        //    SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "Module", ex.StackTrace, DateTime.Now);
+        //    Response.Redirect("~/Frm_ErrorPage.aspx");
+        //}
+    }
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            //RadTextBox txt_AdminMail = RG_ModuleMailID.FindControl("txt_AdminMail") as RadTextBox;
+            //RadTextBox txt_Mail = RG_ModuleMailID.FindControl("txt_Mail") as RadTextBox;
+            //ClearControl(txt_AdminMail);//txt_AdminMail.Text = txt_Mail.Text ="";
+
+            RadTextBox txt_AdminMail;
+            RadTextBox txt_Mail;
+
+            for (int i = 0; i < RG_ModuleMailID.Items.Count; i++)
+            {
+                txt_AdminMail = RG_ModuleMailID.Items[i].FindControl("txt_AdminMail") as RadTextBox;
+                txt_Mail = RG_ModuleMailID.Items[i].FindControl("txt_Mail") as RadTextBox;
+
+                txt_AdminMail.Text = txt_Mail.Text = string.Empty;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "Module", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+
+    }
+    public void ClearControl(Control control)
+    {
+        RadTextBox txt_AdminMail = control as RadTextBox;
+        if (txt_AdminMail != null)
+        {
+            txt_AdminMail.Text = String.Empty;
+        }
+    }
+    protected void btn_Save_Click1(object sender, EventArgs e)
+    {
+        try
+        {
+            const string emailpattern = @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*";
+            string pattern = @"^[a-z][a-z|0-9|]*([_][a-z|0-9]+)*([.][a-z|0-9]+([_][a-z|0-9]+)*)?@[a-z][a-z|0-9|]*\.([a-z][a-z|0-9]*(\.[a-z][a-z|0-9]*)?)$";
+
+
+            Label lblModName;
+            RadTextBox txt_AdminMail, txt_Mail;
+
+            for (int i = 0; i < RG_ModuleMailID.Items.Count; i++)
+            {
+                lblModName = RG_ModuleMailID.Items[i].FindControl("lblModName") as Label;
+                txt_AdminMail = RG_ModuleMailID.Items[i].FindControl("txt_AdminMail") as RadTextBox;
+                txt_Mail = RG_ModuleMailID.Items[i].FindControl("txt_Mail") as RadTextBox;
+
+                if (txt_AdminMail.Text == string.Empty || txt_Mail.Text == string.Empty)
+                {
+                    BLL.ShowMessage(this, "Please Enter E-MailID for " + lblModName.Text);
+
+                    if (txt_AdminMail.Text == string.Empty)
+                        txt_AdminMail.Focus();
+                    else
+                        txt_Mail.Focus();
+
+                    return;
+                }
+
+                bool isEmail1 = Regex.IsMatch(txt_AdminMail.Text.Trim(), @"\A(?:[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)\Z");
+                bool isEmail2 = Regex.IsMatch(txt_Mail.Text.Trim(), @"\A(?:[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)\Z");
+
+                if (isEmail1 == false)
+                {
+                    BLL.ShowMessage(this, "Invalid E-MailID for " + lblModName.Text);
+                    txt_AdminMail.Focus();
+                    return;
+                }
+                if (isEmail2 == false)
+                {
+                    BLL.ShowMessage(this, "Invalid E-MailID for " + lblModName.Text);
+                    txt_Mail.Focus();
+                    return;
+                }
+            }
+
+            _obj_smhr_Module_MailID = new SMHR_Module_MailID();
+            DataTable dt = CreateGridDataTable();
+            RadTextBox rnEmailID;
+            RadTextBox rtxtAdminMail;
+            foreach (GridDataItem g in RG_ModuleMailID.Items)
+            {
+                rnEmailID = new RadTextBox();
+                rnEmailID = g.FindControl("txt_Mail") as RadTextBox;
+
+                rtxtAdminMail = new RadTextBox();
+                rtxtAdminMail = g.FindControl("txt_AdminMail") as RadTextBox;
+
+                string[] strEmailIDs = rnEmailID.Text.Split(';');
+                string[] strAdminEmailIDs = rtxtAdminMail.Text.Split(';');
+
+                /*foreach (string s in strEmailIDs)
+                {
+                    if (!string.IsNullOrEmpty(s) && !isValidEmail(s))
+                    {
+                        BLL.ShowMessage(this, "Please enter valid emailid for " + g.Cells[3].Text);
+                        return;
+                    }
+                }
+                foreach (string s in strAdminEmailIDs)
+                {
+                    if (!string.IsNullOrEmpty(s) && !isValidEmail(s))
+                    {
+                        BLL.ShowMessage(this, "Please enter valid emailid for " + g.Cells[2].Text);
+                        return;
+                    }
+                }
+                foreach (string s in strAdminEmailIDs)
+                {
+                    if (!string.IsNullOrEmpty(s))
+                    {
+                        BLL.ShowMessage(this, "Please Enter E-mailid");
+                    }
+                }*/
+
+                //TextBox txt = RG_ModuleMailID.FindControl("txt_AdminMail") as TextBox;
+                //if (txt.Text == null || txt.Text == "")
+                //{
+                //    BLL.ShowMessage(this, "Please Enter E-mailid");
+                //}
+                dt.Rows.Add(Convert.ToInt32(g.Cells[2].Text), rnEmailID.Text, rtxtAdminMail.Text);
+            }
+            _obj_smhr_Module_MailID.MODULEMAILIDS = dt;
+            _obj_smhr_Module_MailID.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            _obj_smhr_Module_MailID.CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+            _obj_smhr_Module_MailID.CREATEDDATE = DateTime.Now;
+            _obj_smhr_Module_MailID.LASTMDFBY = Convert.ToInt32(Session["USER_ID"]);
+            _obj_smhr_Module_MailID.LASTMDFDATE = DateTime.Now;
+            _obj_smhr_Module_MailID.OPERATION = operation.Insert;
+            if (BLL.set_MailID(_obj_smhr_Module_MailID))
+                BLL.ShowMessage(this, "Information Saved Successfully");
+            else
+                BLL.ShowMessage(this, "Information Not Saved");
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "Module", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void btn_Save_Click2(object sender, EventArgs e)
+    {
+        try
+        {
+            int cnt = 0;
+
+            Label lblModName;
+            Label lblModID;
+            RadTextBox txt_AdminMail;
+            RadTextBox txt_Mail;
+
+            SMHR_Module_MailID _obj_smhr_Module_MailID = new SMHR_Module_MailID();
+
+            for (int i = 0; i < RG_ModuleMailID.Items.Count; i++)
+            {
+                lblModName = RG_ModuleMailID.Items[i].FindControl("lblModName") as Label;
+                lblModID = RG_ModuleMailID.Items[i].FindControl("lblModID") as Label;
+                txt_AdminMail = RG_ModuleMailID.Items[i].FindControl("txt_AdminMail") as RadTextBox;
+                txt_Mail = RG_ModuleMailID.Items[i].FindControl("txt_Mail") as RadTextBox;
+
+                if (txt_AdminMail.Text == string.Empty || txt_Mail.Text == string.Empty)
+                {
+                    BLL.ShowMessage(this, "Please Enter E-MailID for " + lblModName.Text);
+
+                    if (txt_AdminMail.Text == string.Empty)
+                        txt_AdminMail.Focus();
+                    else
+                        txt_Mail.Focus();
+
+                    return;
+                }
+
+                bool isEmail1 = Regex.IsMatch(txt_AdminMail.Text.Trim(), @"\A(?:[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)\Z");
+                bool isEmail2 = Regex.IsMatch(txt_Mail.Text.Trim(), @"\A(?:[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)\Z");
+
+                if (isEmail1 == false)
+                {
+                    BLL.ShowMessage(this, "Invalid E-MailID for " + lblModName.Text);
+                    txt_AdminMail.Focus();
+                    return;
+                }
+
+                if (isEmail2 == false)
+                {
+                    BLL.ShowMessage(this, "Invalid E-MailID for " + lblModName.Text);
+                    txt_Mail.Focus();
+                    return;
+                }
+
+                if (lblModID.Text != string.Empty && lblModName.Text != string.Empty && (txt_AdminMail.Text != string.Empty || txt_Mail.Text != string.Empty))
+                {
+                    _obj_smhr_Module_MailID.Module_MailID_ModuleID = Convert.ToInt32(lblModID.Text);
+                    _obj_smhr_Module_MailID.Module_MailID_AdminEMailID = txt_AdminMail.Text;
+                    _obj_smhr_Module_MailID.Module_MailID_EmailIDS = txt_Mail.Text;
+                    _obj_smhr_Module_MailID.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                    _obj_smhr_Module_MailID.CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_Module_MailID.LASTMDFBY = Convert.ToInt32(Session["USER_ID"]);
+
+                    if (BLL.setEmailConfgMailIds(_obj_smhr_Module_MailID))
+                        cnt++;
+                }
+            }
+
+            if (cnt > 0)
+                BLL.ShowMessage(this, "Information Saved Successfully");
+            else
+                BLL.ShowMessage(this, "Information Not Saved");
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "Module", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

@@ -1,0 +1,821 @@
+﻿using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+using SMHR;
+using Telerik.Web.UI;
+
+public partial class Masters_frm_SalaryStructure : System.Web.UI.Page
+{
+    static DataTable dtDetails = new DataTable(); // Header Details
+    static DataTable dt_Details = new DataTable(); // Details 
+    static DataTable dt_Det = new DataTable(); // Structure Code
+    SMHR_SALARYSTRUCT _obj_smhr_salaryStruct = new SMHR_SALARYSTRUCT();
+    SMHR_PERIODTYPE _obj_Smhr_PeriodType;
+    SMHR_ORGANISATION _obj_smhr_organisation;
+    static string _sal_struct_ID;
+
+    protected override void InitializeCulture()
+    {
+        BLL.SetCulture_Theme(Page, Request);
+        base.InitializeCulture();
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+
+        try
+        {
+            if (!Page.IsPostBack)
+            {
+                //code for security privilage
+                Session.Remove("WRITEFACILITY");
+
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Salary Structure");//SALARYSTRUCTURE");
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    RG_Salary.MasterTableView.CommandItemDisplay = GridCommandItemDisplay.None;
+                    btn_Save.Visible = false;
+                    btn_Update.Visible = false;
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+                Page.Validate();
+                BLL.ChangeDateFormat(Convert.ToString(Session["EMP_ID"]), txt_EndDate, txt_StartDate);
+                BLL.gridDateFormat(Convert.ToString(Session["EMP_ID"]), RG_Salary, "SALARYSTRUCT_STARTDATE", "SALARYSTRUCT_ENDDATE");
+                trUpdate.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void lnk_Add_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            RMP_SalaryStruct.SelectedIndex = 1;
+            _obj_smhr_salaryStruct.OPERATION = operation.Empty;
+            _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            dt_Details = BLL.get_EmptyValues(_obj_smhr_salaryStruct);
+            RG_SalaryStruct.DataSource = dt_Details;
+            RG_SalaryStruct.DataBind();
+            btn_Update.Visible = false;
+            btn_Save.Visible = true;
+            txt_SalCode.Enabled = true;
+            LoadCombos();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void clearItems()
+    {
+        try
+        {
+            txt_SalCode.Text = string.Empty;
+            txt_SalName.Text = string.Empty;
+            txt_StartDate.SelectedDate = null;
+            txt_EndDate.SelectedDate = null;
+            lbl_ID.Text = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Save_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string Code = "";
+            int i;
+            int j = 0;
+            for (i = 0; i <= RG_SalaryStruct.Items.Count - 1; i++)
+            {
+                Label lblCalMode = new Label();
+                TextBox txtgetVal = new TextBox();
+                CheckBox chkBox = new CheckBox();
+                txtgetVal = RG_SalaryStruct.Items[i].FindControl("txtNumber") as TextBox;
+                lblCalMode = RG_SalaryStruct.Items[i].FindControl("lblCALMODE") as Label;
+                chkBox = RG_SalaryStruct.Items[i].FindControl("chk_Select") as CheckBox;
+                if (Convert.ToString(txtgetVal.Text) != "")
+                {
+                    if (Convert.ToString(lblCalMode.Text).ToUpper() == "%AGE")
+                    {
+                        if (Convert.ToDouble(txtgetVal.Text) > 100)
+                        {
+                            BLL.ShowMessage(this, "Percentage Value should not exceed 100%");
+                            return;
+                        }
+                    }
+
+                    if (chkBox.Checked == false)
+                    {
+                        BLL.ShowMessage(this, "Please Select the Element at Salary Structure");
+                        return;
+                    }
+                }
+                else
+                {
+                    j = j + 1;
+                }
+            }
+
+            if (j == RG_SalaryStruct.Items.Count)
+            {
+                BLL.ShowMessage(this, "Please Enter Atleast one Value(s)");
+                return;
+            }
+            _obj_smhr_salaryStruct = new SMHR_SALARYSTRUCT();
+            _obj_smhr_salaryStruct.SALARYSTRUCT_CODE = Convert.ToString(txt_SalCode.Text).Replace("'", "''");
+            _obj_smhr_salaryStruct.OPERATION = operation.Check;
+            _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt = BLL.get_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+            if (dt.Rows.Count != 0)
+            {
+                BLL.ShowMessage(this, "Name Entered is already used");
+                return;
+            }
+            Code = Convert.ToString(txt_SalCode.Text).Replace("'", "''");
+            bool status = false;
+            _obj_smhr_salaryStruct.SALARYSTRUCT_CODE = Convert.ToString(txt_SalCode.Text).Replace("'", "''");
+            _obj_smhr_salaryStruct.SALARYSTRUCT_NAME = Convert.ToString(txt_SalName.Text.Replace("'", "''"));
+            _obj_smhr_salaryStruct.SALARYSTRUCT_STARTDATE = Convert.ToDateTime(txt_StartDate.SelectedDate);
+            if (txt_EndDate.SelectedDate.HasValue)
+                _obj_smhr_salaryStruct.SALARYSTRUCT_ENDDATE = Convert.ToDateTime(txt_EndDate.SelectedDate);
+            else
+                _obj_smhr_salaryStruct.SALARYSTRUCT_ENDDATE = null;
+            _obj_smhr_salaryStruct.SALARYSTRUCT_TYPE = Convert.ToInt32(rcb_Type.SelectedItem.Value);
+            _obj_smhr_salaryStruct.SALARYSTRUCT_ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            _obj_smhr_salaryStruct.SALARYSTRUCT_CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+            _obj_smhr_salaryStruct.SALARYSTRUCT_CREATEDDATE = DateTime.Now;
+            _obj_smhr_salaryStruct.OPERATION = operation.Insert;
+            status = BLL.set_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+            if (status == true)
+            {
+                int index;
+                _obj_smhr_salaryStruct.OPERATION = operation.Check;
+                _obj_smhr_salaryStruct.SALARYSTRUCT_CODE = Convert.ToString(Code);
+                _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                dt_Det = BLL.get_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+                if (dt_Det.Rows.Count != 0)
+                {
+                    _sal_struct_ID = Convert.ToString(dt_Det.Rows[0][0]);
+                }
+                for (index = 0; index <= RG_SalaryStruct.Items.Count - 1; index++)
+                {
+                    Label lblCode = new Label(); // Pay item Code
+                    Label lblMode = new Label(); // Pay item Mode
+                    TextBox txtVal = new TextBox(); // Salary Structure Entered Value
+                    Label lblformula = new Label(); //Salary Structure Entered Formula
+                    CheckBox chkBox = new CheckBox(); // Check Box
+                    lblCode = RG_SalaryStruct.Items[index].FindControl("lblPAYITEM_ID") as Label;
+                    lblMode = RG_SalaryStruct.Items[index].FindControl("lblCALMODE") as Label;
+                    txtVal = RG_SalaryStruct.Items[index].FindControl("txtNumber") as TextBox;
+                    lblformula = RG_SalaryStruct.Items[index].FindControl("lblformula") as Label;
+                    chkBox = RG_SalaryStruct.Items[index].FindControl("chk_Select") as CheckBox;
+                    if (Convert.ToString(txtVal.Text) != "")
+                    {
+                        if (chkBox.Checked)
+                        {
+                            _obj_smhr_salaryStruct.SALARYSTRUCT_ID = Convert.ToInt32(_sal_struct_ID);
+                            _obj_smhr_salaryStruct.SALARYSTRUCTDET_PAYITEM_ID = Convert.ToInt32(lblCode.Text);
+                            _obj_smhr_salaryStruct.SALARYSTRUCTDET_PAYMODE = Convert.ToString(lblMode.Text);
+                            _obj_smhr_salaryStruct.SALARYSTRUCTDET_PAYVALUE = Convert.ToString(txtVal.Text);
+                            _obj_smhr_salaryStruct.SALARYSTRUCTDET_FORMULA = "";
+                            _obj_smhr_salaryStruct.SALARYSTRUCTDET_CHECKED = true;
+                            _obj_smhr_salaryStruct.SALARYSTRUCT_CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+                            _obj_smhr_salaryStruct.SALARYSTRUCT_CREATEDDATE = DateTime.Now;
+                            _obj_smhr_salaryStruct.OPERATION = operation.Insert;
+                            status = BLL.set_SalaryDetails(_obj_smhr_salaryStruct);
+                        }
+                    }
+
+                }
+                BLL.ShowMessage(this, "Record Saved Successfully");
+                RMP_SalaryStruct.SelectedIndex = 0;
+                LoadMainGrid();
+                RG_Salary.DataBind();
+                clearItems();
+                return;
+            }
+            else
+            {
+                BLL.ShowMessage(this, "Error Occured While Doing the Process");
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Update_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            int i;
+            int j = 0;
+            for (i = 0; i <= RG_SalaryStruct.Items.Count - 1; i++)
+            {
+                Label lblCalMode = new Label();
+                TextBox txtgetVal = new TextBox();
+                CheckBox chkBox = new CheckBox();
+                txtgetVal = RG_SalaryStruct.Items[i].FindControl("txtNumber") as TextBox;
+                lblCalMode = RG_SalaryStruct.Items[i].FindControl("lblCALMODE") as Label;
+                chkBox = RG_SalaryStruct.Items[i].FindControl("chk_Select") as CheckBox;
+                if (Convert.ToString(txtgetVal.Text) != "")
+                {
+                    if (Convert.ToString(lblCalMode.Text).ToUpper() == "%AGE")
+                    {
+                        if (Convert.ToDouble(txtgetVal.Text) > 100)
+                        {
+                            BLL.ShowMessage(this, "Percentage Value should not exceed 100%");
+                            return;
+                        }
+                    }
+                    if (chkBox.Checked == false)
+                    {
+                        BLL.ShowMessage(this, "Please Select the Element at Salary Structure");
+                        return;
+                    }
+                }
+                else
+                {
+                    j = j + 1;
+                }
+            }
+
+            if (j == RG_SalaryStruct.Items.Count)
+            {
+                BLL.ShowMessage(this, "Please Enter Atleast one Value(s)");
+                return;
+            }
+            bool status = false;
+            _obj_smhr_salaryStruct.OPERATION = operation.Check;
+            _obj_smhr_salaryStruct.SALARYSTRUCT_CODE = Convert.ToString(txt_SalCode.Text);
+            _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            dt_Det = BLL.get_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+            if (dt_Det.Rows.Count != 0)
+            {
+                _sal_struct_ID = Convert.ToString(dt_Det.Rows[0]["SALARYSTRUCT_ID"]);
+                _obj_smhr_salaryStruct.SALARYSTRUCT_ID = Convert.ToInt32(_sal_struct_ID);
+                _obj_smhr_salaryStruct.SALARYSTRUCT_NAME = Convert.ToString(txt_SalName.Text.Replace("'", "''"));
+                _obj_smhr_salaryStruct.SALARYSTRUCT_STARTDATE = Convert.ToDateTime(txt_StartDate.SelectedDate);
+                if (txt_EndDate.SelectedDate.HasValue)
+                    _obj_smhr_salaryStruct.SALARYSTRUCT_ENDDATE = Convert.ToDateTime(txt_EndDate.SelectedDate);
+                else
+                    _obj_smhr_salaryStruct.SALARYSTRUCT_ENDDATE = null;
+                _obj_smhr_salaryStruct.SALARYSTRUCT_TYPE = Convert.ToInt32(rcb_Type.SelectedItem.Value);
+                _obj_smhr_salaryStruct.SALARYSTRUCT_ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_smhr_salaryStruct.SALARYSTRUCT_LASTMDFBY = Convert.ToInt32(Session["USER_ID"]);
+                _obj_smhr_salaryStruct.SALARYSTRUCT_LASTMDFDATE = DateTime.Now;
+                _obj_smhr_salaryStruct.OPERATION = operation.Update;
+                status = BLL.set_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+                if (status == true)
+                {
+                    _obj_smhr_salaryStruct.OPERATION = operation.Delete;
+                    _obj_smhr_salaryStruct.SALARYSTRUCT_ID = Convert.ToInt32(_sal_struct_ID);
+                    status = BLL.set_SalaryDetails(_obj_smhr_salaryStruct);
+                    if (status == true)
+                    {
+                        int index;
+                        for (index = 0; index <= RG_SalaryStruct.Items.Count - 1; index++)
+                        {
+                            Label lblCode = new Label(); // Pay item Code
+                            Label lblMode = new Label(); // Pay item Mode
+                            TextBox txtVal = new TextBox(); // Salary Structure Entered Value
+                            Label lblformula = new Label(); //Salary Structure Entered Formula
+                            CheckBox chkBox = new CheckBox(); // Check Box
+
+                            lblCode = RG_SalaryStruct.Items[index].FindControl("lblPAYITEM_ID") as Label;
+                            lblMode = RG_SalaryStruct.Items[index].FindControl("lblCALMODE") as Label;
+                            txtVal = RG_SalaryStruct.Items[index].FindControl("txtNumber") as TextBox;
+                            lblformula = RG_SalaryStruct.Items[index].FindControl("lblformula") as Label;
+                            chkBox = RG_SalaryStruct.Items[index].FindControl("chk_Select") as CheckBox;
+                            if (Convert.ToString(txtVal.Text) != "")
+                            {
+                                if (chkBox.Checked)
+                                {
+                                    _obj_smhr_salaryStruct.SALARYSTRUCT_ID = Convert.ToInt32(_sal_struct_ID);
+                                    _obj_smhr_salaryStruct.SALARYSTRUCTDET_PAYITEM_ID = Convert.ToInt32(lblCode.Text);
+                                    _obj_smhr_salaryStruct.SALARYSTRUCTDET_PAYMODE = Convert.ToString(lblMode.Text);
+                                    _obj_smhr_salaryStruct.SALARYSTRUCTDET_PAYVALUE = Convert.ToString(txtVal.Text);
+                                    _obj_smhr_salaryStruct.SALARYSTRUCTDET_FORMULA = "";
+                                    _obj_smhr_salaryStruct.SALARYSTRUCTDET_CHECKED = true;
+                                    _obj_smhr_salaryStruct.OPERATION = operation.Insert;
+                                    _obj_smhr_salaryStruct.SALARYSTRUCT_CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+                                    _obj_smhr_salaryStruct.SALARYSTRUCT_CREATEDDATE = DateTime.Now;
+                                    status = BLL.set_SalaryDetails(_obj_smhr_salaryStruct);
+                                }
+                            }
+                        }
+                    }
+                    BLL.ShowMessage(this, "Record Updated Successfully");
+                    RMP_SalaryStruct.SelectedIndex = 0;
+                    LoadMainGrid();
+                    RG_Salary.DataBind();
+
+                    if (chk_Updateall.Checked)//updating these payitems for all employees who are under that salary structure
+                    {
+                        _obj_smhr_salaryStruct.SALARYSTRUCT_ID = Convert.ToInt32(_sal_struct_ID);
+                        _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                        _obj_smhr_salaryStruct.OPERATION = operation.New;//For Dumping Each Pay Item To Employee Who Belongs To That Salary Structure
+                        status = BLL.set_SalaryDetails(_obj_smhr_salaryStruct);
+                    }
+                    clearItems();
+                    return;
+                }
+                else
+                {
+                    BLL.ShowMessage(this, "Error Occured While Doing the Process");
+                    return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            clearItems();
+            RMP_SalaryStruct.SelectedIndex = 0;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadCombos()
+    {
+        try
+        {
+            _obj_Smhr_PeriodType = new SMHR_PERIODTYPE();
+            _obj_Smhr_PeriodType.OPERATION = operation.Select;
+            rcb_Type.DataSource = BLL.get_PeriodType(_obj_Smhr_PeriodType);
+            rcb_Type.DataTextField = "PERIODTYPE_NAME";
+            rcb_Type.DataValueField = "PERIODTYPE_ID";
+            rcb_Type.DataBind();
+            rcb_Type.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadMainGrid()
+    {
+        try
+        {
+            _obj_smhr_salaryStruct = new SMHR_SALARYSTRUCT();
+            //_obj_smhr_salaryStruct.ISDELETED = null;
+            _obj_smhr_salaryStruct.OPERATION = operation.Select;
+            _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            dtDetails = BLL.get_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+            RG_Salary.DataSource = dtDetails;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void RG_Salary_NeedDataSource(object source, Telerik.Web.UI.GridNeedDataSourceEventArgs e)
+    {
+        try
+        {
+            LoadMainGrid();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void lnk_SalStructEdit_Command(object sender, CommandEventArgs e)
+    {
+        try
+        {
+            //Editing Salary Structure Record
+            LoadCombos();
+            lbl_ID.Text = Convert.ToString(e.CommandArgument);
+            _obj_smhr_salaryStruct.OPERATION = operation.Select;
+            _obj_smhr_salaryStruct.SALARYSTRUCT_ID = Convert.ToInt32(lbl_ID.Text);
+            _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            dtDetails = BLL.get_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+            if (dtDetails.Rows.Count != 0)
+            {
+                txt_SalCode.Text = Convert.ToString(dtDetails.Rows[0]["SALARYSTRUCT_CODE"]);
+                txt_SalName.Text = Convert.ToString(dtDetails.Rows[0]["SALARYSTRUCT_NAME"]);
+                if (dtDetails.Rows[0]["SALARYSTRUCT_STARTDATE"] != System.DBNull.Value)
+                    txt_StartDate.SelectedDate = Convert.ToDateTime(Convert.ToString(dtDetails.Rows[0]["SALARYSTRUCT_STARTDATE"]));
+                else
+                    txt_StartDate.SelectedDate = null;
+                if (dtDetails.Rows[0]["SALARYSTRUCT_ENDDATE"] != System.DBNull.Value)
+                    txt_EndDate.SelectedDate = Convert.ToDateTime(Convert.ToString(dtDetails.Rows[0]["SALARYSTRUCT_ENDDATE"]));
+                else
+                    txt_EndDate.SelectedDate = null;
+                if (dtDetails.Rows[0]["SALARYSTRUCT_TYPE"] != System.DBNull.Value)
+                    rcb_Type.SelectedIndex = rcb_Type.FindItemIndexByValue(Convert.ToString(dtDetails.Rows[0]["SALARYSTRUCT_TYPE"]));
+                _obj_smhr_salaryStruct.SALARYSTRUCT_ID = Convert.ToInt32(lbl_ID.Text);
+                _obj_smhr_salaryStruct.OPERATION = operation.Check;
+                _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                DataTable dt = BLL.get_SalaryDetails(_obj_smhr_salaryStruct);
+                RG_SalaryStruct.DataSource = dt;
+                RG_SalaryStruct.DataBind();
+                int i;
+                for (i = 0; i <= RG_SalaryStruct.Items.Count - 1; i++)
+                {
+                    CheckBox chkChoose = new CheckBox();
+                    TextBox txtgetVal = new TextBox();
+                    chkChoose = RG_SalaryStruct.Items[i].FindControl("chk_Select") as CheckBox;
+                    txtgetVal = RG_SalaryStruct.Items[i].FindControl("txtNumber") as TextBox;
+                    if (Convert.ToString(txtgetVal.Text) != "")
+                    {
+                        chkChoose.Checked = true;
+                    }
+                    else
+                    {
+                        chkChoose.Checked = false;
+                    }
+                }
+                txt_SalCode.Enabled = false;
+                // rcb_Type.Enabled = false;
+            }
+            RMP_SalaryStruct.SelectedIndex = 1;
+
+            if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+            {
+                btn_Update.Visible = false;
+
+            }
+
+            else
+            {
+                btn_Update.Visible = true;
+            }
+
+            btn_Save.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void RG_Salary_ItemCommand(object source, Telerik.Web.UI.GridCommandEventArgs e)
+    {
+        try
+        {
+            if (e.CommandName == "Formula")
+            {
+                GridDataItem dt_Item = (GridDataItem)e.Item;
+                int index = dt_Item.ItemIndex;
+                Label lblCode = new Label(); // Pay item Code
+                Label lblMode = new Label(); // Pay item Mode
+                Telerik.Web.UI.RadTextBox txtVal = new RadTextBox(); // Salary Structure Entered Value
+                Label lblformula = new Label(); //Salary Structure Entered Formula
+                lblCode = RG_Salary.Items[index].FindControl("lblCode") as Label;
+                lblMode = RG_Salary.Items[index].FindControl("lblMode") as Label;
+                txtVal = RG_Salary.Items[index].FindControl("txtValue") as Telerik.Web.UI.RadTextBox;
+                lblformula = RG_Salary.Items[index].FindControl("lblformula") as Label;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private string getCode()
+    {
+        
+        string code = string.Empty;
+        try
+        {
+
+            string str = string.Empty;
+            string Series = string.Empty;
+            _obj_smhr_salaryStruct.OPERATION = operation.Empty;
+            dt_Det = BLL.get_SalaryHeaderDetails(_obj_smhr_salaryStruct);
+            if (dt_Det.Rows.Count != 0)
+            {
+                str = Convert.ToString(dt_Det.Rows[0][0]);
+                if (str.Length == 1)
+                {
+                    Series = "000";
+                }
+                else if (str.Length == 2)
+                {
+                    Series = "00";
+                }
+                else if (str.Length == 3)
+                {
+                    Series = "00";
+                }
+                else if (str.Length == 4)
+                {
+                    Series = "0";
+                }
+            }
+            code = "SS" + Convert.ToString(Series) + Convert.ToString(str);
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+        return code;
+    }
+
+    protected void txt_TextChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            TextBox txt = new TextBox();
+            TextBox txtAnnual = new TextBox();
+            Label lblCalMode = new Label();
+            _obj_Smhr_PeriodType = new SMHR_PERIODTYPE();
+            _obj_Smhr_PeriodType.PERIODTYPE_ID = Convert.ToInt32(rcb_Type.SelectedItem.Value);
+            DataTable dt_PeriodType = BLL.get_PeriodType(_obj_Smhr_PeriodType);
+            if (dt_PeriodType.Rows.Count != 0)
+            {
+                ViewState["days"] = Convert.ToInt32(dt_PeriodType.Rows[0]["PERIODTYPE_NOOFMONTHS"]);
+            }
+            int iMonth = (int)ViewState["days"];
+            for (int index = 0; index < RG_SalaryStruct.Items.Count; index++)
+            {
+                txt = RG_SalaryStruct.Items[index].FindControl("txtNumber") as TextBox;
+                txtAnnual = RG_SalaryStruct.Items[index].FindControl("txtAnnualNumber") as TextBox;
+                lblCalMode = RG_SalaryStruct.Items[index].FindControl("lblCALMODE_1") as Label;
+                string str = txt.Text;
+                if (txt.Text != "")
+                {
+                    if (lblCalMode.Text.ToUpper() == "DIRECT")
+                    {
+                        try
+                        {
+                            txtAnnual.Text = Convert.ToString(iMonth * (Convert.ToDouble(txt.Text)));
+                        }
+                        catch
+                        {
+                        }
+
+                    }
+                    else if (lblCalMode.Text.ToUpper() == "PERCENTAGE")
+                    {
+                        txtAnnual.Text = txt.Text;
+
+                    }
+
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void txtAnnual_TextChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            TextBox txt = new TextBox();
+            TextBox txtAnnual = new TextBox();
+            Label lblCalMode = new Label();
+            _obj_Smhr_PeriodType = new SMHR_PERIODTYPE();
+            _obj_Smhr_PeriodType.PERIODTYPE_ID = Convert.ToInt32(rcb_Type.SelectedItem.Value);
+            DataTable dt_PeriodType = BLL.get_PeriodType(_obj_Smhr_PeriodType);
+            if (dt_PeriodType.Rows.Count != 0)
+            {
+                ViewState["days"] = Convert.ToInt32(dt_PeriodType.Rows[0]["PERIODTYPE_NOOFMONTHS"]);
+            }
+            int iMonth = (int)ViewState["days"];
+            for (int index = 0; index < RG_SalaryStruct.Items.Count; index++)
+            {
+                txt = RG_SalaryStruct.Items[index].FindControl("txtNumber") as TextBox;
+                txtAnnual = RG_SalaryStruct.Items[index].FindControl("txtAnnualNumber") as TextBox;
+                lblCalMode = RG_SalaryStruct.Items[index].FindControl("lblCALMODE_1") as Label;
+                string str = txtAnnual.Text;
+                if (txtAnnual.Text != "")
+                {
+                    if (lblCalMode.Text.ToUpper() == "DIRECT")
+                    {
+                        txt.Text = Convert.ToString((Convert.ToDouble(txtAnnual.Text)) / iMonth);
+
+                    }
+                    else if (lblCalMode.Text.ToUpper() == "PERCENTAGE")
+                    {
+                        txt.Text = txtAnnual.Text;
+
+                    }
+
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void RG_SalaryStruct_ItemCreated(object sender, GridItemEventArgs e)
+    {
+        try
+        {
+            _obj_smhr_organisation = new SMHR_ORGANISATION();
+            _obj_smhr_organisation.MODE = 2;
+            _obj_smhr_organisation.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt_Org = BLL.get_Organisation(_obj_smhr_organisation);
+            if (e.Item is GridDataItem)
+            {
+                GridDataItem gt = (GridDataItem)e.Item;
+                TextBox txt = (TextBox)gt.FindControl("txtNumber") as TextBox;
+                txt.AutoPostBack = true;
+                txt.TextChanged += new EventHandler(txt_TextChanged);
+
+                TextBox txtAnnual = (TextBox)gt.FindControl("txtAnnualNumber") as TextBox;
+                txtAnnual.AutoPostBack = true;
+                txtAnnual.TextChanged += new EventHandler(txtAnnual_TextChanged);
+                if (Convert.ToString(dt_Org.Rows[0]["ORGANISATION_ANNUALPROCESS"]) != "")
+                {
+                    if (Convert.ToInt32(dt_Org.Rows[0]["ORGANISATION_ANNUALPROCESS"]) == 1)
+                    {
+                        txt.Enabled = false;
+                    }
+                    else
+                    {
+                        txtAnnual.Visible = false;
+                        txtAnnual.Enabled = false;
+                    }
+                }
+                else
+                {
+                    txtAnnual.Enabled = false;
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcb_Type_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            _obj_Smhr_PeriodType = new SMHR_PERIODTYPE();
+            _obj_Smhr_PeriodType.PERIODTYPE_ID = Convert.ToInt32(rcb_Type.SelectedItem.Value);
+            DataTable dt_PeriodType = BLL.get_PeriodType(_obj_Smhr_PeriodType);
+            if (dt_PeriodType.Rows.Count != 0)
+            {
+                ViewState["days"] = Convert.ToInt32(dt_PeriodType.Rows[0]["PERIODTYPE_NOOFMONTHS"]);
+                int iMonth = (int)ViewState["days"];
+            }
+            _obj_smhr_organisation = new SMHR_ORGANISATION();
+            _obj_smhr_organisation.MODE = 2;
+            _obj_smhr_organisation.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt_Org = BLL.get_Organisation(_obj_smhr_organisation);
+            TextBox txtNumber = new TextBox();
+            TextBox txtAnnualNumber = new TextBox();
+            CheckBox chk_Select = new CheckBox();
+            Label lblCalMode = new Label();
+            for (int index = 0; index < RG_SalaryStruct.Items.Count; index++)
+            {
+                chk_Select = RG_SalaryStruct.Items[index].FindControl("chk_Select") as CheckBox;
+                txtNumber = RG_SalaryStruct.Items[index].FindControl("txtNumber") as TextBox;
+                txtAnnualNumber = RG_SalaryStruct.Items[index].FindControl("txtAnnualNumber") as TextBox;
+                lblCalMode = RG_SalaryStruct.Items[index].FindControl("lblCALMODE_1") as Label;
+                if (chk_Select.Checked)
+                {
+                    if (dt_Org.Rows.Count != 0)
+                    {
+                        if (Convert.ToString(dt_Org.Rows[0]["ORGANISATION_ANNUALPROCESS"]) != "")
+                        {
+                            if (Convert.ToInt32(dt_Org.Rows[0]["ORGANISATION_ANNUALPROCESS"]) == 1)
+                            {
+                                if (txtAnnualNumber.Text != "")
+                                {
+                                    if (lblCalMode.Text.ToUpper() == "DIRECT")
+                                    {
+                                        txtNumber.Text = Convert.ToString((Convert.ToDouble(txtAnnualNumber.Text)) / Convert.ToInt32(dt_PeriodType.Rows[0]["PERIODTYPE_NOOFMONTHS"]));
+
+                                    }
+                                    else if (lblCalMode.Text.ToUpper() == "PERCENTAGE")
+                                    {
+                                        txtNumber.Text = txtAnnualNumber.Text;
+
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                if (txtNumber.Text != "")
+                                {
+                                    if (lblCalMode.Text.ToUpper() == "DIRECT")
+                                    {
+                                        txtAnnualNumber.Text = Convert.ToString(Convert.ToInt32(dt_PeriodType.Rows[0]["PERIODTYPE_NOOFMONTHS"]) * (Convert.ToDouble(txtNumber.Text)));
+
+                                    }
+                                    else if (lblCalMode.Text.ToUpper() == "PERCENTAGE")
+                                    {
+                                        txtAnnualNumber.Text = txtNumber.Text;
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_SalaryStructure", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

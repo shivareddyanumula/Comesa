@@ -1,0 +1,74 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using SMHR;
+
+using Telerik.Web.UI.GridExcelBuilder;
+using Telerik.Web.UI;
+using System.Data;
+
+public partial class Payroll_Result : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsPostBack)
+                LoadGrid();
+        }
+        catch(Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("", ""), "Result",ex.StackTrace,DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadGrid()
+    {
+        try
+        {
+            rgResult.DataSource = BLL.GetData(Convert.ToInt32(Session["ORG_ID"]), Convert.ToInt32(Request.QueryString["SRBUID"]), Convert.ToInt32(Request.QueryString["SRPRDID"]),
+                                                    Convert.ToInt32(Request.QueryString["SRMNTH"]));
+            rgResult.DataBind();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("", ""), "Result", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rgResult_NeedDataSource(object source, Telerik.Web.UI.GridNeedDataSourceEventArgs e)
+    {
+        try
+        {
+            rgResult.DataSource = BLL.GetData(Convert.ToInt32(Session["ORG_ID"]), Convert.ToInt32(Request.QueryString["SRBUID"]), Convert.ToInt32(Request.QueryString["SRPRDID"]),
+                                                        Convert.ToInt32(Request.QueryString["SRMNTH"]));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("", ""), "Result", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void imgBtnExcel_Click(object sender, ImageClickEventArgs e)
+    {
+        try
+        {
+            rgResult.ExportSettings.Excel.Format = Telerik.Web.UI.GridExcelExportFormat.ExcelML;
+            rgResult.ExportSettings.IgnorePaging = true;
+            rgResult.ExportSettings.ExportOnlyData = true;
+            rgResult.ExportSettings.FileName = "Test";
+            rgResult.MasterTableView.ExportToExcel();            
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("", ""), "Result", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

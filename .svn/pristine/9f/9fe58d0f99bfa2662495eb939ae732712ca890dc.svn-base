@@ -1,0 +1,332 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+using SMHR;
+using Telerik.Web.UI;
+using System.Collections.Generic;
+
+public partial class SMHRMaster : System.Web.UI.MasterPage
+{
+    SMHR_EMPLOYEE _obj_smhr_employee;
+    SMHR_APPLICANT _obj_smhr_applicant;
+    
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsPostBack)
+            {
+                //To load super modules
+                // Session["SUPERMODULE_ID"] = null;
+                SMHR_FORMS _obj_Smhr_forms = new SMHR_FORMS();
+                _obj_Smhr_forms.MODE = 7;
+                _obj_Smhr_forms.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                DataTable dt = BLL.get_Modules(_obj_Smhr_forms);
+                ViewState["SUPER_MODULES"] = dt;
+                rcmb_module.DataSource = dt;
+                rcmb_module.DataTextField = "SMHR_SUP_MODULE_NAME";
+                rcmb_module.DataValueField = "SMHR_SUP_MODULE_ID";
+                rcmb_module.DataBind();
+                if (Convert.ToInt32(Session["EMP_ID"]) == (-1))
+                {
+                    rcmb_module.Enabled = false;
+                }
+                else
+                {
+                    rcmb_module.SelectedIndex = rcmb_module.FindItemIndexByValue((Convert.ToInt32(Session["SUPERMODULE_ID"])).ToString());
+                }
+
+                lblyear.Text = Convert.ToString(DateTime.Now.Year);
+                if (Session["USERNAME"] == null)
+                {
+                    Response.Redirect("~/Login.aspx", false);
+                }
+                if (Session["ORG_ID"] == null)
+                {
+                    Response.Redirect("~/Login.aspx", false);
+                }
+                DataTable dtGlobal = BLL.ExecuteQuery(" EXEC USP_SMHR_GLOBALCONFIG @OPERATION = 'Check',@GLOBALCONFIG_ORGANISATION_ID = '" + Convert.ToString(Session["ORG_ID"]) + "'");
+                if (dtGlobal.Rows.Count != 0)
+                {
+                    string temp = Convert.ToString(BLL.ExecuteQuery(" EXEC USP_SMHR_GLOBALCONFIG @OPERATION = 'Check',@GLOBALCONFIG_ORGANISATION_ID = '" + Convert.ToString(Session["ORG_ID"]) + "'").Rows[0]["GLOBALCONFIG_COMPANYLOGO"]);
+                    string temp1 = Convert.ToString(BLL.ExecuteQuery(" EXEC USP_SMHR_GLOBALCONFIG @OPERATION = 'Check',@GLOBALCONFIG_ORGANISATION_ID = '" + Convert.ToString(Session["ORG_ID"]) + "'").Rows[0]["GLOBALCONFIG_COMPANYLOGO_WIDTH"]);
+                    string temp2 = Convert.ToString(BLL.ExecuteQuery(" EXEC USP_SMHR_GLOBALCONFIG @OPERATION = 'Check',@GLOBALCONFIG_ORGANISATION_ID = '" + Convert.ToString(Session["ORG_ID"]) + "'").Rows[0]["GLOBALCONFIG_COMPANYLOGO_HEIGHT"]);
+                    // img_CompLogo.ImageUrl = temp;
+                    // img_CompLogo.Width = Unit.Pixel(Convert.ToInt32(temp1));
+                    // img_CompLogo.Height = Unit.Pixel(Convert.ToInt32(temp2));
+                }
+
+                string Name = string.Empty;
+                if (Convert.ToInt32(Session["EMP_ID"]) > 0)
+                {
+                    string fName = string.Empty;
+                    string mName = string.Empty;
+                    string lName = string.Empty;
+                    _obj_smhr_employee = new SMHR_EMPLOYEE();
+                    _obj_smhr_employee.OPERATION = operation.Select;
+                    _obj_smhr_employee.EMP_ID = Convert.ToInt32(Session["EMP_ID"]);
+                    _obj_smhr_employee.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                    DataTable dt_Details = BLL.get_Employee(_obj_smhr_employee);
+                    if (dt_Details.Rows.Count > 0)
+                    {
+                        _obj_smhr_applicant = new SMHR_APPLICANT();
+                        _obj_smhr_applicant.OPERATION = operation.Select;
+                        _obj_smhr_applicant.APPLICANT_ID = Convert.ToInt32(Convert.ToString(dt_Details.Rows[0][2]));
+                        _obj_smhr_applicant.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                        DataTable dtApp = BLL.get_Applicant(_obj_smhr_applicant);
+                        if (dtApp.Rows.Count > 0)
+                        {
+                            fName = Convert.ToString(dtApp.Rows[0]["APPLICANT_FIRSTNAME"]);
+                            mName = Convert.ToString(dtApp.Rows[0]["APPLICANT_MIDDLENAME"]);
+                            lName = Convert.ToString(dtApp.Rows[0]["APPLICANT_LASTNAME"]);
+                        }
+                    }
+                    string strnew = fName.ToUpper().Replace(" ", "&nbsp;") + " " + mName.ToUpper().Replace(" ", "&nbsp;") + " " + lName.ToUpper().Replace(" ", "&nbsp;");
+                    Name = strnew;
+                }
+                else
+                {
+                    Name = string.Empty;
+                }
+                if (Session["USER_ID"] != null)
+                {
+                    Lnk_LogOut.Visible = true;
+                    lnk_Home.Visible = true;
+                    if (Name == string.Empty)
+                    {
+                        hyp_Name.Text = Convert.ToString(Session["USERNAME"]);
+                    }
+                    else
+                    {
+                        hyp_Name.Text = Name;
+                    }
+                }
+                if (Session["ORG_NAME"] != null)
+                {
+                    lbl_org.Text = Convert.ToString(Session["ORG_NAME"]);
+                }
+                if (Session["EMP_TYPE"] != null)
+                    GetMenu(Convert.ToString(Session["EMP_TYPE"]));
+                else
+                {
+                    if (Request.FilePath.IndexOf("Login.aspx") == -1)
+                        Response.Redirect("~/Login.aspx", false);
+                }
+                if (Convert.ToInt32(Session["EMP_ID"]) > 0)
+                {
+                    hypPasswordReset.Visible = false;
+                    pr.Visible = false;
+                    trOld.Visible = true;
+                    trPassReset.Visible = false;
+                }
+                else
+                {
+                    hypPasswordReset.Visible = true;
+                    pr.Visible = true;
+                    trOld.Visible = false;
+                    trPassReset.Visible = true;
+                }
+                if (Session["USER_ID"] == null)
+                {
+                    Response.Redirect("~/frm_SesstionExp.aspx", false);
+                }
+            }
+            if (Session["USER_ID"] == null)
+            {
+                Response.Redirect("~/frm_SesstionExp.aspx", false);
+            }
+            BreadCrumb();
+            this.Page.Title = ":: Smart HR ::";
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "SMHRMaster", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void Lnk_LogOut_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (Session["USER_ID"] != null)
+            {
+                SMHR_USERLOG _obj_SMHR_USER_LOG = new SMHR_USERLOG();
+
+                _obj_SMHR_USER_LOG.USERLOG_ID = Convert.ToInt32(Session["UserlogID"]);
+                _obj_SMHR_USER_LOG.USERLOG_LOGEND = DateTime.Now;
+
+                if (BLL.GET_USER_LOG_UPDATE(_obj_SMHR_USER_LOG))
+                    Session.Remove("USER_ID");
+
+                Response.Redirect("~/Logout.aspx");
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "SMHRMaster", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void lnk_Home_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (Convert.ToInt32(Session["EMP_ID"]) > 0)
+            {
+
+                if (Convert.ToString(Session["SELFSERVICE"]) == "true")
+                    Response.Redirect("~/Security/frm_Dashboard.aspx", false);
+                else
+                    //Session["SELFSERVICE"] = "";
+                    Response.Redirect("~/Security/frm_Dashboradmngr.aspx", false);
+            }
+            else
+            {
+                Response.Redirect("~/Masters/Default.aspx", false);
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "SMHRMaster", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void GetMenu(string LoginType)
+    {
+
+        //added to assign security privileges form to super admin by anirudh
+        foreach (RadMenuItem items in MainMenu.GetAllItems())
+        {
+            items.Visible = false;
+        }
+
+        DataTable DT = BLL.get_Menus(Convert.ToString(LoginType), Convert.ToInt32(Session["SUPERMODULE_ID"]));
+        foreach (DataRow item in DT.Rows)
+        {
+            foreach (RadMenuItem items in MainMenu.GetAllItems())
+            {
+                if (items.TabIndex == Convert.ToInt32(item["TYPSEC_FORMS_ID"]))
+                    items.Visible = true;
+            }
+        }
+
+        if (Convert.ToInt32(Session["EMP_ID"]) == -1)
+        {
+            DataTable DT_NEW = BLL.get_Forms();
+            foreach (DataRow item in DT_NEW.Rows)
+            {
+                foreach (RadMenuItem items in MainMenu.GetAllItems())
+                {
+                    if (items.TabIndex == 203 || items.TabIndex == 63)
+                        items.Visible = true;
+                    if (items.TabIndex == 74)
+                        items.Visible = false;
+                }
+            }
+        }
+        else
+        {
+            //To make Organisation,Localisation screens invisible by sravani
+            DataTable DT_NEW = BLL.get_Forms_org();
+            foreach (DataRow item in DT_NEW.Rows)
+            {
+                foreach (RadMenuItem items in MainMenu.GetAllItems())
+                {
+                    if (items.TabIndex == 83 || items.TabIndex == 89)
+                        items.Visible = false;
+
+                }
+            }
+        }
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void BreadCrumb()
+    {
+        RadMenuItem currentItem = MainMenu.FindItemByUrl(Request.Url.PathAndQuery);
+        if (currentItem != null)
+        {
+            //currentItem.HighlightPath();
+            DataBindBreadCrumbRepeater(currentItem);
+        }
+    }
+
+    private void DataBindBreadCrumbRepeater(RadMenuItem currentItem)
+    {
+        try
+        {
+            List<RadMenuItem> breadCrumbPath = new List<RadMenuItem>();
+            while (currentItem != null)
+            {
+                breadCrumbPath.Insert(0, currentItem);
+                currentItem = currentItem.Owner as RadMenuItem;
+            }
+            BreadCrumbRepeater.DataSource = breadCrumbPath;
+            BreadCrumbRepeater.DataBind();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "SMHRMaster", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_module_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+
+            foreach (RadMenuItem items in MainMenu.GetAllItems())
+            {
+                items.Visible = false;
+            }
+            Session["SUPERMODULE_ID"] = Convert.ToInt32(rcmb_module.SelectedItem.Value);
+            DataTable DT = BLL.get_Menus(Convert.ToString(Session["EMP_TYPE"]), Convert.ToInt32(rcmb_module.SelectedItem.Value));
+            foreach (DataRow item in DT.Rows)
+            {
+                foreach (RadMenuItem items in MainMenu.GetAllItems())
+                {
+                    if (items.TabIndex == Convert.ToInt32(item["TYPSEC_FORMS_ID"]))
+                        items.Visible = true;
+                }
+            }
+            if (Convert.ToString(Session["SELFSERVICE"]) == "ADMIN")
+            {
+                Response.Redirect("~/Masters/Default.aspx", false);
+            }
+            else if (Convert.ToString(Session["SELFSERVICE"]) == "true")
+            {
+                Response.Redirect("~/Security/frm_Dashboard.aspx", false);
+            }
+            else
+            {
+                Response.Redirect("~/Security/frm_Dashboradmngr.aspx", false);
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "SMHRMaster", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void lnk_Click(object sender, EventArgs e)
+    {
+        //string strSmartPMLink = "Mission, Vision and Values";//ConfigurationManager.AppSettings["SmartPMLink"].ToString();
+        //ScriptManager.RegisterStartupScript(this, this.GetType(), Guid.NewGuid().ToString(), "winOpen('"+strSmartPMLink+"');", true);
+    }
+}

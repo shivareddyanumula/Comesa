@@ -1,0 +1,39 @@
+Changes from HR :-
+01.	Bank details Screen should be included in the employee details as an additional tab. --> 
+	Yes, we can do this option while creating a new tab for entering Employees' Bank details for n records., but only one record should be active at once --- Done
+
+02.	ESIC no should be added employee details -> other Details. --> We can do -- Done
+
+03.	Personal Mail id to be added employee details -> Physical Details. --> We can do --Done
+
+04.	Please add .in mail ids for the official mail id. --> We can do, but need clarification on this, coz IS team should create a domain for '.in' mail IDs -- Done
+
+05.	Add a number tab for giving the experience in number instead of giving the Joining & reliving dates in the experience Screen. -->
+ 	We need to do impact analysis and it takes time -- Done
+
+06.	Add Project Tab in the employee Personal Details. --> 
+	We need clarification and it takes time to integrate Employee data with Projects -- Need Clarifications
+
+07.	Unfreez the picture tab while updating the new employee information. --> We can do --Done
+
+
+
+
+========================================================================================================================
+Changes from Subbarao:-
+01. Current project Field in database -- Done
+
+02. Remove Land Line and Extension No from Phisical details -- Done
+
+03. show bank details in popup -- Done
+
+04. Change Label Probation Date to Probation End Date -- Done
+
+05. Change Label Notification Period to Notice Period -- Done
+
+06. If Probation Period is ended Send Single Mail at 7 PM to HR ID --- Yogitha
+
+07. Calculate Experience in Months Relieving Date - Joining Date -- Done
+
+08. Bank details Screen should be included in the employee details as an additional tab. --> 
+    Yes, we can do this option while creating a new tab for entering Employees' Bank details for n records., but only one record should be active at once -- Done

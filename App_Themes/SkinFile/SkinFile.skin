@@ -1,0 +1,43 @@
+﻿
+<%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI"%>
+
+<telerik:RadGrid runat="server" Skin="Outlook"  Font-Names="Arial" >
+</telerik:RadGrid>
+
+<telerik:RadNumericTextBox runat="server" width="30%" Skin="Outlook" SkinID="eMedicals" />
+<telerik:RadGrid runat="server" Skin="Outlook" SkinID="eMedical" Width="40%" Font-Names="Arial" >
+</telerik:RadGrid>
+
+<telerik:RadComboBox Runat="server" Skin="Outlook" Width="210px" Font-Names="Arial" ForeColor="Black" Filter="Contains" MaxHeight="150"  />
+<telerik:RadComboBox Runat="server" Skin="Outlook" Width="50px" Font-Names="Arial" ForeColor="Black" SkinID="Attendance" Filter="Contains" MaxHeight="150" />
+<telerik:RadFormDecorator Runat="server" Skin="Outlook" />
+<telerik:RadTextBox Runat="server"  Width="205px" Skin="Outlook" Font-Names="Arial" />
+<telerik:RadTextBox Runat="server"  Width="250px" Height="150px" Skin="Outlook" Font-Names="Arial" SkinID="eAssests" />
+<telerik:RadTextBox Runat="server"  Width="30px" Skin="Outlook" Font-Names="Arial" SkinID="EmpExp"/>
+<telerik:RadTextBox Runat="server"  Width="40px" Skin="Outlook" Font-Names="Arial" SkinID="EmpExp2"/>
+<telerik:RadContextMenu runat="server" Skin="Outlook" />                
+<telerik:RadTabStrip runat="server" Skin="Outlook" />
+<telerik:RadAjaxLoadingPanel runat="server" Visible="true"  Skin="Outlook"/>
+<telerik:RadTreeView runat="server" Skin="Outlook" />
+<telerik:RadMenu runat="server" Skin="Outlook" />
+<telerik:RadNumericTextBox runat="server" width="205px" Skin="Outlook" />
+<telerik:RadRating runat="server" Font-Names="Arial" Skin="Default"/>
+<telerik:RadWindow runat="server" Skin="Outlook" />
+
+ <telerik:RadDatePicker runat="server" Skin="Outlook" MaxDate="9999-12-31" width="210px" MinDate="1900-01-01">
+    <DateInput DisplayDateFormat="dd/MM/yyyy" DateFormat="dd/MM/yyyy">
+    </DateInput>
+</telerik:RadDatePicker> 
+<telerik:RadListBox runat="server" width="205px" Skin="Outlook" />
+<telerik:RadWindowManager runat="server" Skin="Outlook" />
+<telerik:RadMaskedTextBox runat="server" Width="205px" Skin="Outlook"  />
+<asp:RadioButtonList runat="server" Font-Names="Arial" Skin="Outlook" />
+<asp:RadioButton runat="server" Font-Names="Arial" Skin="Outlook" />
+<asp:CheckBoxList runat="server" Font-Names="Arial" Skin="Outlook"/>
+<asp:CheckBox runat="server" Font-Names="Arial" Skin="Outlook" />
+<asp:Label runat="server" Font-Names="Arial" Font-Size="9pt"  />
+
+
+
+                      
+                      

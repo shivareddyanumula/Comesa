@@ -1,0 +1,97 @@
+﻿/*body
+{
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	font-family: Arial;
+	font-size: 9pt; background: #7692B9;
+	background: #FFFFFF;
+}
+*/
+.main_Content
+{
+	width: 1014px;
+	background: #FFFFFF;
+}
+
+.LeftPane
+{
+	width: 7px;
+	background: url('Images/left.gif') repeat-y;
+}
+
+.RightPane
+{
+	width: 7px;
+	background: url('Images/right.gif') repeat-y;
+}
+.BottomPane
+{
+	height: 7px;
+	background: url('Images/bottom.gif') repeat-x;
+}
+/*
+.header
+{
+	height: 20px;
+}
+
+.top_header
+{
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	height: 20px;
+}
+*/
+.footer
+{
+	height: 20px;
+}
+
+.menu
+{
+	height: 30px;
+}
+
+.bottom_left
+{
+	background: url('Images/left_1.gif') no-repeat;
+}
+
+.bottom_right
+{
+	background: url('Images/right_1.gif') no-repeat;
+}
+
+.top_line
+{
+	background: url('Images/top_line.gif') repeat-x;
+}
+
+.top_box_left
+{
+	background: url('Images/top_box_left.gif') no-repeat;
+}
+
+.top_box_right
+{
+	background: url('Images/top_box_right.gif') repeat-x;
+}
+
+.top_box
+{
+	background: url('Images/top_box.gif') repeat-x;
+	height: 20px;
+}
+
+.line_link_1
+{
+	color: White;
+	text-decoration: none;
+}
+
+
+

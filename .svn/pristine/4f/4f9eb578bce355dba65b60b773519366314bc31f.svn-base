@@ -1,0 +1,238 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+using SMHR;
+using System.Data;
+
+public partial class Approval_frmEmpDtlsAprvl : System.Web.UI.Page
+{
+    PWDEncryprt.PWDEncrypt PWD = new PWDEncryprt.PWDEncrypt();
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            LoadGrid();
+            rgEmpDtlsAprvl.DataBind();
+
+            if (rgEmpDtlsAprvl.Items.Count == 0)
+                btnApprove.Visible = rgEmpDtlsAprvl.MasterTableView.Columns[0].Visible = false;
+            else
+                btnApprove.Visible = rgEmpDtlsAprvl.MasterTableView.Columns[0].Visible = true;
+
+            //Code for Security Privileges
+            Session.Remove("WRITEFACILITY");
+
+            SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+
+            _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+            _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+            _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employee Details Approval");
+
+            DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+
+            if (dtformdtls.Rows.Count != 0)
+            {
+                if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                {
+                    Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                }
+                else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                {
+                    Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                }
+                else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                {
+                    Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                }
+            }
+            else
+            {
+                smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+
+                _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+
+                SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                Response.Redirect("~/frm_UnAuthorized.aspx", false);
+            }
+
+            if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                btnApprove.Visible = false;
+            else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+            {
+                smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+
+                _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+
+                SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                Response.Redirect("~/frm_UnAuthorized.aspx", false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// To Load the Grid Data
+    /// </summary>
+    protected void LoadGrid()
+    {
+        try
+        {
+            rgEmpDtlsAprvl.DataSource = BLL.GetEmpDtlsCnfmAprvlData(6);
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpDtlsCnfm", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    /// <summary>
+    /// To Check all the available records to be checked
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected void chkAll_CheckedChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            CheckBox chkAll = (CheckBox)sender;
+            CheckBox chk;
+
+            for (int i = 0; i < rgEmpDtlsAprvl.Items.Count; i++)
+            {
+                chk = rgEmpDtlsAprvl.Items[i].FindControl("chk") as CheckBox;
+                
+                if (chkAll.Checked)
+                    chk.Checked = true;
+                else
+                    chk.Checked = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpDtlsCnfm", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    /// <summary>
+    /// Confirm click Event
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected void btnApprove_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (Session["USER_ID"] != null)
+            {
+                CheckBox chk;
+                Label lblID;
+
+                int chkCnt = 0;
+                string ids = string.Empty;
+
+                for (int i = 0; i < rgEmpDtlsAprvl.Items.Count; i++)
+                {
+                    chk = rgEmpDtlsAprvl.Items[i].FindControl("chk") as CheckBox;
+
+                    if (chk.Checked)
+                        chkCnt++;
+                }
+
+                if (chkCnt == 0)
+                {
+                    BLL.ShowMessage(this, "Please check at least one record before clicking the button..!");
+                    return;
+                }
+                else
+                {
+                    for (int i = 0; i < rgEmpDtlsAprvl.Items.Count; i++)
+                    {
+                        chk = rgEmpDtlsAprvl.Items[i].FindControl("chk") as CheckBox;
+                        lblID = rgEmpDtlsAprvl.Items[i].FindControl("lblID") as Label;
+
+                        if (chk.Checked)
+                            ids = ids + lblID.Text + ",";
+                    }
+
+                    if (ids != string.Empty)
+                    {
+                        ids = ids.Remove(ids.Length - 1);
+
+                        if (BLL.SetEmpDtlsCnfmAprvlData(-3, Convert.ToInt32(Session["USER_ID"]), ids))
+                            BLL.ShowMessage(this, "Selected record(s) Approved successfully..!");
+
+                        for (int i = 0; i < rgEmpDtlsAprvl.Items.Count; i++)
+                        {
+                            chk = rgEmpDtlsAprvl.Items[i].FindControl("chk") as CheckBox;
+                            lblID = rgEmpDtlsAprvl.Items[i].FindControl("lblID") as Label;
+
+                            if (chk.Checked)
+                            {
+                                SMHR_LOGININFO _obj_LoginInfo = new SMHR_LOGININFO();
+
+                                _obj_LoginInfo.OPERATION = operation.Select;
+                                _obj_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                                _obj_LoginInfo.LOGIN_EMP_ID = Convert.ToInt32(lblID.Text);
+
+                                DataTable dtLogData = BLL.get_LoginInfo1(_obj_LoginInfo);
+
+                                if (dtLogData.Rows.Count > 0)
+                                    BLL.setemployeelogin((Convert.ToInt32(dtLogData.Rows[0]["LOGIN_EMP_ID"])),
+                                        Convert.ToString(PWD.PasswordDecrypt(Convert.ToString(dtLogData.Rows[0]["LOGIN_PASSWORD"]))));
+                            }
+                        }
+
+                        LoadGrid();
+                        rgEmpDtlsAprvl.DataBind();
+
+                        if (rgEmpDtlsAprvl.Items.Count == 0)
+                            btnApprove.Visible = rgEmpDtlsAprvl.MasterTableView.Columns[0].Visible = false;
+                        else
+                            btnApprove.Visible = rgEmpDtlsAprvl.MasterTableView.Columns[0].Visible = true;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpDtlsCnfm", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    /// <summary>
+    /// On Need Datasource for the rad grid
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="e"></param>
+    protected void rgEmpDtlsAprvl_NeedDataSource(object source, Telerik.Web.UI.GridNeedDataSourceEventArgs e)
+    {
+        try
+        {
+            LoadGrid();
+
+            if (rgEmpDtlsAprvl.Items.Count == 0)
+                btnApprove.Visible = rgEmpDtlsAprvl.MasterTableView.Columns[0].Visible = false;
+            else
+                btnApprove.Visible = rgEmpDtlsAprvl.MasterTableView.Columns[0].Visible = true;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpDtlsCnfm", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

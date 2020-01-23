@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ACode" xml:space="preserve">
+    <value>Enter Asset Code</value>
+  </data>
+  <data name="ARemarks" xml:space="preserve">
+    <value>Enter Asset Remarks</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Choose Asset Type</value>
+  </data>
+  <data name="AssetCode" xml:space="preserve">
+    <value>Asset&amp;nbsp;Code</value>
+  </data>
+  <data name="AssetDetails" xml:space="preserve">
+    <value>Asset Details</value>
+  </data>
+  <data name="AssetName" xml:space="preserve">
+    <value>Asset&amp;nbsp;Name</value>
+  </data>
+  <data name="AssetRemarks" xml:space="preserve">
+    <value>Asset&amp;nbsp;Remarks</value>
+  </data>
+  <data name="AssetType" xml:space="preserve">
+    <value>Assets</value>
+  </data>
+  <data name="btn_Add.Text" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="btn_Cancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btn_Save.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="btn_Update.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="DCode" xml:space="preserve">
+    <value>Enter Document Code</value>
+  </data>
+  <data name="DName" xml:space="preserve">
+    <value>Choose Document Name</value>
+  </data>
+  <data name="DocCode" xml:space="preserve">
+    <value>Document&amp;nbsp;Code</value>
+  </data>
+  <data name="DocDetails" xml:space="preserve">
+    <value>Document Details</value>
+  </data>
+  <data name="DocName" xml:space="preserve">
+    <value>Document&amp;nbsp;Name</value>
+  </data>
+  <data name="DocRemarks" xml:space="preserve">
+    <value>Document&amp;nbsp;Remarks</value>
+  </data>
+  <data name="DocType" xml:space="preserve">
+    <value>Document&amp;nbsp;Type</value>
+  </data>
+  <data name="Document" xml:space="preserve">
+    <value>Choose Document Type</value>
+  </data>
+  <data name="DRemarks" xml:space="preserve">
+    <value>Enter Document Remarks</value>
+  </data>
+  <data name="Employee" xml:space="preserve">
+    <value>Choose Employee</value>
+  </data>
+  <data name="EmployeeAsset" xml:space="preserve">
+    <value>Employee&amp;nbsp;Assets</value>
+  </data>
+  <data name="EmployeeDoc" xml:space="preserve">
+    <value>Employee&amp;nbsp;Documents</value>
+  </data>
+  <data name="lbl_Employee" xml:space="preserve">
+    <value>Employee</value>
+  </data>
+  <data name="lbl_IssueDate" xml:space="preserve">
+    <value>Issue Date</value>
+  </data>
+  <data name="lbl_Serial" xml:space="preserve">
+    <value>Serial</value>
+  </data>
+  <data name="lbl_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="lblReturnable" xml:space="preserve">
+    <value>Returnable</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Choose Asset Name</value>
+  </data>
+  <data name="RFV_ADType.ErrorMessage" xml:space="preserve">
+    <value>Please Select Type</value>
+  </data>
+  <data name="RFV_Code.ErrorMessage" xml:space="preserve">
+    <value>Please Enter Code</value>
+  </data>
+  <data name="RFV_Date.ErrorMessage" xml:space="preserve">
+    <value>Please Enter Issue Date</value>
+  </data>
+  <data name="RFV_Employee.ErrorMessage" xml:space="preserve">
+    <value>Please Select Employee</value>
+  </data>
+  <data name="RFV_Name.ErrorMessage" xml:space="preserve">
+    <value>Please Enter Name</value>
+  </data>
+  <data name="RFV_Remarks.ErrorMessage" xml:space="preserve">
+    <value>Enter Remarks</value>
+  </data>
+  <data name="RFV_Returnable.ErrorMessage" xml:space="preserve">
+    <value>Check Returnable</value>
+  </data>
+  <data name="RFV_Serial.ErrorMessage" xml:space="preserve">
+    <value>Enter Serial No</value>
+  </data>
+  <data name="RFV_Type.ErrorMessage" xml:space="preserve">
+    <value>Please Select Type</value>
+  </data>
+  <data name="lblUpload.Text" xml:space="preserve">
+    <value>Upload Document</value>
+  </data>
+  <data name="lbl_IssueDate1.Text" xml:space="preserve">
+    <value>Issued Date</value>
+  </data>
+  <data name="lblReceived.Text" xml:space="preserve">
+    <value>Received By</value>
+  </data>
+  <data name="lblReceivedDate.Text" xml:space="preserve">
+    <value>Received Date</value>
+  </data>
+  <data name="cmp_ReceivedDate.ErrorMessage" xml:space="preserve">
+    <value>Received Date Should not be less than Issue Date</value>
+  </data>
+  <data name="lbl_BusinessUnit.Text" xml:space="preserve">
+    <value>Business Unit</value>
+  </data>
+</root>

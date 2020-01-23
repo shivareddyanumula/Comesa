@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using SMHR;
+using System.Data;
+using Telerik.Web.UI;
+
+
+public partial class Training_frm_TrainingApproval : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!Page.IsPostBack)
+        {
+            LoadData();
+        }
+    }
+
+
+    private void LoadData()
+    {
+        SMHR_TRAININGREQUEST _obj_Smhr_TrgRqst = new SMHR_TRAININGREQUEST();
+        _obj_Smhr_TrgRqst.Mode = 8;
+       
+        DataTable DT = BLL.get_TrgRqst(_obj_Smhr_TrgRqst);
+        RG_TrainingApproval.DataSource = DT;
+        RG_TrainingApproval.DataBind();
+    }
+
+
+    protected void RG_TrainingApproval_NeedDataSource(object source, GridNeedDataSourceEventArgs e)
+    {
+        LoadData();
+    }
+
+
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("~/Masters/Default.aspx", false);
+        return;
+    }
+
+
+
+    protected void btn_Approve_Click(object sender, EventArgs e)
+    {
+        CheckBox chkBox = new CheckBox();
+        Label lblID = new Label();
+        string str = "";
+        for (int index = 0; index <= RG_TrainingApproval.Items.Count - 1; index++)
+        {
+            chkBox = RG_TrainingApproval.Items[index].FindControl("chk_Choose") as CheckBox;
+            lblID = RG_TrainingApproval.Items[index].FindControl("lbltrgID") as Label;
+            if (chkBox.Checked)
+            {
+                if (str == "")
+                    str = "" + lblID.Text + "";
+                else
+                    str = str + "," + lblID.Text + "";
+            }
+        }
+
+        if (string.IsNullOrEmpty(str))
+        {
+            BLL.ShowMessage(this, "Please Select Employees");
+            return;
+        }
+        bool status = false;
+        _obj_smhr_expense = new SMHR_EXPENSE();
+        _obj_smhr_expense = new SMHR_EXPENSE();
+        _obj_smhr_expense.EXPENSE_STATUS = 1;
+        _obj_smhr_expense.EXPENSE_NAME = str;
+        _obj_smhr_expense.EXPENSE_APPROVEDBY = Convert.ToInt32(rtxt_ReportingMgr.Text);
+        _obj_smhr_expense.EXPENSE_APPROVEDDATE = Convert.ToDateTime(rdp_ApprovalDate.SelectedDate.Value);
+        _obj_smhr_expense.LASTMDFBY = 1;
+        _obj_smhr_expense.LASTMDFDATE = DateTime.Now;
+        _obj_smhr_expense.OPERATION = operation.Update;
+        status = BLL.set_Expense(_obj_smhr_expense);
+        if (status == true)
+        {
+            BLL.ShowMessage(this, "Selected Expenses Approved");
+            LoadData();
+            RG_ExpenseApproval.DataBind();
+            //RG_ExpenseApproval.Visible = false;
+            return;
+        }
+    }
+}

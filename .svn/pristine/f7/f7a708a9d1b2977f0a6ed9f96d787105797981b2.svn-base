@@ -1,0 +1,374 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true" CodeFile="frmEduClaimAdd.aspx.cs" Inherits="Selfservice_frmEduClaimAdd" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphDefault" runat="Server">
+        <table align="center">
+        <tr>
+            <td colspan="3" align="center">
+                <asp:Label ID="lbl_EducationDetHeader" runat="server" Font-Bold="true" Text="Educational Claim"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" align="center">
+                <telerik:RadMultiPage ID="Rm_Education_page" runat="server" SelectedIndex="0" Width="100%" Height="480px">
+                    <telerik:RadPageView ID="RPV_Loans" runat="server" Selected="true">
+                        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                            <ContentTemplate>
+                                <table align="center" width="100%">
+                                    <tr>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_Employee" runat="server" Text="Employee"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcmb_Employee" runat="server" AutoPostBack="True" MaxHeight="300px" Filter="Contains"
+                                                MarkFirstMatch="true" OnSelectedIndexChanged="rcmb_Employee_SelectedIndexChanged" Skin="WebBlue">
+                                            </telerik:RadComboBox>
+                                            <asp:RequiredFieldValidator ID="rfv_Employee" runat="server" ControlToValidate="rcmb_Employee"
+                                                ErrorMessage="Please select Employee"
+                                                InitialValue="Select" Text="*" ValidationGroup="Controls"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_BusinessUnit" runat="server" Text="BusinessUnit"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadTextBox ID="rtbBusinessUnit" runat="server" Skin="WebBlue"
+                                                MarkFirstMatch="true" MaxHeight="300px" Enabled="false" Filter="Contains">
+                                            </telerik:RadTextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_Department" runat="server" Text="Department"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadTextBox ID="rtbDepartment" runat="server" Skin="WebBlue"
+                                                MarkFirstMatch="true" MaxHeight="300px" Enabled="false" Filter="Contains">
+                                            </telerik:RadTextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_Scale" runat="server" Text="Scale"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadTextBox ID="rtbScale" runat="server" Skin="WebBlue"
+                                                MarkFirstMatch="true" MaxHeight="300px" Enabled="false" Filter="Contains">
+                                            </telerik:RadTextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lblFinPeriod" runat="server" Text="Financial Period"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcbFinPeriod" runat="server" MarkFirstMatch="true" Filter="Contains"
+                                                Skin="WebBlue" MaxHeight="300px" AutoPostBack="true" OnSelectedIndexChanged="rcbFinPeriod_SelectedIndexChanged">
+                                            </telerik:RadComboBox>
+                                            <asp:RequiredFieldValidator ID="rfvFinPeriod" runat="server" ControlToValidate="rcbFinPeriod"
+                                                ErrorMessage="Please select Financial Period"
+                                                InitialValue="Select" Text="*" ValidationGroup="Controls"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_EduAllScale" runat="server" Text="Allowance per Dependant as per Scale"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rntbEduAllScale" runat="server" Skin="WebBlue" MaxHeight="300px" Enabled="false">
+                                            </telerik:RadNumericTextBox>
+                                        </td>
+                                    </tr>
+                                    <%--
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_DependentName" runat="server" Text="Dependent Name"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadComboBox ID="rcbDependentName" runat="server" MarkFirstMatch="true" Filter="Contains"
+                                                Skin="WebBlue" MaxHeight="300px" AutoPostBack="true" OnSelectedIndexChanged="rcbDependentName_SelectedIndexChanged">
+                                            </telerik:RadComboBox>
+                                            <asp:RequiredFieldValidator ID="rfvDependentName" runat="server" ControlToValidate="rcbDependentName"
+                                                ErrorMessage="Please select Dependent Name"
+                                                InitialValue="Select" Text="*" ValidationGroup="Controls"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_BalAval" runat="server" Text="Balance Available"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rntb_bal" runat="server" Width="125px" Enabled="false"
+                                                MaxLength="9">
+                                            </telerik:RadNumericTextBox>
+                                            <asp:HiddenField ID="hdf_balamt" runat="server" />
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_currency" runat="server" Text="Currency Type"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <b>:</b>
+                                        </td>
+                                        <td align="left">
+                                            <telerik:RadComboBox ID="rcmb_Currency" runat="server" MarkFirstMatch="true" MaxHeight="120px" Filter="Contains"
+                                                Skin="WebBlue" AutoPostBack="true" OnSelectedIndexChanged="rcmb_Currency_SelectedIndexChanged">
+                                            </telerik:RadComboBox>
+                                        </td>
+                                    </tr>
+
+                                    <tr id="MAXCURR" runat="server">
+                                        <td align="right">
+                                            <asp:Label ID="lbl_maxcurrencyamt" runat="server" Text="Amount After Conversion"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rnt_maxcurramt" runat="server"
+                                                Culture="English (United States)" AutoPostBack="true"
+                                                Skin="WebBlue" Enabled="false">
+                                            </telerik:RadNumericTextBox>
+                                            <asp:HiddenField ID="hdf_maxcurr" runat="server" />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_ClaimAmt" runat="server" Text="Claim Amount"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rad_ClaimAmount" runat="server"
+                                                Culture="English (United States)" MaxLength="9" AutoPostBack="true"
+                                                MinValue="0" Skin="WebBlue" OnTextChanged="rad_ClaimAmount_TextChanged">
+                                            </telerik:RadNumericTextBox>
+                                            <asp:HiddenField ID="hf_Claimamount" runat="server" />
+                                            <asp:RequiredFieldValidator ID="rfv_rad_ClaimAmount" runat="server" ControlToValidate="rad_ClaimAmount"
+                                                ErrorMessage="Please Enter Claim Amount"
+                                                meta:resourcekey="rad_ClaimAmount" Text="*" ValidationGroup="Controls"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_currencyAmt" runat="server" Text="Currency Amount in USD$"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox ID="rnt_CurrencyAmt" runat="server"
+                                                Culture="English (United States)" MaxLength="9" AutoPostBack="true"
+                                                MinValue="0" Skin="WebBlue" Enabled="false">
+                                            </telerik:RadNumericTextBox>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lblRule" runat="server" Text="Is Rule Checked"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <asp:CheckBox ID="chk_rule" runat="server" OnCheckedChanged="chk_rule_CheckedChanged" AutoPostBack="true" />
+                                        </td>
+                                    </tr>
+
+                                    <asp:Panel runat="server" ID="pnlRule" Enabled="false" Visible="false">
+                                        <tr>
+                                            <td align="right">
+                                                <asp:Label ID="lblRule75" runat="server" Text="Final Amount as per Rule 75%"></asp:Label>                                                
+                                            </td>
+                                            <td><b>:</b>
+                                            </td>
+                                            <td>
+                                                <telerik:RadNumericTextBox ID="rntbRule75" runat="server"
+                                                    Culture="English (United States)" MaxLength="9"
+                                                    MinValue="0" Skin="WebBlue" Enabled="false">
+                                                </telerik:RadNumericTextBox>
+                                            </td>
+                                        </tr>
+                                    </asp:Panel>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_ReceiptNo" runat="server" Text="Receipt No.."></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadNumericTextBox runat="server" ID="rntbReceiptNo" Skin="WebBlue" Width="125px" MaxLength="8">
+                                                <NumberFormat DecimalDigits="0" GroupSeparator="" />
+                                            </telerik:RadNumericTextBox>
+                                            <asp:RequiredFieldValidator ID="rfv_rtxt_ReceiptNo" runat="server"
+                                                ControlToValidate="rntbReceiptNo" ErrorMessage="Please Enter Receipt No"
+                                                Text="*" ValidationGroup="Controls"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>--%>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_ReceiptDate" runat="server" Text="Claim Date"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <telerik:RadDatePicker ID="rdpt_ReceiptDate" runat="server" Culture="English (United States)"
+                                                Skin="WebBlue" Width="135px">
+                                            </telerik:RadDatePicker>
+                                            <asp:RequiredFieldValidator ID="rfv_rdpt_ReceiptDate" runat="server"
+                                                ControlToValidate="rdpt_ReceiptDate" ErrorMessage="Please Pick Receipt Date"
+                                                meta:resourcekey="rdpt_ReceiptDate" Text="*"
+                                                ValidationGroup="Controls"></asp:RequiredFieldValidator>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_Documents" runat="server" Text="Upload Receipt and Documents "></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <asp:FileUpload ID="FBrowse" runat="server" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">
+                                            <asp:Label ID="lbl_Certificate" runat="server" Text="Attendance Certificate"></asp:Label></td>
+                                        <td><b>:</b>
+                                        </td>
+                                        <td>
+                                            <asp:FileUpload ID="fu_Browse" runat="server" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                </table>
+                                
+                                <table align="center" width="100%">
+                                    <tr>
+                                        <td colspan="3" align="center">
+                                            <br />
+                                            <telerik:RadGrid ID="rgEmpDepndnts" runat="server" AutoGenerateColumns="False" Visible="true"
+                                                AllowFilteringByColumn="false" AllowSorting="True" Skin="WebBlue" GridLines="None"
+                                                OnNeedDataSource="rgEmpDepndnts_NeedDataSource" AllowPaging="True" PageSize="10"
+                                                Style="resize: none">
+                                                <GroupingSettings CaseSensitive="False" />
+                                                <MasterTableView CommandItemDisplay="None">
+                                                    <Columns>
+                                                        <telerik:GridTemplateColumn HeaderText="Beneficiary Name" ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <asp:CheckBox runat="server" ID="chk"
+                                                                    AutoPostBack="true" OnCheckedChanged="chk_CheckedChanged" />
+                                                                <asp:Label runat="server" ID="lblBenName" Text='<%# Eval("BENEFICIARY") %>'></asp:Label>
+                                                                <asp:Label runat="server" ID="lblFmlyDtlID" Text='<%# Eval("EMPFMDTL_ID") %>' Visible="false"></asp:Label>
+                                                                <asp:Label runat="server" ID="lblRelID" Text='<%# Eval("RELATION_ID") %>' Visible="false"></asp:Label>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridBoundColumn DataField="RELATION" HeaderText="Relation" meta:resourcekey="RELATION"
+                                                            UniqueName="RELATION" ItemStyle-HorizontalAlign="Left" AutoPostBackOnFilter="true">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn>
+                                                        <telerik:GridBoundColumn DataField="BAL" HeaderText="Balance" meta:resourcekey="BAL"
+                                                            UniqueName="BAL" ItemStyle-HorizontalAlign="Left" AutoPostBackOnFilter="true">
+                                                            <HeaderStyle HorizontalAlign="Center" />
+                                                        </telerik:GridBoundColumn><%--ALW_ELGB--%>
+                                                        <telerik:GridTemplateColumn HeaderText="Currency" ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <telerik:RadComboBox ID="rcmb_Currency" runat="server" MarkFirstMatch="true" MaxHeight="120px"
+                                                                    Filter="Contains" Skin="WebBlue" SkinID="eMedicals" Width="90%" AutoPostBack="true"
+                                                                    OnSelectedIndexChanged="rcmb_Currency_SelectedIndexChanged" Enabled="false">
+                                                                </telerik:RadComboBox><%-- Text='<%# Eval("EMPFMDTL_ID") %>'--%>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn HeaderText="Conversion Amount" ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <telerik:RadNumericTextBox ID="rnt_maxcurramt" runat="server" SkinID="EmpExp"
+                                                                    Culture="English (United States)" Skin="WebBlue" Enabled="false" Width="90%">
+                                                                </telerik:RadNumericTextBox>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn HeaderText="Claim Amount" ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <telerik:RadNumericTextBox ID="radAmount" runat="server" Skin="WebBlue" MaxLength="7" MinValue="0"
+                                                                    AutoPostBack="true" SkinID="EmpExp" OnTextChanged="radAmount_TextChanged" Enabled="false" Width="90%">
+                                                                </telerik:RadNumericTextBox>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn HeaderText="Claim Amount(USD)" ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <telerik:RadNumericTextBox ID="rntbCurrencyAmt" runat="server" Width="90%"
+                                                                    Culture="English (United States)" MaxLength="9" AutoPostBack="true"
+                                                                    MinValue="0" Skin="WebBlue" Enabled="false" SkinID="EmpExp">
+                                                                </telerik:RadNumericTextBox>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn HeaderText="Rule" ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <asp:CheckBox ID="chk_rule" runat="server" OnCheckedChanged="chk_rule_CheckedChanged"
+                                                                    AutoPostBack="true" />
+                                                            </ItemTemplate>
+                                                            <HeaderStyle Width="5%" />
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn HeaderText="75 Rule Amount(USD)" ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <telerik:RadNumericTextBox ID="rntbRule80" runat="server"
+                                                                    Culture="English (United States)" MaxLength="9" Width="90%"
+                                                                    MinValue="0" Skin="WebBlue" Enabled="false" SkinID="EmpExp">
+                                                                </telerik:RadNumericTextBox>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn HeaderText="Receipt No." ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <telerik:RadTextBox ID="rtbRecNo" runat="server" Skin="WebBlue" MaxLength="8"
+                                                                    SkinID="eMedicals" Enabled="false" Width="90%">
+                                                                </telerik:RadTextBox>
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                        <telerik:GridTemplateColumn ItemStyle-HorizontalAlign="Left">
+                                                            <ItemTemplate>
+                                                                <asp:Button runat="server" ID="btnClaim" Text="Claim" OnClick="btnClaim_Click" Enabled="false" />
+                                                            </ItemTemplate>
+                                                        </telerik:GridTemplateColumn>
+                                                    </Columns>
+                                                </MasterTableView>
+                                                <ClientSettings>                                                
+                                                    <Scrolling AllowScroll="true" FrozenColumnsCount="2" />
+                                                    <Resizing AllowColumnResize="true" ResizeGridOnColumnResize="true" AllowRowResize="true" />
+                                                </ClientSettings>    
+                                                <PagerStyle AlwaysVisible="True" />
+                                            </telerik:RadGrid>
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <table align="center" width="100%">
+                                    <tr>
+                                        <td colspan="3" align="center">
+                                            <asp:Button ID="btn_Submit" runat="server" Text="Submit" ValidationGroup="Controls" OnClick="btn_Submit_Click" />
+                                            <asp:Button ID="btn_Cancel" runat="server" Text="Cancel" OnClick="btn_Cancel_Click" />
+                                            <asp:ValidationSummary ID="vg_Master" runat="server" ShowMessageBox="True" ShowSummary="False"
+                                                ValidationGroup="Controls" meta:resourcekey="vg_Master" />
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </ContentTemplate>
+                            <Triggers>
+                                <asp:PostBackTrigger ControlID="btn_Submit" />
+                            </Triggers>
+                        </asp:UpdatePanel>
+                    </telerik:RadPageView>
+                </telerik:RadMultiPage>
+            </td>
+        </tr>
+    </table>
+</asp:Content>

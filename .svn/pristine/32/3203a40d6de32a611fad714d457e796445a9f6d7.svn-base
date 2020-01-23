@@ -1,0 +1,85 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="LoginNew.aspx.cs" Inherits="LoginNew" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Comesa-SMHR</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <form id="form1" runat="server">
+        <header class="logobg">
+            <div class="container">
+                <div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+                    <div class="col-md-3 col-xs-3 ">
+                        <img src="img/COMESA_Logo.png" class="img-responsive pull-left center-image ">
+                    </div>
+                    <div class="col-md-6 col-xs-6">
+                        <h2 class="text-center fontstyle">COMMON MARKET FOR EASTERN AND SOUTHERN AFRICA </h2>
+                    </div>
+                    <div class="col-md-3 col-xs-3">
+                        <img src="img/smhrlogo3.png" class="img-responsive pull-right center-image image-position" style="margin-top: 10px;">
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="headerbar">
+            <div class="container">
+                <h4 class="text-center headerbar_font">Human Resource Management System </h4>
+            </div>
+        </div>
+        <div class="bg">
+            <div class="container">
+                <div class="row" style="margin-top: 5%; padding: 15px 0px;">
+
+                    <div class="col-md-4 col-md-offset-3 col-md-pull-1 pull-right">
+                        <div class="panel panel-default">
+                            <div class="panel-heading panel-login">
+                                <h3 class="panel-title text-center ">Login Page</h3>
+                            </div>
+                            <div class="panel-body">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <asp:TextBox name="Search" type="text" ID="rtxtUserName" runat="server" 
+                                                class="form-control formcustom-control" placeholder="Username" hint="Search.."></asp:TextBox>
+                                        </div>
+                                        <div class="form-group">
+                                            <asp:TextBox name="Search" type="password" ID="rtxtPassword" runat="server" 
+                                                class="form-control formcustom-control" placeholder="Password" TextMode="Password" hint="Search.."></asp:TextBox>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                <asp:CheckBox ID="chk_Remember" runat="server" Font-Bold="True" /><strong style="font-weight: 500"> Keep me Signed In...</strong>
+                                                <asp:LinkButton ID="lnk_Forgot" runat="server" Text="Forgot Password" class="buttontext" style="padding-left: 75px; font-weight: 700"
+                                                    Font-Bold="True" Font-Names="Arial" Font-Size="9pt" ForeColor="Black" Font-Underline="true"></asp:LinkButton>
+                                            </label>
+                                        </div>
+                                         <asp:Button ID="btnLogin" runat="server" ValidationGroup="Controls" onmouseout="MM_swapImgRestore()" Text="Login"
+                                             onmouseover="MM_swapImage('Image7','','images/signin2.png',1)" class="btn btn-lg btn-success btn-block" />
+                                    </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footerbg">
+            <div class="container">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-6 col-xs-12">
+                        <p style="padding-left: 100px;" class="right-p">Contact Us : For any issues or suggestions you can mail to: smarthrteam@dhanushinfotech.com </p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <p class="pull-right">© 2016. Dhanush Infotech Pvt. Ltd. All Rights Reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

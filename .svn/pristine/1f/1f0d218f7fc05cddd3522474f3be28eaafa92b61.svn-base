@@ -1,0 +1,841 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using SMHR;
+using System.Data;
+using Telerik.Web.UI;
+using System.Text;
+using System.Collections;
+
+public partial class Payroll_frm_overtimecalc : System.Web.UI.Page
+{
+    //SMHR_BUSINESSUNIT _obj_smhr_businessunit;
+    SMHR_PERIOD _obj_smhr_period;
+    //SMHR_PERIODDTL _obj_smhr_perioddtl;
+    SMHR_EMPOTTRANS _obj_smhr_ottrans;
+    SMHR_EMPLOYEE _obj_smhr_employee;
+
+    static int sal = 0;
+    //static DataTable dt_Details;
+    DataTable dt_Load;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!Page.IsPostBack)
+            {
+
+                Session.Remove("WRITEFACILITY");
+
+
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("OVERTIME CALCULATION");
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    btn_Finalise.Visible = false;
+                    btn_Process.Visible = false;
+
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+                Page.Validate();
+                LoadCombos();
+                btn_Process.Visible = false;
+                //Rg_OTDetails.Visible = true;
+                btn_Process.Visible = false;
+                btn_Cancle.Visible = false;
+                Rg_OTDetails.Visible = false;
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected override void InitializeCulture()
+    {
+        BLL.SetCulture_Theme(Page, Request);
+        base.InitializeCulture();
+    }
+
+    private void LoadCombos()
+    {
+        try
+        {
+            _obj_smhr_period = new SMHR_PERIOD();
+            SMHR_LOGININFO _obj_SMHR_LoginInfo = new SMHR_LOGININFO();
+            _obj_SMHR_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            _obj_SMHR_LoginInfo.LOGIN_ID = Convert.ToInt32(Session["USER_ID"]);
+            DataTable dt_BUDetails = BLL.get_Business_Units(_obj_SMHR_LoginInfo);
+            rcmb_BUI.DataSource = dt_BUDetails;
+            rcmb_BUI.DataValueField = "BUSINESSUNIT_ID";
+            rcmb_BUI.DataTextField = "BUSINESSUNIT_CODE";
+            rcmb_BUI.DataBind();
+            rcmb_BUI.Items.Insert(0, new RadComboBoxItem("Select"));
+
+
+            _obj_smhr_period.OPERATION = operation.Select;
+            _obj_smhr_period.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt_Details = BLL.get_PeriodHeaderDetails(_obj_smhr_period);
+            rcmb_PeriodMaster.DataSource = dt_Details;
+            rcmb_PeriodMaster.DataValueField = "PERIOD_ID";
+            rcmb_PeriodMaster.DataTextField = "PERIOD_NAME";
+            rcmb_PeriodMaster.DataBind();
+            rcmb_PeriodMaster.Items.Insert(0, new RadComboBoxItem("Select"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_PeriodMaster_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if (rcmb_BUI.SelectedIndex <= 0)
+            {
+                BLL.ShowMessage(this, "Please Select Business Unit");
+                rcmb_PeriodMaster.ClearSelection();
+                return;
+            }
+            tr_OTDt.Visible = false;
+            rdtp_OTDt.Visible = false;
+            // _obj_smhr_perioddtl = new SMHR_PERIODDTL();
+            if (Convert.ToInt32(rcmb_PeriodMaster.SelectedIndex) > 0)
+            {
+                SMHR_PERIODDTL _obj_smhr_perioddtl1 = new SMHR_PERIODDTL();
+                _obj_smhr_perioddtl1.OPERATION = operation.Select;
+                _obj_smhr_perioddtl1.PRDDTL_PERIOD_ID = Convert.ToInt32(rcmb_PeriodMaster.SelectedItem.Value);
+                DataTable dt_Details = BLL.get_PeriodDetails(_obj_smhr_perioddtl1);
+                if (dt_Details.Rows.Count != 0)
+                {
+                    rcmb_PeriodElement.DataSource = dt_Details;
+                    rcmb_PeriodElement.DataValueField = "PRDDTL_ID";
+                    rcmb_PeriodElement.DataTextField = "PRDDTL_NAME";
+                    rcmb_PeriodElement.DataBind();
+                    rcmb_PeriodElement.Items.Insert(0, new RadComboBoxItem("Select"));
+                }
+                Rg_OTDetails.Visible = false;
+            }
+            else
+            {
+                Rg_OTDetails.Visible = false;
+                rcmb_PeriodElement.ClearSelection();
+                //rcmb_PeriodElement.Items.Clear();
+                btn_Cancle.Visible = false;
+                btn_Process.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Process_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            /* To check if record is selected */
+            int count = 0;
+            int OtCount = 0;
+            for (int x = 0; x < Rg_OTDetails.Items.Count; x++)
+            {
+                CheckBox chk = Rg_OTDetails.Items[x].FindControl("chk_emp") as CheckBox;
+                RadNumericTextBox rnt = Rg_OTDetails.Items[x].FindControl("txt_nofdays") as RadNumericTextBox;
+                if (chk.Checked)
+                {
+                    count++;
+                    if (rnt.Value != null)
+                    {
+                        OtCount++;
+                    }
+                }
+            }
+            if (count == 0)
+            {
+                BLL.ShowMessage(this, "Please Select Atleast one Employee.");
+                return;
+            }
+            if (count != OtCount)
+            {
+                BLL.ShowMessage(this, "Please Enter No. Of OT Hours for Selected Employees.");
+                return;
+            }
+            /* To check if record is selected */
+
+
+            int i, a, b;
+            //int j = 0;
+            decimal c = 0;
+
+            StringBuilder strQry = new StringBuilder();
+
+            _obj_smhr_ottrans = new SMHR_EMPOTTRANS();
+            _obj_smhr_ottrans.BUID = Convert.ToInt32(rcmb_BUI.SelectedItem.Value);
+
+            _obj_smhr_ottrans.EMPOTTRANS_PERIOD_ID = Convert.ToInt32(rcmb_PeriodMaster.SelectedItem.Value);
+            _obj_smhr_ottrans.EMPOTTRANS_PERIODDTL_ID = Convert.ToInt32(rcmb_PeriodElement.SelectedItem.Value);
+
+            for (i = 0; i <= Rg_OTDetails.Items.Count - 1; i++)
+            {
+                Label lblempid = new Label();
+                RadNumericTextBox txtgetVal = new RadNumericTextBox();
+                CheckBox chkChoose = new CheckBox();
+                Label lblAtt_Status = new Label();
+                chkChoose = Rg_OTDetails.Items[i].FindControl("chk_emp") as CheckBox;
+                txtgetVal = Rg_OTDetails.Items[i].FindControl("txt_nofdays") as RadNumericTextBox;
+                lblempid = Rg_OTDetails.Items[i].FindControl("lbl_empid") as Label;
+                lblAtt_Status = Rg_OTDetails.Items[i].FindControl("lbl_Att_Status") as Label;
+                if (Convert.ToString(txtgetVal.Text) != "" && chkChoose.Checked)
+                {
+                    //if (Convert.ToDouble(txtgetVal.Text) >= 720)
+                    //{
+                    //    BLL.ShowMessage(this, "No of working Hours should not exceed 720");
+                    //    return;
+                    //}
+
+                    if (Convert.ToDouble(txtgetVal.Text) > 15)
+                    {
+                        BLL.ShowMessage(this, "No of working Hours should not exceed 15");
+                        return;
+                    }
+
+                    //if (chkChoose.Checked == false)
+                    //{
+                    //    //BLL.ShowMessage(this, "Please select Employee");
+                    //    //return;
+                    //    continue;
+                    //}
+
+                    _obj_smhr_employee = new SMHR_EMPLOYEE();
+                    _obj_smhr_employee.EMP_ID = Convert.ToInt32(lblempid.Text);
+                    _obj_smhr_employee.Mode = 1;
+                    DataTable dt = BLL.get_EmpESS(_obj_smhr_employee);
+                    if (dt.Rows.Count != 0)
+                    {
+                        //sal = Convert.ToInt32(dt.Rows[0]["EMP_GROSSSAL"]);
+                        sal = Convert.ToInt32(dt.Rows[0]["EMP_BASIC"]);
+                    }
+
+                    a = Convert.ToInt32(txtgetVal.Text);
+                    ///to caluluate OT hours we should subtract normal working hours 180 from total input
+                    ///formula to calculate OT for Weekends
+                    ///Basic Salary * 2/480 = Rate * Total Hours Worked = Total Amount
+                    ///
+                    ///formula to claculate OT for Weekdays
+                    ///Basic Salary * 3/480 = Rate * Total Hours Worked = Total Amount
+
+                    /* Attendance Staus*/
+                    /* Note: 
+                     Present         = "P" 
+                     Absent          = "A" 
+                     Leave           = "L" 
+                     Weekly-Off      = "W" 
+                     Travel          = "T" 
+                     Comp Off        = "C" 
+                     Holiday         = "H"
+                     Half Day Absent = "HD"
+                     Half Day Leave  = "HL"  
+                     */
+
+                    //To calculate over time
+                    if (lblAtt_Status.Text.Trim() == "P") //WeekDay
+                    {
+                        /* WeekDay Calculation */
+                        b = a;
+                        //c = ((sal * 3 )/ 480) * b;
+                        c = Math.Round(((((Convert.ToDecimal(sal) * 3) / 480)) * b), 0);
+                        string otamount = Convert.ToString(c);
+                        /* For WeekDay Overtime */
+                    }
+                    else if (lblAtt_Status.Text.Trim() == "W")    //WeekEnd/WeekOff
+                    {
+                        /* WeekEnds Calculation */
+                        b = a;
+                        c = (sal * 2 / 240) * b;
+                        c = Math.Round(((((Convert.ToDecimal(sal) * 2) / 240)) * b), 0);
+                        string otamount = Convert.ToString(c);
+                        /* For WeekEnds Overtime */
+                    }
+                    else if (lblAtt_Status.Text.Trim() == "WO")    //WeekEnd/WeekOff
+                    {
+                        /* WeekEnds Calculation */
+                        b = a;
+                        c = (sal * 2 / 240) * b;
+                        c = Math.Round(((((Convert.ToDecimal(sal) * 2) / 240)) * b), 0);
+                        string otamount = Convert.ToString(c);
+                        /* For WeekEnds Overtime */
+                    }
+                    else if (lblAtt_Status.Text.Trim() == "H")    //Holidays
+                    {
+                        /* WeekEnds Calculation */
+                        b = a;
+                        //c = (sal * 2 / 240) * b;
+                        c = Math.Round(((((Convert.ToDecimal(sal) * 2) / 240)) * b), 0);
+                        string otamount = Convert.ToString(c);
+                        /* For WeekEnds Overtime */
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    /* Previous code */
+                    //b = a;
+                    //c = (b * sal) / 180;
+                    //string otamount = Convert.ToString(c);
+                    /* Previous code */
+
+
+                    _obj_smhr_ottrans.EMPOTTRANS_EMPID = Convert.ToInt32(lblempid.Text);
+                    _obj_smhr_ottrans.EMPOTTRANS_PERIOD_ID = Convert.ToInt32(rcmb_PeriodMaster.SelectedItem.Value);
+                    _obj_smhr_ottrans.EMPOTTRANS_HOURS = b;
+                    _obj_smhr_ottrans.EMPOTTANS_AMOUNT = Convert.ToSingle(c);
+                    _obj_smhr_ottrans.EMPOTTRANS_STATUS = 0;
+                    _obj_smhr_ottrans.CREATEDBY = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_ottrans.CREATEDDATE = System.DateTime.Now;
+                    _obj_smhr_ottrans.LASTMDFBY = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_ottrans.LASTMDFDATE = System.DateTime.Now;
+                    _obj_smhr_ottrans.MODE = 2;
+                    _obj_smhr_ottrans.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                    _obj_smhr_ottrans.OTCALC_DATE = Convert.ToDateTime(rdtp_OTDt.SelectedDate);
+                    strQry.Append("EXEC USP_SMHR_OTCALC ");
+                    string str = " @Mode = '" + _obj_smhr_ottrans.MODE + "'" +
+                                   ",@BUID = '" + _obj_smhr_ottrans.BUID + "'" +
+                                   ",@OTCALC_EMPID = '" + _obj_smhr_ottrans.EMPOTTRANS_EMPID + "'" +
+                                   ",@OTCALC_PERIOD = '" + _obj_smhr_ottrans.EMPOTTRANS_PERIOD_ID + "'" +
+                                   ",@EMPOTTRANS_PERIODDTL_ID = '" + _obj_smhr_ottrans.EMPOTTRANS_PERIODDTL_ID + "'" +
+                                   ",@OTCALC_WORKINGHOURS = '" + _obj_smhr_ottrans.EMPOTTRANS_HOURS + "'" +
+                                   ",@OTCALC_OTAMOUNT = '" + _obj_smhr_ottrans.EMPOTTANS_AMOUNT + "'" +
+                                   ",@OTCALC_STATUS = '" + _obj_smhr_ottrans.EMPOTTRANS_STATUS + "'" +
+                                   ",@OTCALC_ORG_ID='" + _obj_smhr_ottrans.ORGANISATION_ID + "'" +
+                                   ",@OTCALC_CREATEDBY = '" + _obj_smhr_ottrans.EMPOTTRANS_STATUS + "'" +
+                                   ",@OTCALC_CREATEDDATE = '" + Convert.ToDateTime(_obj_smhr_ottrans.CREATEDDATE).ToString("MM/dd/yyyy") + "'" +
+                                   ",@OTCALC_LASTMDFBY = '" + _obj_smhr_ottrans.LASTMDFBY + "'" +
+                                   ",@OTCALC_LASTMDFDATE = '" + Convert.ToDateTime(_obj_smhr_ottrans.LASTMDFDATE).ToString("MM/dd/yyyy") + "'" +
+                                   ",@OTCALC_DATE = '" + Convert.ToDateTime(_obj_smhr_ottrans.OTCALC_DATE).ToString("MM/dd/yyyy") + "'";
+                    strQry.Append(str);
+                }
+                //else
+                //{
+                //    j = j + 1;
+                //}
+
+
+                /*As The Tester Wants null can be inserted for the employee if they don't want to give any over time amount*/
+                /* Sravani */
+
+                //if (j == Rg_OTDetails.Items.Count)
+                //{
+                //    BLL.ShowMessage(this, "Please Enter atleaset one value");
+                //    return;
+                //}
+                else
+                {
+                    //IF THERE IS NO AMOUNT AND NO HOURS AN EMPLOYEE HAS WORKED THEN DELETING THAT RECORD
+                    _obj_smhr_ottrans = new SMHR_EMPOTTRANS();
+                    _obj_smhr_ottrans.MODE = 3;
+                    _obj_smhr_ottrans.EMPOTTRANS_PERIODDTL_ID = Convert.ToInt32(rcmb_PeriodElement.SelectedValue);
+                    _obj_smhr_ottrans.BUID = Convert.ToInt32(rcmb_BUI.SelectedValue);
+                    _obj_smhr_ottrans.EMPOTTRANS_EMPID = Convert.ToInt32(lblempid.Text);
+                    _obj_smhr_ottrans.OTCALC_DATE = Convert.ToDateTime(rdtp_OTDt.SelectedDate);
+                    bool Status = BLL.Set_Ot(_obj_smhr_ottrans);
+
+                }
+            }
+            if (strQry.Length > 0)
+            {
+                _obj_smhr_ottrans.MODE = 2;
+                bool rs = BLL.Cal_OTAmount(_obj_smhr_ottrans, strQry.ToString());
+                if (rs == true)
+                {
+                    BLL.ShowMessage(this, "Over Time Calculation Completed Successfully");
+                    //btn_Cancle_Click(null, null);
+                    return;
+                }
+                else
+                {
+                    BLL.ShowMessage(this, "Error found");
+                }
+                Rg_OTDetails.DataBind();
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    btn_Finalise.Visible = false;
+                }
+
+                else
+                {
+                    btn_Finalise.Visible = false;
+                }
+                btn_Process.Enabled = true;
+            }
+            else
+            {
+                BLL.ShowMessage(this, "Over Time Calculation Completed Successfully");
+            }
+            //}
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Cancle_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            rcmb_BUI.SelectedIndex = 0;
+            rcmb_PeriodMaster.SelectedIndex = 0;
+            rcmb_PeriodElement.Items.Clear();
+            rcmb_PeriodElement.Items.Insert(0, new RadComboBoxItem("", ""));
+            Rg_OTDetails.Visible = false;
+            btn_Process.Visible = false;
+            btn_Cancle.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_PeriodElement_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            tr_OTDt.Visible = false;
+            rdtp_OTDt.Visible = false;
+            Rg_OTDetails.Visible = false;
+            btn_Process.Visible = false;
+            btn_Cancle.Visible = false;
+            if (rcmb_PeriodMaster.SelectedIndex <= 0)
+            {
+                BLL.ShowMessage(this, "Please Select Period");
+                return;
+            }
+            if (rcmb_PeriodElement.SelectedIndex > 0)
+            {
+                rdtp_OTDt.SelectedDate = null;
+                SMHR_PERIODDTL _obj_smhr_prddtl = new SMHR_PERIODDTL();
+                DataTable dt_Details = new DataTable();
+                _obj_smhr_prddtl.OPERATION = operation.Select;
+                _obj_smhr_prddtl.PRDDTL_ID = Convert.ToInt32(rcmb_PeriodElement.SelectedValue);
+                dt_Details = BLL.get_PeriodDetails(_obj_smhr_prddtl);
+                if (dt_Details.Rows.Count > 0)
+                {
+                    if (Convert.ToDateTime(dt_Details.Rows[0][3].ToString()) <= DateTime.Now)
+                    //if (Convert.ToDateTime(dt_Details.Rows[0][3].ToString()).Month <= DateTime.Now.Month)
+                    {
+                        rdtp_OTDt.MinDate = Convert.ToDateTime(dt_Details.Rows[0]["PRDDTL_STARTDATE"].ToString());
+                        if (Convert.ToDateTime(dt_Details.Rows[0]["PRDDTL_ENDDATE"].ToString()) > DateTime.Now)
+                        //if (Convert.ToDateTime(dt_Details.Rows[0]["PRDDTL_ENDDATE"].ToString()).Month > DateTime.Now.Month)
+                        {
+                            //DateTime start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                            //DateTime end = start.AddMonths(1).AddDays(-1);
+                            //rdtp_OTDt.MaxDate = end;
+                            rdtp_OTDt.MaxDate = DateTime.Now;
+                        }
+                        else
+                        {
+                            rdtp_OTDt.MaxDate = Convert.ToDateTime(dt_Details.Rows[0]["PRDDTL_ENDDATE"].ToString());
+                        }
+                        tr_OTDt.Visible = true;
+                        rdtp_OTDt.Visible = true;
+                    }
+                }
+            }
+            //if (rcmb_BUI.SelectedIndex > 0)
+            //{
+            //    tr_OTDt.Visible = true; //To display datepicker
+            //    rdtp_OTDt.MaxDate = DateTime.Today.AddDays(-1);
+
+
+            //}
+            else
+            {
+                Rg_OTDetails.Visible = false;
+                BLL.ShowMessage(this, "Please Select Period Element");
+                return;
+            }
+            if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+            {
+                btn_Finalise.Visible = false;
+                btn_Process.Visible = false;
+
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcmb_BUI_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            //_obj_smhr_ottrans = new SMHR_EMPOTTRANS();
+            //_obj_smhr_ottrans.BUID = Convert.ToInt32(rcmb_BUI.SelectedItem.Value);
+            //_obj_smhr_ottrans.MODE = 1;
+            //Rg_OTDetails.DataSource = BLL.calculate_OT(_obj_smhr_ottrans);
+            //Rg_OTDetails.DataBind();
+            //btn_Process.Visible = true;
+            //Rg_OTDetails.Visible = true;
+            //for (int i = 0; i <= Rg_OTDetails.Items.Count - 1; i++)
+            //{
+            //    RadNumericTextBox txtgetVal = new RadNumericTextBox();
+            //    txtgetVal = Rg_OTDetails.Items[i].FindControl("txt_nofdays") as RadNumericTextBox;
+            //    txtgetVal.Text = "";
+            //}
+            rcmb_PeriodMaster.ClearSelection();
+            rcmb_PeriodElement.ClearSelection();
+            //rcmb_PeriodElement.Items.Clear();
+            Rg_OTDetails.Visible = false;
+            btn_Process.Visible = false;
+            btn_Cancle.Visible = false;
+            tr_OTDt.Visible = false;
+            rdtp_OTDt.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void ClearControls()
+    {
+        try
+        {
+            rcmb_BUI.SelectedIndex = 0;
+            rcmb_PeriodMaster.SelectedIndex = 0;
+            rcmb_PeriodElement.Items.Clear();
+            Rg_OTDetails.Visible = false;
+            btn_Process.Visible = false;
+            btn_Cancle.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void LoadGrid()
+    {
+        try
+        {
+            _obj_smhr_ottrans = new SMHR_EMPOTTRANS();
+            _obj_smhr_ottrans.BUID = Convert.ToInt32(rcmb_BUI.SelectedItem.Value);
+            _obj_smhr_ottrans.MODE = 1;
+            _obj_smhr_ottrans.EMPOTTRANS_PERIODDTL_ID = Convert.ToInt32(rcmb_PeriodElement.SelectedItem.Value);
+            _obj_smhr_ottrans.OTCALC_DATE = Convert.ToDateTime(rdtp_OTDt.SelectedDate);     //To pass Overtime Date
+            _obj_smhr_ottrans.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            dt_Load = BLL.calculate_OT(_obj_smhr_ottrans);
+            Rg_OTDetails.DataSource = dt_Load;
+            // NEED TO CALL A METHOD FOR MAKING THE FIELDS AS READ ONLY 
+            Rg_OTDetails.DataBind();
+            LoadEmpData();
+
+
+
+            /* To disable no. of hours textbox */
+            Telerik.Web.UI.RadNumericTextBox rntxt = new RadNumericTextBox();
+            Label lblempid = new Label();
+
+            for (int i = 0; i <= Rg_OTDetails.Items.Count - 1; i++)
+            {
+                //ddlList = Rg_OTDetails.Items[i].FindControl("rcmb_AttDtls_Status") as RadComboBox;
+                rntxt = Rg_OTDetails.Items[i].FindControl("txt_nofdays") as RadNumericTextBox;
+                rntxt.Enabled = false;
+                //TO GET PAYROLL STATUS
+                //chk = Rg_OTDetails.Items[i].FindControl("chckbtn_Select") as CheckBox;
+                lblempid = Rg_OTDetails.Items[i].FindControl("lbl_empid") as Label;
+                SMHR_ATTENDANCE _obj_Smhr_Attendance = new SMHR_ATTENDANCE();
+                _obj_Smhr_Attendance.OPERATION = operation.Select1;
+                _obj_Smhr_Attendance.ATTENDANCE_BU_ID = Convert.ToInt32(rcmb_BUI.SelectedItem.Value);
+                _obj_Smhr_Attendance.ATTENDANCE_PERIOD_ID = Convert.ToInt32(rcmb_PeriodMaster.SelectedItem.Value);
+                _obj_Smhr_Attendance.ATTENDANCE_PERIOD_DTL_ID = Convert.ToInt32(rcmb_PeriodElement.SelectedItem.Value);
+                _obj_Smhr_Attendance.ATTENDANCE_EMP_ID = Convert.ToInt32(lblempid.Text);
+                DataTable dt_status = BLL.get_Attendance(_obj_Smhr_Attendance);
+                bool st = false;
+                if (dt_status.Rows.Count > 0)
+                {
+                    for (int count = 0; count < dt_status.Rows.Count; count++)
+                    {
+                        if (Convert.ToString(dt_status.Rows[count]["COUNT"]) != "0")
+                        {
+                            st = true;//IF PAYROLL IS IN PENDING OR APPROVED
+                        }
+                    }
+                }
+                if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][2]))).Trim() != "")
+                {
+                    if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][3]))).Trim() == "0")
+                    {
+                        //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("P"));
+                        ////ddlList.BackColor = Color.Red;
+                        //ddlList.ForeColor = Color.Black;
+                        rntxt.Enabled = true;
+                    }
+                    else if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][3]))).Trim() == "1")
+                    {
+                        //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("L"));
+                        //ddlList.ForeColor = Color.Magenta;
+                        rntxt.Enabled = false;
+                        rntxt.Text = "0.00";
+                    }
+                    else if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][3]))).Trim() == "2")
+                    {
+                        //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("W"));
+                        //ddlList.ForeColor = Color.Blue;
+                        rntxt.Enabled = false;
+                        rntxt.Text = "0.00";
+                    }
+                    else if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][3]))).Trim() == "3")
+                    {
+                        //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("H"));
+                        //ddlList.ForeColor = Color.DarkGreen;
+                        rntxt.Enabled = false;
+                        rntxt.Text = "0.00";
+                    }
+
+                    else if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][3]))).Trim() == "4")
+                    {
+                        //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("HL"));
+                        //ddlList.ForeColor = Color.DarkGoldenrod;
+                        rntxt.Enabled = false;
+                        rntxt.Text = "0.00";
+                    }
+                    else if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][3]))).Trim() == "5")
+                    {
+                        //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("A"));
+                        //ddlList.ForeColor = Color.Red;
+                        rntxt.Enabled = false;
+                        rntxt.Text = "0.00";
+                    }
+                    else if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][3]))).Trim() == "-1")
+                    {
+                        //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("A"));
+                        //ddlList.ForeColor = Color.Red;
+                        //ddlList.Enabled = false;
+                        rntxt.Enabled = false;
+                        rntxt.Text = "0.00";
+                    }
+
+                }
+                else if ((Convert.ToString(Convert.ToString(dt_Load.Rows[i][2]))).Trim() == "")
+                {
+                    //ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("A"));
+                    //ddlList.ForeColor = Color.Red;
+                    rntxt.Enabled = false;
+                    rntxt.Text = "0.00";
+                }
+                if (st == true)
+                {
+                    //ddlList.Enabled = false;
+                    rntxt.Enabled = false;
+                    //chk.Enabled = false;
+                }
+                else
+                {
+                    //ddlList.Enabled = true;
+                    rntxt.Enabled = true;
+                    //chk.Enabled = true;
+                    //EMP_COUNT++;
+                }
+                //if (Convert.ToString(Convert.ToString(DT_Employee.Rows[i][3])) == "0")
+                //    ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("P"));
+                //else if (Convert.ToString(Convert.ToString(DT_Employee.Rows[i][3])) == "1")
+                //    ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("L"));
+                //else if (Convert.ToString(Convert.ToString(DT_Employee.Rows[i][3])) == "2")
+                //    ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("W"));
+                //else if (Convert.ToString(Convert.ToString(DT_Employee.Rows[i][3])) == "3")
+                //    ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("H"));
+                //else if (Convert.ToString(Convert.ToString(DT_Employee.Rows[i][3])) == " ")
+                //    ddlList.SelectedIndex = ddlList.FindItemIndexByValue(Convert.ToString("A"));
+            }
+            /* To disable no. of hours textbox */
+
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadEmpData()
+    {
+        try
+        {
+
+            for (int row = 0; row < Rg_OTDetails.Items.Count; row++)
+            {
+                CheckBox check = Rg_OTDetails.Items[row].FindControl("chk_emp") as CheckBox;
+                RadNumericTextBox rntxt_workinghours = Rg_OTDetails.Items[row].FindControl("txt_nofdays") as RadNumericTextBox;
+                if (rntxt_workinghours.Text != string.Empty)
+                    check.Checked = true;
+
+
+                //To diable row
+                /* Note: 
+                 Present         = "P" 
+                 Absent          = "A" 
+                 Leave           = "L" 
+                 Weekly-Off      = "W" 
+                 Travel          = "T" 
+                 Comp Off        = "C" 
+                 Holiday         = "H"
+                 Half Day Absent = "HD"
+                 Half Day Leave  = "HL"  
+                 */
+                Label lblAttStatus = Rg_OTDetails.Items[row].FindControl("lbl_Att_Status") as Label;    //to know Attendace_Status
+                Label lblAttFinalize = Rg_OTDetails.Items[row].FindControl("lbl_Att_Finalize") as Label;    //to know whether Attendance is finalized
+                if ((lblAttStatus.Text.Trim() == "A" || lblAttStatus.Text.Trim() == "L" || lblAttStatus.Text.Trim() == "W" || lblAttStatus.Text.Trim() == "T" || lblAttStatus.Text.Trim() == "C" || lblAttStatus.Text.Trim() == "H" || lblAttStatus.Text.Trim() == "HD" || lblAttStatus.Text.Trim() == "HL") && lblAttFinalize.Text.Trim() == "1")
+                {
+                    Rg_OTDetails.Items[row].Enabled = false;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+
+    }
+
+    protected void rdtp_OTDt_SelectedDateChanged(object sender, Telerik.Web.UI.Calendar.SelectedDateChangedEventArgs e)
+    {
+        try
+        {
+            //if (rcmb_PeriodElement.SelectedIndex > 0)
+            if (rdtp_OTDt.SelectedDate != null)
+            {
+                Rg_OTDetails.Enabled = true;
+                Rg_OTDetails.Visible = true;
+                SMHR_PAYROLL _obj_smhr_payroll = new SMHR_PAYROLL();
+                _obj_smhr_payroll.BUID = Convert.ToInt32(rcmb_BUI.SelectedItem.Value);
+                _obj_smhr_payroll.PERIODDTLID = Convert.ToInt32(rcmb_PeriodElement.SelectedItem.Value);
+                _obj_smhr_payroll.MODE = 10;
+                DataTable dt = BLL.get_PayDetails(_obj_smhr_payroll);
+                if (dt.Rows.Count == 0)
+                {
+                    LoadGrid();
+                    if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                    {
+
+                        btn_Process.Visible = false;
+
+
+                    }
+
+                    else
+                    {
+                        btn_Process.Visible = true;
+
+                    }
+
+                    Rg_OTDetails.Visible = true;
+                    //Rg_OTDetails.Visible = true;
+                    btn_Cancle.Visible = true;
+                }
+                else
+                {
+
+                    Rg_OTDetails.Visible = true;
+                    btn_Process.Visible = false;
+                    Rg_OTDetails.Enabled = false;
+                    btn_Cancle.Visible = true;
+                    LoadGrid();
+                }
+                ////TO CHECK WHETHER PAYROLL IS APPROVED OR NOT
+                //_obj_smhr_payroll.BUID = Convert.ToInt32(rcmb_BUI.SelectedItem.Value);
+                //_obj_smhr_payroll.PERIODDTLID = Convert.ToInt32(rcmb_PeriodElement.SelectedItem.Value);
+                //_obj_smhr_payroll.PERODID = Convert.ToInt32(rcmb_PeriodMaster.SelectedItem.Value);
+                //_obj_smhr_payroll.MODE = 32;
+                //DataTable dt1 = BLL.get_PayDetails(_obj_smhr_payroll);
+                //if (dt1.Rows.Count > 0)
+                //{
+                //    if (Convert.ToString(dt1.Rows[0]["COUNT"]) != "0")
+                //    {
+                //        btn_Process.Visible = false;
+                //        Rg_OTDetails.Enabled = false;
+                //        BLL.ShowMessage(this, "Payroll is Approved for this month.");
+                //        return;
+                //    }
+                //}
+            }
+            else
+            {
+                Rg_OTDetails.Visible = false;
+                btn_Process.Visible = false;
+                btn_Cancle.Visible = false;
+                //BLL.ShowMessage(this, "Select A Period");
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_overtimecalc", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

@@ -1,0 +1,430 @@
+﻿using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Xml.Linq;
+using System.Text;
+using Telerik.Web.UI;
+using SMHR;
+using System.IO;
+
+
+public partial class Security_frm_GlobalConfig : System.Web.UI.Page
+{
+    static DataTable dtDetails;
+    static DataTable dtDetails1;
+    SMHR_GLOBALCONFIG _obj_smhr_globalConfig = new SMHR_GLOBALCONFIG();
+
+    protected override void InitializeCulture()
+    {
+        BLL.SetCulture_Theme(Page, Request);
+        base.InitializeCulture();
+    }
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!Page.IsPostBack)
+            {
+                //code for security privilage
+                Session.Remove("WRITEFACILITY");
+
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Global Configuration");//GLOBALCONFIGURATION");
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    btn_Save.Visible = false;
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+
+                LoadCombos();
+                LoadDetails();
+            }
+            Page.Validate();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_GlobalConfig", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    protected void btn_Save_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            _obj_smhr_globalConfig = new SMHR_GLOBALCONFIG();
+            _obj_smhr_globalConfig.OPERATION = operation.Select;
+            _obj_smhr_globalConfig.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            dtDetails = BLL.get_ConfigDetails(_obj_smhr_globalConfig);
+            if (dtDetails.Rows.Count != 0)
+            {
+                _obj_smhr_globalConfig.GLOBALCONFIG_APP_ID = Convert.ToInt32(rntxt_AppNo.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_APP_CODE = Convert.ToString(rtxt_AppPrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_NEXT_ID = 0;
+                //_obj_smhr_globalConfig.GLOBALCONFIG_EMP_CODE = Convert.ToString(rtxt_EmpPrefix.Text.Replace("'", "''"));
+                //_obj_smhr_globalConfig.GLOBALCONFIG_CONSULTANT_EMP_CODE = Convert.ToString(rtxt_ConsultantPrefix.Text.Replace("'", "''"));
+                //_obj_smhr_globalConfig.GLOBALCONFIG_CONTRACT_EMP_CODE = Convert.ToString(rtxt_ContractPrefix.Text.Replace("'", "''"));
+                //_obj_smhr_globalConfig.GLOBALCONFIG_EMP_ID = Convert.ToInt32(rntxt_EmpNo.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_NextEMP_ID = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_LOAN_ID = Convert.ToInt32(rntxt_LoanID.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_LOAN_NO = Convert.ToString(rtxt_LoanPrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_INCIDENT_ID = Convert.ToInt32(rntxt_IncidentID.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_INCIDENT_PREFIX = Convert.ToString(rtxt_IncidentPrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_DISCIPLINE_ID = Convert.ToInt32(rntxt_DisciplineID.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_DISCIPLINE_PREFIX = Convert.ToString(rtxt_DisciplinePrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_MAILID = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_PERIOD_CODE = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_PWD = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_SALSTRUCT_CODE = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_TRAVEL_REQUEST_CODE = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_TRAVEL_REQUEST_ID = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_USERNAME = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_JOB_REQ_CODE = Convert.ToInt32(rntxt_JobReq_Code.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_DOMAIN_IP = "";
+                _obj_smhr_globalConfig.GLOABLCONFIG_THEME = Convert.ToString(rcmb_Theme.SelectedItem.Text);
+                _obj_smhr_globalConfig.GLOBALCONFIG_RECRUIT_JOBREQ_CODE = Convert.ToString(rtxt_JobReqcode.Text);
+                _obj_smhr_globalConfig.GLOBALCONFIG_PEN_REGAMT = Convert.ToDouble(rtxt_PensionRegdAmt.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_INSTAXRELIEF = Convert.ToDouble(rtxt_InsuranceTaxRelief.Value);
+                if (rtxt_Payrollfootermsg.Text != String.Empty || rtxt_Payrollfootermsg.Text != "")
+                    _obj_smhr_globalConfig.PayrollFooterMsg = BLL.ReplaceQuote(rtxt_Payrollfootermsg.Text);
+                else
+                    _obj_smhr_globalConfig.PayrollFooterMsg = null;
+                // _obj_smhr_globalConfig = new SMHR_GLOBALCONFIG();
+                _obj_smhr_globalConfig.OPERATION = operation.ChkSuperModuleID;
+                _obj_smhr_globalConfig.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                dtDetails1 = BLL.get_ConfigDetails(_obj_smhr_globalConfig);
+                if (dtDetails1.Rows[0]["SMHR_SUP_MODULE_NAME"].ToString() == "1")
+                {
+                    if (rtxt_JobReqcode.Text == "")
+                    {
+                        BLL.ShowMessage(this, "Job Requisition Code is Mandatory");
+                        return;
+                    }
+                }
+
+
+                _obj_smhr_globalConfig.GLOBALCONFIG_DATEFORMAT = Convert.ToString(rcmb_DateFormat.SelectedItem.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_MINAGE = Convert.ToInt32(rntxt_MinAge.Text);
+                _obj_smhr_globalConfig.GLOBALCONFIG_MAXAGE = Convert.ToInt32(rntxt_MaxAge.Text);
+                //_obj_smhr_globalConfig.GLOBALCONFIG_APPLIEDDATES = chk_AppliedDates.Checked;
+                if (chk_AppliedDates.Checked)
+                {
+                    _obj_smhr_globalConfig.GLOBALCONFIG_APPLIEDDATES = true;
+                }
+                else
+                {
+                    _obj_smhr_globalConfig.GLOBALCONFIG_APPLIEDDATES = false;
+                }
+                _obj_smhr_globalConfig.GLOBALCONFIG_LEAVETRANFLAG = Convert.ToInt32(chk_LeaveTranFlag.Checked);
+                //_obj_smhr_globalConfig.GLOBALCONFIG_CONTRACTNO = Convert.ToInt32(rntxt_EmpPart.Value);
+                //_obj_smhr_globalConfig.GLOBALCONFIG_TRAINEENO = Convert.ToInt32(rntxt_EmpTrainee.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO_WIDTH = Convert.ToInt32(rntxt_Width.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO_HEIGHT = Convert.ToInt32(rntxt_Height.Value);
+
+                if (!string.IsNullOrEmpty(FUpload.PostedFile.FileName))
+                {
+                    FUpload.PostedFile.SaveAs(System.IO.Path.Combine(Server.MapPath("~/EmpUploads"), rntxt_AppNo.Text + "_" + Convert.ToString(Session["ORG_ID"]) + "_" + FUpload.FileName));
+                    _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO = "~/EmpUploads/" + rntxt_AppNo.Text + "_" + Convert.ToString(Session["ORG_ID"]) + "_" + FUpload.FileName;
+                    lbl_LogoPath.Text = "~/EmpUploads/" + rntxt_AppNo.Text + "_" + Convert.ToString(Session["ORG_ID"]) + "_" + FUpload.FileName;
+                }
+                else
+                {
+                    _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO = lbl_LogoPath.Text;
+                }
+
+                _obj_smhr_globalConfig.OPERATION = operation.Update;
+                _obj_smhr_globalConfig.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                bool result = BLL.set_GlobalConfig(_obj_smhr_globalConfig);
+                if (result == true)
+                {
+                    BLL.ShowMessage(this, "Details Successfully Saved");
+                    // Response.Redirect("~/Security/frm_GlobalConfig.aspx", false);AS IT IS IN THE SAME PAGE MESSAGE IS NOT DISPLAYING.
+                    LoadDetails();
+                    return;
+                }
+                else
+                {
+                    BLL.ShowMessage(this, "Error Occured While Performing the Operation");
+                    return;
+                }
+            }
+            else
+            {
+                _obj_smhr_globalConfig.GLOBALCONFIG_APP_ID = Convert.ToInt32(rntxt_AppNo.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_APP_CODE = Convert.ToString(rtxt_AppPrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_NEXT_ID = 0;
+                //_obj_smhr_globalConfig.GLOBALCONFIG_EMP_CODE = Convert.ToString(rtxt_EmpPrefix.Text.Replace("'", "''"));
+                //_obj_smhr_globalConfig.GLOBALCONFIG_CONSULTANT_EMP_CODE = Convert.ToString(rtxt_ConsultantPrefix.Text.Replace("'", "''"));
+                //_obj_smhr_globalConfig.GLOBALCONFIG_CONTRACT_EMP_CODE = Convert.ToString(rtxt_ContractPrefix.Text.Replace("'", "''"));
+                //_obj_smhr_globalConfig.GLOBALCONFIG_EMP_ID = Convert.ToInt32(rntxt_EmpNo.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_NextEMP_ID = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_LOAN_ID = Convert.ToInt32(rntxt_LoanID.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_LOAN_NO = Convert.ToString(rtxt_LoanPrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_INCIDENT_ID = Convert.ToInt32(rntxt_IncidentID.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_INCIDENT_PREFIX = Convert.ToString(rtxt_IncidentPrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_DISCIPLINE_ID = Convert.ToInt32(rntxt_DisciplineID.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_DISCIPLINE_PREFIX = Convert.ToString(rtxt_DisciplinePrefix.Text.Replace("'", "''"));
+                _obj_smhr_globalConfig.GLOBALCONFIG_MAILID = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_PERIOD_CODE = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_PWD = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_SALSTRUCT_CODE = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_TRAVEL_REQUEST_CODE = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_TRAVEL_REQUEST_ID = 0;
+                _obj_smhr_globalConfig.GLOBALCONFIG_USERNAME = "";
+                _obj_smhr_globalConfig.GLOBALCONFIG_JOB_REQ_CODE = Convert.ToInt32(rntxt_JobReq_Code.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_DOMAIN_IP = "";
+                _obj_smhr_globalConfig.GLOABLCONFIG_THEME = Convert.ToString(rcmb_Theme.SelectedItem.Text);
+
+
+                _obj_smhr_globalConfig.GLOBALCONFIG_DATEFORMAT = Convert.ToString(rcmb_DateFormat.SelectedItem.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_MINAGE = Convert.ToInt32(rntxt_MinAge.Text);
+                _obj_smhr_globalConfig.GLOBALCONFIG_MAXAGE = Convert.ToInt32(rntxt_MaxAge.Text);
+                //_obj_smhr_globalConfig.PayrollFooterMsg = Convert.ToString(rtxt_Payrollfootermsg.Text);
+                if (rtxt_Payrollfootermsg.Text != string.Empty || rtxt_Payrollfootermsg.Text != "")
+                    _obj_smhr_globalConfig.PayrollFooterMsg = BLL.ReplaceQuote(rtxt_Payrollfootermsg.Text);
+                else
+                    _obj_smhr_globalConfig.PayrollFooterMsg = null;
+                //_obj_smhr_globalConfig.GLOBALCONFIG_APPLIEDDATES = chk_AppliedDates.Checked;
+                if (chk_AppliedDates.Checked)
+                {
+                    _obj_smhr_globalConfig.GLOBALCONFIG_APPLIEDDATES = true;
+                }
+                else
+                {
+                    _obj_smhr_globalConfig.GLOBALCONFIG_APPLIEDDATES = false;
+                }
+                _obj_smhr_globalConfig.GLOBALCONFIG_LEAVETRANFLAG = Convert.ToInt32(chk_LeaveTranFlag.Checked);
+                //_obj_smhr_globalConfig.GLOBALCONFIG_CONTRACTNO = Convert.ToInt32(rntxt_EmpPart.Value);
+                //_obj_smhr_globalConfig.GLOBALCONFIG_TRAINEENO = Convert.ToInt32(rntxt_EmpTrainee.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO_WIDTH = Convert.ToInt32(rntxt_Width.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO_HEIGHT = Convert.ToInt32(rntxt_Height.Value);
+                if (!string.IsNullOrEmpty(FUpload.PostedFile.FileName))
+                {
+                    FUpload.PostedFile.SaveAs(System.IO.Path.Combine(Server.MapPath("~/EmpUploads"), rntxt_AppNo.Text + "_" + Convert.ToString(Session["ORG_ID"]) + "_" + FUpload.FileName));
+                    _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO = "~/EmpUploads/" + rntxt_AppNo.Text + "_" + Convert.ToString(Session["ORG_ID"]) + "_" + FUpload.FileName;
+                    lbl_LogoPath.Text = "~/EmpUploads/" + rntxt_AppNo.Text + "_" + Convert.ToString(Session["ORG_ID"]) + "_" + FUpload.FileName;
+                }
+                else
+                {
+                    _obj_smhr_globalConfig.GLOBALCONFIG_COMPANYLOGO = lbl_LogoPath.Text;
+                }
+
+                _obj_smhr_globalConfig.OPERATION = operation.Insert;
+                _obj_smhr_globalConfig.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_smhr_globalConfig.GLOBALCONFIG_PEN_REGAMT = Convert.ToDouble(rtxt_PensionRegdAmt.Value);
+                _obj_smhr_globalConfig.GLOBALCONFIG_INSTAXRELIEF = Convert.ToDouble(rtxt_InsuranceTaxRelief.Value);
+                bool result = BLL.set_GlobalConfig(_obj_smhr_globalConfig);
+                if (result == true)
+                {
+                    BLL.ShowMessage(this, "Details Successfully Saved");
+                    // Response.Redirect("~/Security/frm_GlobalConfig.aspx", false);AS IT IS IN SAME FORM MESSAGE IS NOT DISPLAYING
+                    LoadDetails();
+                    return;
+                }
+                else
+                {
+                    BLL.ShowMessage(this, "Error Occured While Performing the Operation");
+                    return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_GlobalConfig", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadDetails()
+    {
+        try
+        {
+            _obj_smhr_globalConfig = new SMHR_GLOBALCONFIG();
+            _obj_smhr_globalConfig.OPERATION = operation.Select;
+            _obj_smhr_globalConfig.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            dtDetails = BLL.get_ConfigDetails(_obj_smhr_globalConfig);
+            if (dtDetails.Rows.Count != 0)
+            {
+                rntxt_AppNo.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_APP_ID"]));
+                //rntxt_EmpNo.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_EMP_ID"]));
+                rntxt_LoanID.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_LOAN_ID"]));
+                rtxt_LoanPrefix.Text = Convert.ToString(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_LOAN_NO"]));
+                if (dtDetails.Rows[0]["GLOBALCONFIG_INCIDENT_ID"].ToString() != string.Empty)
+                    rntxt_IncidentID.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_INCIDENT_ID"]));
+                rtxt_IncidentPrefix.Text = Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_INCIDENT_PREFIX"]);
+
+                if (dtDetails.Rows[0]["GLOBALCONFIG_DISCIPLINE_ID"].ToString() != string.Empty)
+                    rntxt_DisciplineID.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_DISCIPLINE_ID"]));
+                rtxt_DisciplinePrefix.Text = Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_DISCIPLINE_PREFIX"]);
+
+                // rtxt_EmpPrefix.Text = Convert.ToString(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_EMP_CODE"]));
+                rtxt_AppPrefix.Text = Convert.ToString(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_APP_CODE"]));
+                //if (dtDetails.Rows[0]["GLOBALCONFIG_CONTRACT_EMPCODE"] != System.DBNull.Value)
+                //{
+                //    rtxt_ContractPrefix.Text = Convert.ToString(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_CONTRACT_EMPCODE"]));
+                //}
+                //else
+                //{
+                //    rtxt_ContractPrefix.Text = string.Empty;
+                //}
+                //if (dtDetails.Rows[0]["GLOBALCONFIG_CONSULTANT_EMPCODE"] != System.DBNull.Value)
+                //{
+                //    rtxt_ConsultantPrefix.Text = Convert.ToString(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_CONSULTANT_EMPCODE"]));
+                //}
+                //else
+                //{
+                //    rtxt_ConsultantPrefix.Text = string.Empty;
+                //}
+                //rntxt_EmpPart.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_CONTRACTNO"]));
+                //rntxt_EmpTrainee.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_TRAINEENO"]));
+                rntxt_Width.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_COMPANYLOGO_WIDTH"]));
+                rntxt_Height.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_COMPANYLOGO_HEIGHT"]));
+                rntxt_JobReq_Code.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_JOB_REQ_CODE"]));
+                rcmb_DateFormat.SelectedIndex = rcmb_DateFormat.FindItemIndexByValue(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_DATEFORMAT"]));
+                rntxt_MinAge.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_MINAGE"]));
+                rntxt_MaxAge.Value = Convert.ToInt32(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_MAXAGE"]));
+                chk_AppliedDates.Checked = Convert.ToBoolean(dtDetails.Rows[0]["GLOBALCONFIG_APPLIEDDATES"]);
+                lbl_LogoPath.Text = Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_COMPANYLOGO"]);
+                chk_LeaveTranFlag.Checked = Convert.ToBoolean(dtDetails.Rows[0]["GLOBALCONFIG_LEAVETRANFLAG"]);
+
+                rtxt_JobReqcode.Text = Convert.ToString(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_RECRUIT_JOBREQ_CODE"]));
+
+                if (dtDetails.Rows[0]["GLOBALCONFIG_THEME"] != System.DBNull.Value)
+                    rcmb_Theme.SelectedIndex = rcmb_Theme.FindItemIndexByValue(Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_THEME"]));
+                if (Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_PEN_REGAMT"]) != "")
+                {
+                    rtxt_PensionRegdAmt.Value = Convert.ToDouble(dtDetails.Rows[0]["GLOBALCONFIG_PEN_REGAMT"]);
+                }
+                else
+                {
+                    rtxt_PensionRegdAmt.Text = string.Empty;
+                }
+            
+            if (Convert.ToString(dtDetails.Rows[0]["GLOBALCONFIG_INSTAXRELIEF"]) != "")
+                {
+                    rtxt_InsuranceTaxRelief.Value = Convert.ToDouble(dtDetails.Rows[0]["GLOBALCONFIG_INSTAXRELIEF"]);
+                }
+                else
+                {
+                    rtxt_InsuranceTaxRelief.Text = string.Empty;
+                }
+
+            if (dtDetails.Rows[0]["PAYROLLFOOTERMSG"] != "" || dtDetails.Rows[0]["PAYROLLFOOTERMSG"] != System.DBNull.Value)
+            {
+                rtxt_Payrollfootermsg.Text = Convert.ToString(dtDetails.Rows[0]["PAYROLLFOOTERMSG"]);
+            }
+            else
+            {
+                rtxt_Payrollfootermsg.Text = string.Empty;
+            }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_GlobalConfig", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadCombos()
+    {
+        try
+        {
+            DirectoryInfo dir = new DirectoryInfo(Server.MapPath("~/App_Themes/"));
+            DirectoryInfo[] dir1 = dir.GetDirectories();
+            rcmb_Theme.Items.Clear();
+            foreach (DirectoryInfo item in dir1)
+            {
+                rcmb_Theme.Items.Add(new Telerik.Web.UI.RadComboBoxItem(item.Name, item.Name));
+            }
+
+            rcmb_DateFormat.Items.Clear();
+            rcmb_DateFormat.DataSource = BLL.get_DateFormat(new SMHR_DATEFORMAT());
+            rcmb_DateFormat.DataTextField = "DATEFORMAT_CODE";
+            rcmb_DateFormat.DataValueField = "DATEFORMAT_ID";
+            rcmb_DateFormat.DataBind();
+            rcmb_DateFormat.Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("Select", "0"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_GlobalConfig", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+    #region picture
+
+    byte[] ReadFile(string sPath)
+    {
+        byte[] data = null;
+        FileInfo fInfo = new FileInfo(sPath);
+        long numBytes = fInfo.Length;
+        FileStream fStream = new FileStream(sPath, FileMode.Open, FileAccess.Read);
+        BinaryReader br = new BinaryReader(fStream);
+        data = br.ReadBytes((int)numBytes);
+        //string Value = "";
+        //Value = BitConverter.ToString(data);
+        return data;
+    }
+    #endregion
+
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Response.Redirect("~/Masters/Default.aspx", false);
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frm_GlobalConfig", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}
+

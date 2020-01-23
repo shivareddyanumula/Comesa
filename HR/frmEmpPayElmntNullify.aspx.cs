@@ -1,0 +1,547 @@
+﻿using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+using SMHR;
+using Telerik.Web.UI;
+using System.Text;
+
+public partial class HR_frmEmpPayElmntNullify : System.Web.UI.Page
+{
+    SMHR_SALARYSTRUCT _obj_smhr_salaryStruct;
+    SMHR_BUSINESSUNIT _obj_smhr_businessunit;
+    SMHR_EMP_PAYITEMS _obj_smhr_emp_payitems;
+    SMHR_POSITIONS _obj_smhr_positions;
+    SMHR_LOGININFO _obj_SMHR_LoginInfo;
+    SMHR_PENSION_CONTRIBUTION _obj_SMHR_PENSION_CONTRIBUTION;
+    SMHR_EMPPENSIONSCHEME _obj_Smhr_EMPPENSIONSCHEME;
+
+    string emplPF = Convert.ToString(System.Configuration.ConfigurationSettings.AppSettings["EmployeePension"]);
+    string emprPF = Convert.ToString(System.Configuration.ConfigurationSettings.AppSettings["EmployerPension"]);
+
+    protected override void InitializeCulture()
+    {
+        BLL.SetCulture_Theme(Page, Request);
+        base.InitializeCulture();
+    }
+
+    protected override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            Page.Validate();
+
+            if (!Page.IsPostBack)
+            {
+                Session.Remove("WRITEFACILITY");
+                SMHR_LOGININFO _obj_Smhr_LoginInfo = new SMHR_LOGININFO();
+
+                _obj_Smhr_LoginInfo.OPERATION = operation.Empty1;
+                _obj_Smhr_LoginInfo.LOGIN_USERNAME = Convert.ToString(Session["USERNAME"]).Trim();
+                _obj_Smhr_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                _obj_Smhr_LoginInfo.LOGIN_PASS_CODE = Convert.ToString("Employee Pay Item Reversing");
+
+                DataTable dtformdtls = BLL.get_LoginInfo(_obj_Smhr_LoginInfo);
+
+                if (dtformdtls.Rows.Count != 0)
+                {
+                    if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == true))
+                    {
+                        Session["WRITEFACILITY"] = 1;//WHICH MEANS READ AND WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == true) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 2;//WHICH MEANS READ NO WRITE
+                    }
+                    else if ((Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_READ"]) == false) && (Convert.ToBoolean(dtformdtls.Rows[0]["TYPSEC_WRITE"]) == false))
+                    {
+                        Session["WRITEFACILITY"] = 3;//WHICH MEANS NO READ AND NO WRITE
+                    }
+                }
+                else
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+                if (Convert.ToInt32(Session["WRITEFACILITY"]) == 2)
+                {
+                    RG_SalaryStruct.MasterTableView.CommandItemDisplay = GridCommandItemDisplay.None;
+                    btn_Save.Visible = false;
+                }
+                else if (Convert.ToInt32(Session["WRITEFACILITY"]) == 3)
+                {
+                    smhr_UNAUTHORIZED _obj_smhr_unauthorized = new smhr_UNAUTHORIZED();
+                    _obj_smhr_unauthorized.UNAUTHORIZED_USERID = Convert.ToInt32(Session["USER_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_FORMID = Convert.ToInt32(ViewState["FORMS_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_MODULEID = Convert.ToInt32(ViewState["MODULE_ID"]);
+                    _obj_smhr_unauthorized.UNAUTHORIZED_ACCESSDATE = Convert.ToDateTime(DateTime.Now.ToString());
+                    SMHR.BLL.UnAuthorized_Log(_obj_smhr_unauthorized);
+                    Response.Redirect("~/frm_UnAuthorized.aspx", false);
+                }
+
+                LoadPeriod();
+                RG_SalaryStruct.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+            return;
+        }
+    }
+
+    protected void LoadPeriod()
+    {
+        try
+        {
+            rcbPeriod.Items.Clear();
+            rcbPeriod.ClearSelection();
+            rcbPeriod.Text = string.Empty;
+
+            rcbPrdDtl.Items.Clear();
+            rcbPrdDtl.ClearSelection();
+            rcbPrdDtl.Text = string.Empty;
+
+            rcbTranID.Items.Clear();
+            rcbTranID.ClearSelection();
+            rcbTranID.Text = string.Empty;
+
+            rcbEmployee.Items.Clear();
+            rcbEmployee.ClearSelection();
+            rcbEmployee.Text = string.Empty;
+
+            rcbPrdDtl.Items.Insert(0, new RadComboBoxItem("Select"));
+            rcbTranID.Items.Insert(0, new RadComboBoxItem("Select"));
+            rcbEmployee.Items.Insert(0, new RadComboBoxItem("Select"));
+
+            SMHR_PERIOD _obj_smhr_period = new SMHR_PERIOD();
+
+            _obj_smhr_period.OPERATION = operation.Select;
+            _obj_smhr_period.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+
+            DataTable dt_Details = BLL.get_PeriodHeaderDetails(_obj_smhr_period);
+
+            if (dt_Details.Rows.Count > 0)
+            {
+                rcbPeriod.DataSource = dt_Details;
+                rcbPeriod.DataValueField = "PERIOD_ID";
+                rcbPeriod.DataTextField = "PERIOD_NAME";
+                rcbPeriod.DataBind();
+            }
+            rcbPeriod.Items.Insert(0, new RadComboBoxItem("Select"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void LoadEmptyData()
+    {
+        try
+        {
+            _obj_smhr_salaryStruct = new SMHR_SALARYSTRUCT();
+            _obj_smhr_salaryStruct.OPERATION = operation.Empty;
+            _obj_smhr_salaryStruct.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            DataTable dt_Details = BLL.get_EmptyValues(_obj_smhr_salaryStruct);
+            RG_SalaryStruct.DataSource = dt_Details;
+            RG_SalaryStruct.DataBind();
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+            return;
+        }
+    }
+
+    private void LoadCombos()
+    {
+        try
+        {
+            //// _obj_SMHR_LoginInfo = new SMHR_LOGININFO();
+            //// _obj_SMHR_LoginInfo.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+            //// _obj_SMHR_LoginInfo.LOGIN_ID = Convert.ToInt32(Session["USER_ID"]);
+            //// DataTable dt_BUDetails = BLL.get_Business_Units(_obj_SMHR_LoginInfo);
+            //// rcb_BussinessUnit.DataSource = dt_BUDetails;
+            //// rcb_BussinessUnit.DataValueField = "BUSINESSUNIT_ID";
+            //// rcb_BussinessUnit.DataTextField = "BUSINESSUNIT_CODE";
+            //// rcb_BussinessUnit.DataBind();
+            //// rcb_BussinessUnit.Items.Insert(0, new RadComboBoxItem("Select"));
+            rcbEmployee.Items.Clear();
+            rcbEmployee.Items.Insert(0, new RadComboBoxItem("Select"));
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+            return;
+        }
+
+    }
+
+    protected void rcbEmployee_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            if (rcbEmployee.SelectedIndex > 0)
+            {
+                _obj_smhr_emp_payitems = new SMHR_EMP_PAYITEMS();
+
+                _obj_smhr_emp_payitems.OPERATION = operation.Select;
+                _obj_smhr_emp_payitems.SMHR_EMP_PAYITEMS_EMPID = Convert.ToInt32(rcbEmployee.SelectedValue);
+                _obj_smhr_emp_payitems.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+
+                DataTable dt1 = BLL.get_EmpSalaryStruct(_obj_smhr_emp_payitems);
+
+                if (dt1.Rows.Count != 0)
+                {
+                    rtxt_SalaryStruct.Text = Convert.ToString(dt1.Rows[0]["SALARYSTRUCT_CODE"]);
+                    rtxt_Positions.Text = Convert.ToString(dt1.Rows[0]["POSITIONS_CODE"]);
+                    rtxt_Basic.Text = Convert.ToString(dt1.Rows[0]["EMP_BASIC"]);
+                    getJob(Convert.ToString(dt1.Rows[0]["POSITIONS_ID"]));
+                }
+
+                DataTable dtGrid = BLL.GetEmpPayItemsNullify(Convert.ToInt32(rcbTranID.SelectedValue), rcbEmployee.SelectedValue);
+
+                if (dtGrid.Rows.Count > 0)
+                {
+                    RG_SalaryStruct.Visible = btn_Save.Visible = btn_Cancel.Visible = true;
+                    RG_SalaryStruct.DataSource = dtGrid;
+                    RG_SalaryStruct.DataBind();
+                }
+                else
+                    RG_SalaryStruct.Visible = btn_Save.Visible = btn_Cancel.Visible = false;
+            }
+            else
+            {
+                rtxt_SalaryStruct.Text = rtxt_Positions.Text = rtxt_Basic.Text = rtxt_Jobs.Text = string.Empty;
+                RG_SalaryStruct.Visible = btn_Save.Visible = btn_Cancel.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+            return;
+        }
+    }
+
+    protected void btn_Save_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            //int cnt = 0;
+
+            //rcbTranID.Items.Insert(0, new RadComboBoxItem("Select"));
+            //rcbPrdDtl.Items.Insert(0, new RadComboBoxItem("Select"));
+
+            RadNumericTextBox rntbNullifyAmount;
+            Label lblEmpSalDtsID;
+
+            for (int i = 0; i < RG_SalaryStruct.Items.Count; i++)
+            {
+                lblEmpSalDtsID = RG_SalaryStruct.Items[i].FindControl("lblEmpSalDtsID") as Label;
+                rntbNullifyAmount = RG_SalaryStruct.Items[i].FindControl("rntbNullifyAmount") as RadNumericTextBox;
+
+                if (lblEmpSalDtsID.Text != string.Empty)
+                {
+                    if (rntbNullifyAmount.Text != string.Empty)
+                        BLL.SaveEmpPayItemsNullify(lblEmpSalDtsID.Text, rntbNullifyAmount.Text);
+                    else
+                        BLL.SaveEmpPayItemsNullify(lblEmpSalDtsID.Text, "-1");
+                }
+            }
+
+            BLL.ShowMessage(this, "Entered record(s) are updated successfully");
+
+            ClearFields();
+            RG_SalaryStruct.Visible = false;
+            btn_Save.Visible = btn_Cancel.Visible = false;
+            //LoadPeriod();
+            //rcbPeriod.Items.Clear();
+            //rcbPeriod.Items.Insert(0, new RadComboBoxItem("Select"));
+            Response.Redirect("~/HR/frmEmpPayElmntNullify.aspx", false);
+            //rcbTranID.Items.Clear();
+            //rcbTranID.Items.Insert(0, new RadComboBoxItem("Select"));
+            //rcbPrdDtl.Items.Clear();
+            //rcbPrdDtl.Items.Insert(0, new RadComboBoxItem("Select"));
+            //rcbTranID.Items.Insert(0, new RadComboBoxItem("Select"));
+            //rcbPrdDtl.Items.Insert(0, new RadComboBoxItem("Select"));
+
+            /*for (int i = 0; i < RG_SalaryStruct.Items.Count; i++)
+            {
+                rntbNullifyAmount = RG_SalaryStruct.Items[i].FindControl("rntbNullifyAmount") as RadNumericTextBox;
+
+                if (rntbNullifyAmount.Text != string.Empty)
+                    cnt++;
+            }
+
+            if (cnt == 0)
+            {
+                BLL.ShowMessage(this, "No records entered to save the data..!");
+                return;
+            }
+            else
+            {
+                for (int i = 0; i < RG_SalaryStruct.Items.Count; i++)
+                {
+                    lblEmpSalDtsID = RG_SalaryStruct.Items[i].FindControl("lblEmpSalDtsID") as Label;
+                    rntbNullifyAmount = RG_SalaryStruct.Items[i].FindControl("rntbNullifyAmount") as RadNumericTextBox;
+
+                    if (lblEmpSalDtsID.Text != string.Empty)
+                    {
+                        if (rntbNullifyAmount.Text != string.Empty)
+                            BLL.SaveEmpPayItemsNullify(lblEmpSalDtsID.Text, rntbNullifyAmount.Text);
+                        else
+                            BLL.SaveEmpPayItemsNullify(lblEmpSalDtsID.Text, "-1");
+                    }
+                }
+
+                BLL.ShowMessage(this, "Entered record(s) are updated successfully");
+            }
+            */
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void btn_Cancel_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Response.Redirect("~/HR/frmEmpPayElmntNullify.aspx", false);
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void getJob(string strPosition)
+    {
+        try
+        {
+            if (strPosition != "")
+            {
+                _obj_smhr_positions = new SMHR_POSITIONS();
+                _obj_smhr_positions.OPERATION = operation.Empty;
+                _obj_smhr_positions.POSITIONS_ID = Convert.ToInt32(strPosition);
+                _obj_smhr_positions.ORGANISATION_ID = Convert.ToInt32(Session["ORG_ID"]);
+                DataTable dt = BLL.get_Positions(_obj_smhr_positions);
+                if (dt.Rows.Count != 0)
+                {
+                    rtxt_Jobs.Text = Convert.ToString(dt.Rows[0]["JOBS_CODE"]);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    private void ClearFields()
+    {
+        try
+        {
+            rcbEmployee.Items.Clear();
+            rcbEmployee.Items.Insert(0, new RadComboBoxItem("Select"));
+            rtxt_SalaryStruct.Text = string.Empty;
+            rtxt_Jobs.Text = string.Empty;
+            rtxt_Positions.Text = string.Empty;
+            rtxt_Basic.Text = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void chk_Choose_CheckedChanged1(object sender, EventArgs e)
+    {
+        try
+        {
+            CheckBox chk = sender as CheckBox;
+            TextBox rtxt_GrossSalary = chk.NamingContainer.FindControl("txtNumber") as TextBox;
+            if (chk.Checked == false)
+            {
+                rtxt_GrossSalary.Text = string.Empty;
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void RG_SalaryStruct_ItemDataBound(object sender, GridItemEventArgs e)
+    {
+        try
+        {
+            if (e.Item is GridDataItem)
+            {
+                GridDataItem item = (GridDataItem)e.Item;
+                Label lblIsEnabled = item.FindControl("lblIsEnabled") as Label;
+                CheckBox chk_Choose = item.FindControl("chk_Choose") as CheckBox;
+                TextBox txtNumber = item.FindControl("txtNumber") as TextBox;
+                if (lblIsEnabled.Text != "")
+                {
+                    int isEnabled = Convert.ToInt32((item.FindControl("lblIsEnabled") as Label).Text);
+                    chk_Choose.Enabled = Convert.ToBoolean(isEnabled);
+                    txtNumber.Enabled = Convert.ToBoolean(isEnabled);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcbPeriod_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            rcbPrdDtl.Items.Clear();
+            rcbPrdDtl.ClearSelection();
+            rcbPrdDtl.Text = string.Empty;
+
+            rcbTranID.Items.Clear();
+            rcbTranID.ClearSelection();
+            rcbTranID.Text = string.Empty;
+
+            rcbEmployee.Items.Clear();
+            rcbEmployee.ClearSelection();
+            rcbEmployee.Text = string.Empty;
+
+            ClearFields();
+            RG_SalaryStruct.Visible = false;
+
+            if (rcbPeriod.SelectedIndex > 0)
+            {
+                SMHR_PERIODDTL _obj_smhr_perioddtl = new SMHR_PERIODDTL();
+
+                _obj_smhr_perioddtl.OPERATION = operation.Select;
+                _obj_smhr_perioddtl.PRDDTL_PERIOD_ID = Convert.ToInt32(rcbPeriod.SelectedValue);
+
+                DataTable dtPrdDetails = BLL.get_PeriodDetails(_obj_smhr_perioddtl);
+
+                if (dtPrdDetails.Rows.Count != 0)
+                {
+                    rcbPrdDtl.DataSource = dtPrdDetails;
+                    rcbPrdDtl.DataValueField = "PRDDTL_ID";
+                    rcbPrdDtl.DataTextField = "PRDDTL_NAME";
+                    rcbPrdDtl.DataBind();
+                }
+
+                rcbPrdDtl.Items.Insert(0, new RadComboBoxItem("Select"));
+                rcbTranID.Items.Insert(0, new RadComboBoxItem("Select"));
+                rcbEmployee.Items.Insert(0, new RadComboBoxItem("Select"));
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcbPrdDtl_SelectedIndexChanged(object o, RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            rcbTranID.Items.Clear();
+            rcbTranID.ClearSelection();
+            rcbTranID.Text = string.Empty;
+
+            rcbEmployee.Items.Clear();
+            rcbEmployee.ClearSelection();
+            rcbEmployee.Text = string.Empty;
+
+            ClearFields();
+            RG_SalaryStruct.Visible = false;
+
+            if (rcbPrdDtl.SelectedIndex > 0)
+            {
+                DataTable dtTran = BLL.GetEmpPayItemsNullify(1, rcbPrdDtl.SelectedValue);
+
+                if (dtTran.Rows.Count != 0)
+                {
+                    rcbTranID.DataSource = dtTran;
+                    rcbTranID.DataTextField = "TEMP_PAYTRAN_NAME";
+                    rcbTranID.DataValueField = "TEMP_PAYTRAN_ID";
+                    rcbTranID.DataBind();
+                }
+
+                rcbTranID.Items.Insert(0, new RadComboBoxItem("Select"));
+                rcbEmployee.Items.Insert(0, new RadComboBoxItem("Select"));
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+
+    protected void rcbTranID_SelectedIndexChanged(object o, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        try
+        {
+            rcbEmployee.Items.Clear();
+            rcbEmployee.ClearSelection();
+            rcbEmployee.Text = string.Empty;
+
+            ClearFields();
+
+            RG_SalaryStruct.Visible = false;
+
+            if (rcbTranID.SelectedIndex > 0)
+            {
+                DataTable dtEmp = BLL.GetEmpPayItemsNullify(2, rcbTranID.SelectedValue);
+
+                if (dtEmp.Rows.Count != 0)
+                {
+                    rcbEmployee.DataSource = dtEmp;
+                    rcbEmployee.DataTextField = "EMP_NAME";
+                    rcbEmployee.DataValueField = "EMP_ID";
+                    rcbEmployee.DataBind();
+                }
+                rcbEmployee.Items.Insert(0, new RadComboBoxItem("Select"));
+            }
+        }
+        catch (Exception ex)
+        {
+            SMHR.BLL.Error_Log(Session["USER_ID"].ToString(), ex.TargetSite.ToString(), ex.Message.Replace("'", "''"), "frmEmpPayElmntNullify", ex.StackTrace, DateTime.Now);
+            Response.Redirect("~/Frm_ErrorPage.aspx");
+        }
+    }
+}

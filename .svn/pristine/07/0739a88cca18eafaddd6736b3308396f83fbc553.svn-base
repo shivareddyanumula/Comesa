@@ -1,0 +1,49 @@
+.breadcrumb
+{
+    list-style:none;
+    padding:0;
+    margin: 9px 0 0 0;
+    height:14px;
+}
+
+.breadcrumb .first
+{
+    width:140px;
+    background:#ffa800;
+    margin-right: 10px;
+}
+
+.breadcrumb .separator
+{
+    padding: 0 4px;
+}
+
+.breadcrumb li
+{
+    float:left;
+    line-height: 14px;
+    color: #000;
+}
+
+.breadcrumb li a,
+.breadcrumb li a:hover
+{
+    font: 12px 'Segoe UI', Arial, 'sans-serif';
+    color: #000;
+    text-decoration:underline;
+}
+
+.content
+{
+    height: 14px;
+    background: transparent url(Images/bg.png) repeat-x 0 0;
+    padding-top:1px;
+}
+
+.content h3
+{
+    font: 24px Georgia, Arial, "sans-serif";
+    clear:left;
+    margin : 0 0 0 148px;
+    color: #000;
+}

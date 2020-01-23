@@ -1,0 +1,240 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SMHRMaster.master" AutoEventWireup="true" CodeFile="frm_Areas.aspx.cs" Inherits="Masters_frm_Areas" %>
+
+
+<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="cphEquipmentCreation" ContentPlaceHolderID="cphDefault" runat="Server">
+    <script type="text/javascript"></script>
+    <telerik:radwindowmanager id="RWM_EquipmentCreation" runat="server" style="z-index: 8000">
+    </telerik:radwindowmanager>
+    <telerik:radajaxmanagerproxy id="RAM_EquipmentCreation" runat="server">
+        <AjaxSettings>
+            <telerik:AjaxSetting AjaxControlID="Rg_EquipmentCreation">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="RAL_Panel_Main_c" LoadingPanelID="RAL_Panel_Main" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+        </AjaxSettings>
+    </telerik:radajaxmanagerproxy>
+    <telerik:radmultipage id="Rm_HDPT_page" runat="server" selectedindex="0" style="z-index: 10"
+        width="990px" height="490px" scrollbars="Auto">
+                    <telerik:RadPageView ID="Rp_DPT_ViewMain" runat="server" Selected="True">
+                        <table align="center" width="50%">
+                            <tr>
+                                <td>
+                                    <telerik:RadGrid ID="Rg_Areas" runat="server" AutoGenerateColumns="False" GridLines="None"
+                                        AllowPaging="True" AllowFilteringByColumn="true" Skin="WebBlue">
+                                        <MasterTableView CommandItemDisplay="Top">
+                                            <Columns>                                              
+                                                <telerik:GridBoundColumn DataField="AREA_NAME" UniqueName="AREA_NAME"
+                                                    AllowFiltering="true" HeaderText="AREA NAME"
+                                                    ItemStyle-HorizontalAlign="Left">
+                                                    <HeaderStyle HorizontalAlign="Center" />
+                                                </telerik:GridBoundColumn>
+                                                <telerik:GridBoundColumn DataField="AREA_DESCRIPTION" UniqueName="AREA_DESCRIPTION"
+                                                    AllowFiltering="true" HeaderText="AREA DESCRIPTION" ItemStyle-HorizontalAlign="Left">
+                                                    <HeaderStyle HorizontalAlign="Center" />
+                                                </telerik:GridBoundColumn>     
+                                                <telerik:GridBoundColumn DataField="AREA_BUSINESSUNITNAME" UniqueName="AREA_BUSINESSUNITNAME"
+                                                    AllowFiltering="true" HeaderText="BUSINESSUNIT" ItemStyle-HorizontalAlign="Left">
+                                                <HeaderStyle HorizontalAlign="Center" />
+                                                </telerik:GridBoundColumn>            
+                                                 <telerik:GridBoundColumn DataField="AREA_DIRECTORATE" UniqueName="AREA_DIRECTORATE"
+                                                    AllowFiltering="true" HeaderText="DIRECTORATE" ItemStyle-HorizontalAlign="Left">
+                                                    <HeaderStyle HorizontalAlign="Center" />
+                                                </telerik:GridBoundColumn>            
+                                                 <telerik:GridBoundColumn DataField="AREA_DEPARTMENT" UniqueName="AREA_DEPARTMENT"
+                                                    AllowFiltering="true" HeaderText="DEPARTMENT" ItemStyle-HorizontalAlign="Left">
+                                                    <HeaderStyle HorizontalAlign="Center" />
+                                                </telerik:GridBoundColumn>            
+                                                 <telerik:GridBoundColumn DataField="AREA_SUBDEPARTMENT" UniqueName="AREA_SUBDEPARTMENT"
+                                                    AllowFiltering="true" HeaderText="SUBDEPARTMENT" ItemStyle-HorizontalAlign="Left">
+                                                    <HeaderStyle HorizontalAlign="Center" />
+                                                </telerik:GridBoundColumn>                                                                                                  
+                                                <telerik:GridTemplateColumn UniqueName="ColEdit" meta:resourcekey="ColEdit" AllowFiltering="false"
+                                                    ItemStyle-HorizontalAlign="Left">
+                                                    <ItemTemplate>
+                                                        <asp:LinkButton ID="lnk_Edit" runat="server" CommandArgument='<%# Eval("AREA_ID") %>'
+                                                            meta:resourcekey="lnk_Edit"  OnCommand="lnk_Edit">Edit</asp:LinkButton>
+                                                    </ItemTemplate>
+                                                </telerik:GridTemplateColumn>
+                                            </Columns>
+                                            <CommandItemTemplate>
+                                                <div align="right">
+                                                    <asp:LinkButton ID="lnk_Add" runat="server" OnCommand="lnk_Add_Command"
+                                                         CommandArgument='<%# Eval("AREA_ID") %>'
+                                                         meta:resourceKey="lnk_Add">Add</asp:LinkButton>
+                                                </div>
+                                            </CommandItemTemplate>
+                                        </MasterTableView>
+                                        <PagerStyle AlwaysVisible="true" />
+                                    </telerik:RadGrid>
+                                </td>
+                            </tr>
+                        </table>
+                        <table align="center">
+                            <tr>
+                                <td align="center">
+                                    <asp:UpdatePanel ID="updPanel1" runat="server">
+                                        <ContentTemplate>
+                                            <table align="center">
+                                                <tr align="center">
+                                                    <td align="center" colspan="3">
+                                                        <asp:Label ID="lblheader" runat="server" Text="Import Department Details" Font-Bold="true"></asp:Label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <a href="~/Masters/Importsheets/Import_Department.xlsx" runat="server" id="A2">Download
+                                                            Department Details Template</a>
+                                                    </td>
+                                                    <td>
+                                                        <asp:FileUpload ID="fu_department" runat="server" />
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button ID="btn_import" runat="server" Text="Import"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </ContentTemplate>
+                                        <Triggers>
+                                            <asp:PostBackTrigger ControlID="btn_import" />
+                                        </Triggers>
+                                    </asp:UpdatePanel>
+                                </td>
+                            </tr>
+                        </table>
+                    </telerik:RadPageView>
+      <telerik:RadPageView ID="Rp_Activity_ADDView" runat="server">
+    <table align="center">
+        <tr>
+
+        </tr>
+        <tr>
+            <td  align="center" colspan="3">
+                 <asp:Label ID="lbl_AreaID" runat="server" Visible="False"></asp:Label>
+                <asp:Label ID="lbl_AreaHeading" runat="server" Text="Area&nbsp;Creation" Font-Bold="True"></asp:Label>
+            </td>
+        </tr>         
+        <tr>
+                                <td>
+                                    <asp:Label ID="lbl_Empreg_BU" runat="server" meta:resourcekey="lbl_Empreg_BU" Text="Business Unit"></asp:Label>
+                                </td>
+                                <td>
+                                    :
+                                </td>
+                                <td>
+                                    <telerik:RadComboBox  ID="rcmb_EmpReg_BU" runat="server" MarkFirstMatch="true"
+                                        Skin="WebBlue" AutoPostBack="True" OnSelectedIndexChanged="rcmb_EmpReg_BU_SelectedIndexChanged">
+                                    </telerik:RadComboBox>
+                                </td>
+                                <td>
+                                    <asp:RequiredFieldValidator ID="rfv_rcmb_EmpReg_BU" runat="server" ErrorMessage="Please select Business Unit"
+                                        ControlToValidate="rcmb_EmpReg_BU" ValidationGroup="Controls" InitialValue="Select" >*</asp:RequiredFieldValidator>
+                                </td>
+                            </tr>
+                              <tr>
+                                <td>
+                                    <asp:Label ID="lbl_Directorate" runat="server"  Text="Directorate"></asp:Label>                                   
+                                </td>
+                                <td>
+                                    <b>:</b>
+                                </td>
+                                <td>
+                                    <telerik:RadComboBox ID="rad_Directorate" AutoPostBack="true"  runat="server" Skin="WebBlue" MaxLength="40"
+                                    EnableEmbeddedSkins="false" MarkFirstMatch="true" MaxHeight="120px" OnSelectedIndexChanged="rad_Directorate_SelectedIndexChanged">
+                                    </telerik:RadComboBox>
+                                </td>
+                                <td>
+                                    <asp:RequiredFieldValidator ID="rfv_Directorate" runat="server" ControlToValidate="rad_Directorate"
+                                        InitialValue="Select" ErrorMessage="Please Select Directorate" ValidationGroup="Controls">*</asp:RequiredFieldValidator></td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <asp:Label ID="lbl_Department" runat="server"  Text="Department"></asp:Label>                               
+                                </td>
+                                <td>
+                                    <b>:</b>
+                                </td>
+                                <td>
+                                    <telerik:RadComboBox ID="rad_Department"  runat="server" Skin="WebBlue" MaxLength="40" AutoPostBack="True"
+                                    EnableEmbeddedSkins="false" MarkFirstMatch="true" MaxHeight="120px" OnSelectedIndexChanged="rad_Department_SelectedIndexChanged">
+                                    </telerik:RadComboBox>
+                                </td>
+                                <td>
+                                 <asp:RequiredFieldValidator ID="rfv_Department" ControlToValidate="rad_Department"
+                                        runat="server" ValidationGroup="Controls" ErrorMessage="Please Select Department"
+                                       InitialValue="Select">*</asp:RequiredFieldValidator>
+                                </td>
+                            </tr>
+                              <tr>
+                                <td>
+                                    <asp:Label ID="lbl_SubDepartment" runat="server" Text="Sub Department"></asp:Label>
+                                </td>
+                                <td>
+                                    :
+                                </td>
+                                <td>
+                                    <telerik:RadComboBox ID="rad_SubDepartment" runat="server" 
+                                        EnableEmbeddedSkins ="false" OnSelectedIndexChanged="rad_SubDepartment_SelectedIndexChanged" AutoPostBack="true"  MaxLength="50" TabIndex="2" >
+                                    </telerik:RadComboBox>
+                                </td>
+                                <td>
+                                <%--    <asp:RequiredFieldValidator ID="rfv_SubDepartment" runat="server" ControlToValidate="rad_SubDepartment"
+                                        InitialValue="Select" ErrorMessage="Please Select Sub Department" ValidationGroup="Controls">*</asp:RequiredFieldValidator></td>--%>
+                            </tr>
+        <tr>
+            <td>
+                <asp:Label ID="lbl_AreaName" runat="server" Text="Area&nbsp;Name"></asp:Label>
+            </td>
+            <td>:
+            </td>
+            <td>
+                <telerik:radtextbox id="rad_AreaName" runat="server" skin="WebBlue">
+                                            </telerik:radtextbox>
+            </td>
+        </tr>
+        <tr>
+                                <td>
+                                    <asp:Label ID="lbl_AreaDescription" runat="server" Text="Area&nbsp;Description"></asp:Label>
+                                </td>
+                                <td>
+                                    :
+                                </td>
+                                <td>
+                                   <telerik:radtextbox id="rad_Description" runat="server" skin="WebBlue">
+                                            </telerik:radtextbox>
+                                </td>
+
+                            </tr>
+                              <tr>
+                                <td>
+                                    <asp:Label ID="lbl_IsActive" runat="server" Text="IsActive:"></asp:Label>
+                                </td>
+                                <td>
+                                    :
+                                </td>
+                                <td>
+                                    <asp:CheckBox ID="rad_IsActive" runat="server">
+                                    </asp:CheckBox>
+                                </td>
+                              </tr>
+        <tr>
+            <td></td>
+        </tr>
+    </table>
+    <table align="center">
+        <tr>
+            <td align="center" colspan="3">
+                <br />
+                <asp:Button ID="BTN_SAVE" runat="server"  Text="Save" OnClick="BTN_SAVE_Click" ValidationGroup="Controls" />
+                <asp:Button ID="btn_Update" runat="server"  Text="Update"  OnClick="BTN_SAVE_Click"  ValidationGroup="Controls" />
+                <asp:Button ID="btn_Cancel" runat="server" Text="Cancel" OnClick="btn_Cancel_Click"   />
+            </td>
+        </tr>
+    </table>
+          </telerik:RadPageView>
+         </telerik:radmultipage>
+</asp:Content>

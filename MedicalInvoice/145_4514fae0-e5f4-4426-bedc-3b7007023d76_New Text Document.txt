@@ -1,0 +1,13 @@
+1.	Leave Structure - By while saving and updating application directing to Error log page --Fixed
+2.	Pay Item - while saving and updating application directing to Error log page --- Fixed
+3.	Employee - By click on Edit application directing to Error log page ---Fixed
+4.	Pay Roll - Unable to process payroll (while selecting  salary structure ,application directing to Error log page) -- DB change
+5.	Roll Back Payroll – While Roll backing Payroll application directing to Error log page
+6.	Salary Progressions- While saving application directing to Error log page  --------EXEC USP_SMHR_EMPPROMOTION @Operation = 'Insert',@EMPPRO_EMPID = 429,@EMPPRO_DATEOFPROMOTION = '10/30/2019 12:00:00 AM',@EMPPRO_DESIGNATION_ID = 218,@EMPPRO_GRADE = 1148,@EMPPRO_SLAB_ID = 5361,@EMPPRO_REPORTINGEMPLOYEE = 0,@EMPPRO_REPORTINGEMPLOYEE_ENDDATE = null,@EMMPRO_SHIFT_ID = 44,@EMPPRO_SALALRYSTRUCT_ID =1,@EMPPRO_LEAVESTRUCT_ID=2064,@EMPPRO_GROSSSAL = 60000,@EMPPRO_BASIC = 5000,@OLD_EMPPRO_DATEOFPROMOTION = '10/30/2019 12:00:00 AM',@OLD_EMPPRO_DESIGNATION_ID = 4,@OLD_EMPPRO_GRADE = 1135,@OLD_EMPPRO_SLAB_ID = 5077,@OLD_EMPPRO_REPORTINGEMPLOYEE = 27,@OLD_EMPPRO_REPORTINGEMPLOYEE_ENDDATE = null,@OLD_EMMPRO_SHIFT_ID = 44,@OLD_EMPPRO_SALALRYSTRUCT_ID =1,@OLD_EMPPRO_LEAVESTRUCT_ID=2064,@OLD_EMPPRO_GROSSSAL = 10097.1,@OLD_EMPPRO_BASIC = 841.42,@EMP_ORGANISATION_ID='2',@EMMPRO_STATUS='0',@OLD_EMPPRO_EMPLOYEETYPE='Project Professional - Non Established',@EMPPRO_EMPLOYEETYPE='Regular General Service - Established',
+@OLD_EMPPRO_EMPCODE='',@EMPPRO_EMPCODE='',@EMPPRO_SUPBUSINESSUNIT_ID='1103',@EMPPRO_ANNUALGROSSSALARY='0',@EMPPRO_ANNUALBASICSALARY='0',@EMPPRO_INCREMENTTYPE_ID='0',@EMPPRO_INCRMENTDATE='',@EMPRO_CONTRACT_STARTDATE='',@EMPRO_CONTRACT_ENDDATE='',@EMPPRO_PERIOD=1118,@OLD_EMPPRO_INCRMENTDATE='',@OLD_EMPRO_CONTRACT_STARTDATE='',@OLD_EMPRO_CONTRACT_ENDDATE='',@OLD_EMPPRO_PERIOD=1118,@EMPPRO_CREATEDBY=1519,@EMPPRO_CREATEDDATE='10/30/2019 11:52:21 AM',@EMPPRO_LSTMDFBY=1519,@MP_LSTMDFDATE='10/30/2019 11:52:22 AM'
+
+7.	Mapping Reference pay items -While saving and updating application directing to Error log page ----------Fixed
+8.	By click on District application directing to Error log page --------- we are geeting two records inactive one --Fixed
+9.	Over Time History – By click on menu ,displaying message as “user with unauthorized access “ and directing to Login page ----We have another screen
+10.	Education Claim – By click on [Add] , application directing to Error log page -------- Fixed
+11.	Leave application – Unable to apply Leave ,Displaying Employee name in select with disabled  mode . ------ 

@@ -1,0 +1,946 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btn_Cancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btn_Cancel.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="btn_Save.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="btn_Save.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="btn_Update.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="btn_Update.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.DataFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.EmptyDataText" xml:space="preserve">
+    <value>&amp;nbsp;</value>
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.FooterAggregateFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.HeaderText" xml:space="preserve">
+    <value>Account No</value>
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="BUSUNTBANK_ACCOUNTNO.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="BUSUNTBANK_ACCOUNTNO.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.DataFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.EmptyDataText" xml:space="preserve">
+    <value>&amp;nbsp;</value>
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.FooterAggregateFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.HeaderText" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="BUSUNTBANK_ADDRESS.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.DataFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.EmptyDataText" xml:space="preserve">
+    <value>&amp;nbsp;</value>
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.FooterAggregateFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.HeaderText" xml:space="preserve">
+    <value>Business Unit</value>
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="BUSUNTBANK_BUSINESSUNIT_ID.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.HeaderText" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISACTIVE.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.HeaderText" xml:space="preserve">
+    <value>Is Default</value>
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_ISDEFAULT.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.DataFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="BUSUNTBANK_NAME.EmptyDataText" xml:space="preserve">
+    <value>&amp;nbsp;</value>
+  </data>
+  <data name="BUSUNTBANK_NAME.FooterAggregateFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.HeaderText" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="BUSUNTBANK_NAME.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BUSUNTBANK_NAME.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="BUSUNTBANK_NAME.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="chk_BusinessUnitBankIsActive.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="chk_BusinessUnitBankIsActive.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="chk_BusinessUnitBankIsDefault.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="chk_BusinessUnitBankIsDefault.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumn.HeaderText" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="GridBoundColumnResource1.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.DataFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="GridBoundColumnResource1.EmptyDataText" xml:space="preserve">
+    <value>&amp;nbsp;</value>
+  </data>
+  <data name="GridBoundColumnResource1.FooterAggregateFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.HeaderText" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="GridBoundColumnResource1.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridBoundColumnResource1.HtmlEncode" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="GridBoundColumnResource1.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumn.HeaderText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="GridTemplateColumnResource1.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.HeaderText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GridTemplateColumnResource1.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BBDetails.Text" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="lbl_BBDetails.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnit.Text" xml:space="preserve">
+    <value>Business Unit</value>
+  </data>
+  <data name="lbl_BusinessUnit.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankAccountNo.Text" xml:space="preserve">
+    <value>Account No</value>
+  </data>
+  <data name="lbl_BusinessUnitBankAccountNo.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankAddress.Text" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="lbl_BusinessUnitBankAddress.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankHeader.Text" xml:space="preserve">
+    <value>Banks Information</value>
+  </data>
+  <data name="lbl_BusinessUnitBankHeaderResource1.Text" xml:space="preserve">
+    <value>Business Unit Bank Information</value>
+  </data>
+  <data name="lbl_BusinessUnitBankHeaderResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankID.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankID.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankIsActive.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="lbl_BusinessUnitBankIsActive.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankIsActiveResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankIsDefault.Text" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="lbl_BusinessUnitBankIsDefault.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankIsDefaultResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="lbl_BusinessUnitBankName.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitResource1.Text" xml:space="preserve">
+    <value>Business Unit</value>
+  </data>
+  <data name="lnk_AddResource1.Text" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="lnk_AddResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lnk_Edit.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="lnk_Edit.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lnk_EditResource1.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="PageResource1.Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadComboBoxItemResource1.AccessKey" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadComboBoxItemResource1.Text" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="RadComboBoxItemResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadComboBoxItemResource1.Value" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="RadComboBoxItemResource2.AccessKey" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadComboBoxItemResource2.Text" xml:space="preserve">
+    <value>InActive</value>
+  </data>
+  <data name="RadComboBoxItemResource2.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RadComboBoxItemResource2.Value" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="rcmb_BusinessUnitBankIsActiveResource1.EmptyMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rcmb_BusinessUnitBankIsActiveResource1.LoadingMessage" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="rcmb_BusinessUnitBankIsActiveResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rcmb_BusinessUnitsResource1.EmptyMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rcmb_BusinessUnitsResource1.LoadingMessage" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="rcmb_BusinessUnitsResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rfv_rcmb_BusinessUnits.ErrorMessage" xml:space="preserve">
+    <value>Please Select Business Unit</value>
+  </data>
+  <data name="rfv_rcmb_BusinessUnits.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="rfv_rcmb_BusinessUnits.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankAccountNo.ErrorMessage" xml:space="preserve">
+    <value>Please Enter Account No</value>
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankAccountNo.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankAccountNo.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankAddress.ErrorMessage" xml:space="preserve">
+    <value>Please Enter Address</value>
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankAddress.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankAddress.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankName.ErrorMessage" xml:space="preserve">
+    <value>Please Enter Name </value>
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankName.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="rfv_rtxt_BusinessUnitBankName.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.BackImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.FilterMenu.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.CollapseTooltip" xml:space="preserve">
+    <value>Collapse group</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.ExpandTooltip" xml:space="preserve">
+    <value>Expand group</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.GroupByFieldsSeparator" xml:space="preserve">
+    <value>; </value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.GroupContinuedFormatString" xml:space="preserve">
+    <value>... group continued from the previous page. </value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.GroupContinuesFormatString" xml:space="preserve">
+    <value> Group continues on the next page.</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.GroupSplitDisplayFormat" xml:space="preserve">
+    <value>Showing {0} of {1} items.</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.GroupSplitFormat" xml:space="preserve">
+    <value> ({0})</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.UnGroupButtonTooltip" xml:space="preserve">
+    <value>Click here to ungroup</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupingSettings.UnGroupTooltip" xml:space="preserve">
+    <value>Drag out of the bar to ungroup</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupPanel.Text" xml:space="preserve">
+    <value>Drag a column header and drop it here to group by that column</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.GroupPanel.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.HeaderContextMenu.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.HierarchySettings.CollapseTooltip" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.HierarchySettings.ExpandTooltip" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.HierarchySettings.SelfCollapseTooltip" xml:space="preserve">
+    <value>Self reference collapse</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.HierarchySettings.SelfExpandTooltip" xml:space="preserve">
+    <value>Self reference expand</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.Caption" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.CommandItemSettings.AddNewRecordImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.CommandItemSettings.AddNewRecordText" xml:space="preserve">
+    <value>Add new record</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.CommandItemSettings.RefreshImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.CommandItemSettings.RefreshText" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.CaptionFormatString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.CancelText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.EditText" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.HeaderText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.InsertText" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.EditFormSettings.EditColumn.UpdateText" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.CollapseImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.ExpandImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.HeaderText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ExpandCollapseColumn.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.FilterExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.NoDetailRecordsText" xml:space="preserve">
+    <value>No child records to display.</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.NoMasterRecordsText" xml:space="preserve">
+    <value>No records to display.</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.FirstPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.FirstPageToolTip" xml:space="preserve">
+    <value>First Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.LastPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.LastPageToolTip" xml:space="preserve">
+    <value>Last Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.NextPagesToolTip" xml:space="preserve">
+    <value>Next Pages</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.NextPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.NextPageToolTip" xml:space="preserve">
+    <value>Next Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.PagerTextFormat" xml:space="preserve">
+    <value>Change page: {4} &amp;nbsp;Page &lt;strong&gt;{0}&lt;/strong&gt; of &lt;strong&gt;{1}&lt;/strong&gt;, items &lt;strong&gt;{2}&lt;/strong&gt; to &lt;strong&gt;{3}&lt;/strong&gt; of &lt;strong&gt;{5}&lt;/strong&gt;.</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.PrevPagesToolTip" xml:space="preserve">
+    <value>Previous Pages</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.PrevPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.PagerStyle.PrevPageToolTip" xml:space="preserve">
+    <value>Previous Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.CurrentFilterValue" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.EditFormHeaderTextFormat" xml:space="preserve">
+    <value>{0}:</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.GroupByExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.HeaderAbbr" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.HeaderAxis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.HeaderImageUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.HeaderText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.HeaderTooltip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.RowIndicatorColumn.SortExpression" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.Summary" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.MasterTableView.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.FirstPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.FirstPageToolTip" xml:space="preserve">
+    <value>First Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.LastPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.LastPageToolTip" xml:space="preserve">
+    <value>Last Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.NextPagesToolTip" xml:space="preserve">
+    <value>Next Pages</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.NextPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.NextPageToolTip" xml:space="preserve">
+    <value>Next Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.PagerTextFormat" xml:space="preserve">
+    <value>Change page: {4} &amp;nbsp;Page &lt;strong&gt;{0}&lt;/strong&gt; of &lt;strong&gt;{1}&lt;/strong&gt;, items &lt;strong&gt;{2}&lt;/strong&gt; to &lt;strong&gt;{3}&lt;/strong&gt; of &lt;strong&gt;{5}&lt;/strong&gt;.</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.PrevPagesToolTip" xml:space="preserve">
+    <value>Previous Pages</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.PrevPageText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.PagerStyle.PrevPageToolTip" xml:space="preserve">
+    <value>Previous Page</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.SortingSettings.SortedAscToolTip" xml:space="preserve">
+    <value>Sorted asc</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.SortingSettings.SortedDescToolTip" xml:space="preserve">
+    <value>Sorted desc</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.SortingSettings.SortToolTip" xml:space="preserve">
+    <value>Click here to sort</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.StatusBarSettings.LoadingText" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.StatusBarSettings.ReadyText" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Rg_BusinessUnitBankResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rm_BB_pageResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rp_BB_ViewDetailsResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rp_BB_ViewMainResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankAccountNoResource1.Label" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankAccountNoResource1.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankAccountNoResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankAddressResource1.Label" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankAddressResource1.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankAddressResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankNameResource1.Label" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankNameResource1.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtxt_BusinessUnitBankNameResource1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="vs_BusinessUnitBank.HeaderText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="vs_BusinessUnitBank.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="lbl_BusinessUnitBankBranch.Text" xml:space="preserve">
+    <value>Branch</value>
+  </data>
+  <data name="lbl_BSBCode" xml:space="preserve">
+    <value>BSB Code</value>
+  </data>
+</root>
