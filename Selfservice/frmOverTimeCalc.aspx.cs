@@ -122,7 +122,7 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
             DataTable dt_Load = new DataTable();
             dt_Load = BLL.calculate_OT(_obj_smhr_ottrans);
             Rg_OverTime.DataSource = dt_Load;
-            
+
         }
         catch (Exception ex)
         {
@@ -148,7 +148,7 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
                 if (dt_Details.Rows.Count > 0)
                 {
                     LoadBusinessUnits();
-                   
+
                 }
                 rcmb_BusinessUnit.SelectedIndex = rcmb_BusinessUnit.Items.FindItemIndexByValue(Convert.ToString(dt_Details.Rows[0]["EMP_BUSINESSUNIT_ID"]));
 
@@ -556,7 +556,7 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
             if (dt.Rows.Count > 0)
             {
                 rcmb_Employee.SelectedIndex = rcmb_Employee.FindItemIndexByValue(dt.Rows[0]["OTCALC_EMPID"].ToString());
-                rcmb_BusinessUnit.SelectedIndex = rcmb_BusinessUnit.FindItemIndexByValue(dt.Rows[0]["OTCALC_BUID"].ToString());            
+                rcmb_BusinessUnit.SelectedIndex = rcmb_BusinessUnit.FindItemIndexByValue(dt.Rows[0]["OTCALC_BUID"].ToString());
                 if (!string.IsNullOrEmpty(dt.Rows[0]["OTCALC_DATE"].ToString()))
                 {
                     DateTime dts;
@@ -619,7 +619,7 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
         try
         {
             DateTime date1 = System.Convert.ToDateTime(rdp_fromtime.SelectedDate);
-            DateTime date2 = System.Convert.ToDateTime(rdp_totime.SelectedDate);          
+            DateTime date2 = System.Convert.ToDateTime(rdp_totime.SelectedDate);
             loadtimer(date1, date2);
             timecalculate();
         }
@@ -838,11 +838,6 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
                         BLL.ShowMessage(this, "Your OT Hours for today has exceed");
                         res = true; break;
                     }
-                    else if (totimespan > fromtime)
-                    {
-                        BLL.ShowMessage(this, "To time for this Employee is" + " " + totimespan + " " + "From time Should be greater than To time");
-                        res = true; break;
-                    }
                     else if (fromtimespan == fromtime)
                     {
                         BLL.ShowMessage(this, "From Time Already Selected");
@@ -853,6 +848,18 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
                         BLL.ShowMessage(this, "To Time Already Selected");
                         res = true; break;
                     }
+                    else if (totimespan > fromtime)
+                    {
+                        if (fromtimespan >= totime)
+                        { //this condition is to from time greater than to time
+                        }
+                        else
+                        {
+                            BLL.ShowMessage(this, "To time for this Employee is" + " " + totimespan + " " + "From time Should be greater than To time");
+                            res = true; break;
+                        }
+                    }
+
                 }
 
             }
