@@ -21376,11 +21376,9 @@ namespace SMHR
         #endregion
 
         public static DataTable Checkhourexceed(int OTCALC_EMPID, DateTime OTCALC_DATE,TimeSpan OTCALC_FROMTIME,TimeSpan OTCALC_TOTIME)
-        {
-            //return ExecuteQuery("select ISNULL(sum(ISNULL(otcalc_workinghours,0)),0) As otcalc_workinghours  from SMHR_OTCALC where OTCALC_EMPID= '" + @OTCALC_EMPID + "' and OTCALC_DATE='"+@OTCALC_DATE+"'");                       
-            //  return ExecuteQuery("select ISNULL(sum(ISNULL(OTCALC_ACTUALHOURS,0)),0) As OTCALC_ACTUALHOURS,OTCALC_FROMTIME ,OTCALC_TOTIME  from SMHR_OTCALC where OTCALC_EMPID= '" + @OTCALC_EMPID + "' and OTCALC_DATE='" + @OTCALC_DATE + "' group by OTCALC_FROMTIME,OTCALC_TOTIME");
-            // return ExecuteQuery("select ISNULL(sum(ISNULL(otcalc_workinghours,0)),0) As otcalc_workinghours,OTCALC_FROMTIME ,OTCALC_TOTIME  from SMHR_OTCALC where OTCALC_EMPID= '" + @OTCALC_EMPID + "' and OTCALC_DATE='" + @OTCALC_DATE + "' group by OTCALC_FROMTIME,OTCALC_TOTIME,otcalc_id ORDER BY otcalc_id desc");
+        {          
             return ExecuteQuery("Select  sum(otcalc_workinghours) otcalc_workinghours,max(OTCALC_FROMTIME) OTCALC_FROMTIME,max(OTCALC_TOTIME) OTCALC_TOTIME from(select  ISNULL(sum(ISNULL(otcalc_workinghours,0)),0) As otcalc_workinghours,OTCALC_FROMTIME ,OTCALC_TOTIME ,otcalc_id from SMHR_OTCALC where OTCALC_EMPID='" + @OTCALC_EMPID + "'and OTCALC_DATE='" + @OTCALC_DATE + "' group by OTCALC_FROMTIME,OTCALC_TOTIME ,otcalc_id) t");
+            //return ExecuteQuery("select  ISNULL(sum(ISNULL(otcalc_workinghours,0)),0) As otcalc_workinghours,max(OTCALC_FROMTIME) OTCALC_FROMTIME,max(OTCALC_TOTIME) OTCALC_TOTIME,otcalc_id from SMHR_OTCALC where OTCALC_EMPID='" + @OTCALC_EMPID + "'and OTCALC_DATE='" + @OTCALC_DATE + "' group by OTCALC_FROMTIME,OTCALC_TOTIME ,otcalc_id");
         }
 
         public static bool SetOT(SMHR_EMPOTTRANS _obj_smhr_ottrans)

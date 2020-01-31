@@ -566,9 +566,10 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
                 }
 
                 // rdtp_OTDt.SelectedDate = DateTime.Today + new TimeSpan(((System.TimeSpan)((dt.Rows[0]["OTCALC_DATE"]))).Hours, ((System.TimeSpan)((dt.Rows[0]["OTCALC_DATE"]))).Minutes, ((System.TimeSpan)((dt.Rows[0]["OTCALC_DATE"]))).Seconds);
-                rtbActHrs.Text = Convert.ToString(Convert.ToInt32(Convert.ToDecimal(dt.Rows[0]["OTCALC_ACTUALHOURS"]) / 60));
+                // rtbActHrs.Text = Convert.ToString(Convert.ToInt32(Convert.ToDecimal(dt.Rows[0]["OTCALC_ACTUALHOURS"]) / 60));
+                rtbActHrs.Text = Convert.ToString(System.Convert.ToInt32(dt.Rows[0]["OTCALC_ACTUALHOURS"]) / 60);
                 rtbActMins.Text = Convert.ToString(Convert.ToInt32(Convert.ToDecimal(dt.Rows[0]["OTCALC_ACTUALHOURS"]) % 60));
-                rtbOTHrs.Text = Convert.ToString(Convert.ToInt32(Convert.ToDecimal(dt.Rows[0]["OTCALC_WORKINGHOURS"]) / 60));
+                rtbOTHrs.Text = Convert.ToString(System.Convert.ToInt32(dt.Rows[0]["OTCALC_WORKINGHOURS"]) / 60);
                 rtbOTMins.Text = Convert.ToString(Convert.ToInt32(Convert.ToDecimal(dt.Rows[0]["OTCALC_WORKINGHOURS"]) % 60));
                 rtxt_Comments.Text = Convert.ToString(dt.Rows[0]["OTCALC_COMMENTS"]);
                 //rdp_fromtime.SelectedDate = Convert.ToDateTime(dt.Rows[0]["OTCALC_FROMTIME"]);
@@ -654,7 +655,8 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
                 }
 
                 rtbActHrs.Text = ts.Hours.ToString();
-                rtbActMins.Text = t2.Hours > 12 ? "0" : ts.Minutes.ToString();
+                //  rtbActMins.Text = t2.Hours > 12 ? "0" : ts.Minutes.ToString();
+                rtbActMins.Text = ts.Minutes.ToString();
             }
         }
         catch (Exception ex)
@@ -754,6 +756,11 @@ public partial class Selfservice_frmOverTimeCalc : System.Web.UI.Page
                     {
                         if (Convert.ToInt32(rtbActHrs.Text) > 12)
                             rtbActHrs.Text = Convert.ToInt32(rtbActHrs.Text) > 12 ? "16" : maxHrs.ToString();
+                    }
+                    if (weekDay == "Saturday" || weekDay == "Sunday")
+                    {
+                        if (Convert.ToInt32(rtbActHrs.Text) > 12)
+                            rtbActHrs.Text = Convert.ToInt32(rtbActHrs.Text) > 12 ? "12" : maxHrs.ToString();
                     }
                     if (rtbActMins.Text != string.Empty)
                     {
